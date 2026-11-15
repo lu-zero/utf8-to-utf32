@@ -157,5 +157,3 @@ subject`.
 - The x86 kernels and their numbers were written and measured on a machine that
   is not the aarch64 one used for the NEON work. The two sets of results are
   not comparable.
-- The repository placeholder in `Cargo.toml` and the relative image links in
-  `README.md` are waiting for the hosted URL.
