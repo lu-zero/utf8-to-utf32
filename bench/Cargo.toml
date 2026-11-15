@@ -1,0 +1,30 @@
+[package]
+name = "utf32-bench"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+utf8-to-utf32 = { path = ".." }
+simdutf = { version = "0.7", optional = true }
+simdutf8 = "0.1.5"
+
+[features]
+default = ["simdutf"]
+
+[[bin]]
+name = "utf32-bench"
+path = "src/main.rs"
+
+[[bin]]
+name = "size-ours"
+path = "src/size_ours.rs"
+
+[[bin]]
+name = "size-simdutf"
+path = "src/size_simdutf.rs"
+required-features = ["simdutf"]
+
+[[bin]]
+name = "size-base"
+path = "src/size_base.rs"
