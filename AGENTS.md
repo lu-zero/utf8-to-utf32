@@ -154,9 +154,6 @@ subject`.
 
 ## State of the tree
 
-- The tree has not been through `rustfmt`: `cargo fmt --all -- --check` reports
-  differences in every source file. Format it in its own `style:` commit, never
-  mixed into a change.
 - The x86 kernels and their numbers were written and measured on a machine that
   is not the aarch64 one used for the NEON work. The two sets of results are
   not comparable.
