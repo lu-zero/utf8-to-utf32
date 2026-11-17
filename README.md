@@ -118,7 +118,7 @@ but about half the speed on error-dense input; see `docs/architecture/ppc64.md`.
 - [docs/architecture.md](docs/architecture.md): layers, dispatch, the kernel contract, the scalar module and the `Decoder`.
 - [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.
-- [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its masks and its measured weak spot on 4-byte text.
+- [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its SWAR masks and the measured `Decoder` cost on error-dense input.
 
 ## License
 

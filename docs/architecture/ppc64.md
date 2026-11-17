@@ -3,17 +3,17 @@
 `src/powerpc64.rs` holds one kernel, `vsx_impl`. It is gated behind the `vsx`
 Cargo feature and needs a nightly toolchain (`stdarch_powerpc`,
 `powerpc_target_feature` and, with `std`, `stdarch_powerpc_feature_detection`).
-Default stable builds do not compile it. The kernel enables `power9-vector`:
-`vec_xl`/`vec_xst` then lower to `lxv`/`stxv` instead of POWER8's `lxvd2x`/
-`stxvd2x`, which was worth 3.33 to 5.56 GB/s on ASCII in the same benchmark.
-`Level::Vsx::is_supported()` checks `is_powerpc_feature_detected!("power9")`
+Default stable builds do not compile it. The kernel enables `power9-vector`,
+so `vec_xl`/`vec_xst` lower to `lxv`/`stxv` instead of POWER8's `lxvd2x`/
+`stxvd2x`. `Level::Vsx::is_supported()` checks `is_powerpc_feature_detected!("power9")`
 with `std`, or `cfg!(target_feature = "power9-vector")` without it, so POWER8
 falls back to scalar.
 
 The design mirrors the [NEON kernel](aarch64.md): 64-byte blocks that start on
 a character boundary, Keiser–Lemire lookup validation, one 64-bit lead mask,
-byte-domain decoding and table-driven compaction. PowerPC has no `movemask`
-intrinsic, so the 16-bit masks come from a SWAR multiply on the compare bytes.
+byte-domain decoding and table-driven compaction. stdarch exposes no
+`movemask` intrinsic for PowerPC, so the 16-bit masks come from a SWAR
+multiply on the compare bytes.
 
 ## Overview
 
@@ -23,7 +23,7 @@ decoders' shifted loads. Anything shorter goes to the scalar tail.
 1. An all-ASCII block is widened with four `vec_perm` tables, four bytes to four
    u32 lanes each.
 2. Otherwise each 16-byte vector is validated against its predecessor with
-   three `vec_perm` table lookups (plus two shifts and two saturating
+   three `vec_perm` table lookups, plus two more lookups and two saturating
    subtracts when the block has a byte `>= 0xE0`). The lead mask is built by
    comparing the block as signed bytes: `0x80..=0xBF` is `-128..=-65`, so one
    `vec_cmpgt` against `-64` marks continuations.
@@ -59,7 +59,7 @@ is in `bench/results/ppc64.md`; it was produced with
 | scalar | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
 | VSX | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
 
-VSX wins on every input class here, from 1.4x on Latin to 2.8x on ASCII. Two
+VSX wins on every input class here, from 1.4x on Latin to 2.8x on ASCII. Three
 changes got it there. The first version of `decode_wide` interleaved and
 compacted in two separate `vec_perm` stages (10 permutes per quarter) and ran
 emoji at 0.24 GB/s, below scalar; folding both into one mask-indexed table
@@ -68,9 +68,13 @@ raised ASCII from 3.33 to 5.56 and emoji to 0.59. OR-ing the four validation
 results before one `vec_any_ne` added about 0.05 GB/s on emoji.
 
 On P9, `vperm` and `vbpermq` are 3-cycle PM operations with only two PM units
-per chip. That is why reducing permute counts, rather than scalar work, is the
-lever here: replacing the SWAR movemask with `vbpermq` gained only 3 to 5% and
+per chip. Replacing the SWAR movemask with `vbpermq` gained only 3 to 5% and
 would add two internal nightly features (`link_llvm_intrinsics`, `simd_ffi`).
+
+Three lookups per 16 bytes is the floor for a 128-bit shuffle: one permute has
+a single 5-bit index per lane, so it cannot read two tables at once, and a
+256-byte table needs at least eight permutes. A compare-based replacement for
+one table was correct but slower (latin 0.80 to 0.64 GB/s).
 
 ![GB/s by implementation and input type on POWER9](../performance-ppc64.svg)
 
