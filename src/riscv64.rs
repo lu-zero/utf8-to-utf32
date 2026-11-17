@@ -171,115 +171,116 @@ unsafe fn ascii_widen(p: *const u8, dst: *mut u32, adv: usize) {
     }
 }
 
-/// Decode `adv` bytes into consecutive u32 lanes. Each SEW=32 iteration covers
-/// `vl` byte positions; all arithmetic and the compaction stay inside asm.
+/// Decode `adv` bytes. Phase 1 computes lo/hi/top bytes of every candidate
+/// code point at SEW=8 in one pass; phase 2 widens them to u32 at SEW=32 and
+/// compacts with vcompress. Scratch buffers live on the stack.
 #[target_feature(enable = "v")]
 unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usize {
-    let cnt: usize;
+    let mut lo = [0u8; 32];
+    let mut hi = [0u8; 32];
+    let mut top = [0u8; 32];
+    let mut b0buf = [0u8; 32];
+    let mut lo_ptr = lo.as_mut_ptr();
+    let mut hi_ptr = hi.as_mut_ptr();
+    let mut top_ptr = top.as_mut_ptr();
+    let mut b0_ptr = b0buf.as_mut_ptr();
+    let mut rem = adv;
+    let mut pp = p;
+    let mut dd = dst.add(o);
+    let mut cnt = 0usize;
+    let vl: usize;
+    let c: usize;
     unsafe {
         asm!(
+            // ---- phase 1: SEW=8, all adv byte positions at once ----
             "mv {rem}, {adv}",
-            "mv {pp}, {p}",
+            "vsetvli {vl0}, {rem}, e8, m1, ta, ma",
+            "vle8.v v1, ({p})", "vle8.v v2, ({p1})",
+            "vle8.v v3, ({p2})", "vle8.v v4, ({p3})",
+
+            "vmsgeu.vx v5, v1, {cc0}",
+            "vmsgeu.vx v6, v1, {ce0}",
+            "vmsgeu.vx v7, v1, {cf0}",
+
+            // low byte candidates
+            "vand.vx v8, v4, {c3f}", "vsll.vi v9, v3, 6", "vor.vv v8, v9, v8",
+            "vand.vx v9, v3, {c3f}", "vsll.vi v10, v2, 6", "vor.vv v9, v10, v9",
+            "vand.vx v10, v2, {c3f}", "vsll.vi v11, v1, 6", "vor.vv v10, v11, v10",
+            "vmv.v.v v12, v1",
+            "vmv.v.v v0, v5", "vmerge.vvm v12, v12, v10, v0",
+            "vmv.v.v v0, v6", "vmerge.vvm v12, v12, v9, v0",
+            "vmv.v.v v0, v7", "vmerge.vvm v12, v12, v8, v0",
+            "vse8.v v12, ({dlo})",
+
+            // high byte candidates
+            "vsrl.vi v8, v1, 2", "vand.vi v8, v8, 7",
+            "vand.vx v9, v2, {c3c}", "vsrl.vi v9, v9, 2",
+            "vand.vi v10, v1, 15", "vsll.vi v10, v10, 4", "vor.vv v9, v9, v10",
+            "vand.vx v10, v3, {c3c}", "vsrl.vi v10, v10, 2",
+            "vand.vi v11, v2, 15", "vsll.vi v11, v11, 4", "vor.vv v10, v10, v11",
+            "vmv.v.i v12, 0",
+            "vmv.v.v v0, v5", "vmerge.vvm v12, v12, v8, v0",
+            "vmv.v.v v0, v6", "vmerge.vvm v12, v12, v9, v0",
+            "vmv.v.v v0, v7", "vmerge.vvm v12, v12, v10, v0",
+            "vse8.v v12, ({dhi})",
+
+            // top byte (4-byte characters only)
+            "vand.vi v8, v1, 7", "vsll.vi v8, v8, 2",
+            "vand.vx v9, v2, {c30}", "vsrl.vi v9, v9, 4", "vor.vv v8, v8, v9",
+            "vmv.v.i v12, 0",
+            "vmv.v.v v0, v7", "vmerge.vvm v12, v12, v8, v0",
+            "vse8.v v12, ({dtop})",
+            "vse8.v v1, ({db0})",
+
+            // ---- phase 2: SEW=32, widen and compact ----
             "mv {dd}, {d}",
             "mv {cnt}, zero",
-            "3:",
-            "beq {rem}, zero, 4f",
+            "2:",
+            "beq {rem}, zero, 3f",
             "vsetvli {vl}, {rem}, e32, m1, ta, ma",
-            "addi t0, {pp}, 1",
-            "addi t1, {pp}, 2",
-            "addi t2, {pp}, 3",
-
-            "vle8.v v1, ({pp})",  "vzext.vf4 v2, v1",
-            "vle8.v v3, (t0)",    "vzext.vf4 v4, v3",
-            "vle8.v v5, (t1)",    "vzext.vf4 v6, v5",
-            "vle8.v v7, (t2)",    "vzext.vf4 v8, v7",
-
-            "li t4, 0xc0",
-            "vmsgeu.vx v0, v2, t4", "vmv.v.v v13, v0",
-            "li t4, 0xe0",
-            "vmsgeu.vx v0, v2, t4", "vmv.v.v v14, v0",
-            "li t4, 0xf0",
-            "vmsgeu.vx v0, v2, t4", "vmv.v.v v15, v0",
-
-            "li t4, 0x7f",
-            "vand.vx v9, v2, t4",
-            "li t4, 0x1f",
-            "vand.vx v10, v2, t4",
-            "vsll.vi v10, v10, 6",
-            "li t4, 0x3f",
-            "vand.vx v11, v4, t4",
-            "vor.vv v10, v10, v11",
-
-            "li t4, 0x1f",
-            "vand.vx v11, v2, t4",
-            "vand.vi v11, v11, 15",
-            "vsll.vi v11, v11, 12",
-            "li t4, 0x3f",
-            "vand.vx v16, v4, t4",
-            "vsll.vi v16, v16, 6",
-            "vor.vv v11, v11, v16",
-            "vand.vx v16, v6, t4",
-            "vor.vv v11, v11, v16",
-
-            "vand.vi v12, v2, 7",
-            "vsll.vi v12, v12, 18",
-            "vand.vx v16, v4, t4",
-            "vsll.vi v16, v16, 12",
-            "vor.vv v12, v12, v16",
-            "vand.vx v16, v6, t4",
-            "vsll.vi v16, v16, 6",
-            "vor.vv v12, v12, v16",
-            "vand.vx v16, v8, t4",
-            "vor.vv v12, v12, v16",
-
-            "vmv.v.v v17, v9",
-            "vmv.v.v v0, v13",
-            "vmerge.vvm v17, v17, v10, v0",
-            "vmv.v.v v0, v14",
-            "vmerge.vvm v17, v17, v11, v0",
-            "vmv.v.v v0, v15",
-            "vmerge.vvm v17, v17, v12, v0",
-
-            // lead = !(b0 in 0x80..=0xbf), masked to this chunk's rem
-            "li t4, 0x80",
-            "vmsgeu.vx v0, v2, t4",
-            "vmv.v.v v18, v0",
-            "li t4, 0xc0",
-            "vmsltu.vx v0, v2, t4",
-            "vand.vv v18, v18, v0",
-            "vmv.v.v v0, v18",
-            "vmnot.m v0, v0",
-            "vmv.v.v v18, v0",
-            "vid.v v19", "vmsltu.vx v0, v19, {rem}", "vand.vv v18, v18, v0",
-            "vmv.v.v v0, v18",
-
-            "vpopc.m {c}, v18",
-            "vcompress.vm v20, v17, v0",
-            "vse32.v v20, ({dd})",
-
+            "vle8.v v13, ({dlo})", "vzext.vf4 v14, v13",
+            "vle8.v v15, ({dhi})", "vzext.vf4 v16, v15",
+            "vle8.v v17, ({dtop})", "vzext.vf4 v18, v17",
+            "vsll.vi v16, v16, 8", "vsll.vi v18, v18, 16",
+            "vor.vv v14, v14, v16", "vor.vv v14, v14, v18",
+            "vle8.v v19, ({db0})", "vzext.vf4 v20, v19",
+            "vmsgeu.vx v0, v20, {c80}",
+            "vmsltu.vx v1, v20, {cc0}",
+            "vmand.mm v0, v0, v1", "vmnot.m v0, v0",
+            "vid.v v21", "vmsltu.vx v1, v21, {rem}", "vmand.mm v0, v0, v1",
+            "vpopc.m {c}, v0",
+            "vcompress.vm v22, v14, v0",
+            "vse32.v v22, ({dd})",
             "add {cnt}, {cnt}, {c}",
-            "add {pp}, {pp}, {vl}",
-            "slli t3, {c}, 2",
-            "add {dd}, {dd}, t3",
+            "add {dlo}, {dlo}, {vl}", "add {dhi}, {dhi}, {vl}",
+            "add {dtop}, {dtop}, {vl}", "add {db0}, {db0}, {vl}",
+            "slli {t1}, {c}, 2", "add {dd}, {dd}, {t1}",
             "sub {rem}, {rem}, {vl}",
-            "j 3b",
-            "4:",
+            "j 2b",
+            "3:",
 
             adv = in(reg) adv,
-            p = in(reg) p,
+            c3f = in(reg) 0x3fusize, c30 = in(reg) 0x30usize, c3c = in(reg) 0x3cusize,
+            c80 = in(reg) 0x80usize, cc0 = in(reg) 0xc0usize,
+            ce0 = in(reg) 0xe0usize, cf0 = in(reg) 0xf0usize,
+            p = in(reg) p, p1 = in(reg) p.add(1),
+            p2 = in(reg) p.add(2), p3 = in(reg) p.add(3),
             d = in(reg) dst.add(o),
-            rem = out(reg) _,
-            pp = out(reg) _,
-            dd = out(reg) _,
+            dlo = inout(reg) lo_ptr,
+            dhi = inout(reg) hi_ptr,
+            dtop = inout(reg) top_ptr,
+            db0 = inout(reg) b0_ptr,
+            rem = out(reg) rem,
+            dd = out(reg) dd,
             cnt = out(reg) cnt,
-            vl = out(reg) _,
-            c = out(reg) _,
-            out("t0") _, out("t1") _, out("t2") _, out("t3") _, out("t4") _,
+            vl = out(reg) vl, vl0 = out(reg) _,
+            c = out(reg) c,
+            t1 = out(reg) _,
             out("v0") _, out("v1") _, out("v2") _, out("v3") _, out("v4") _,
             out("v5") _, out("v6") _, out("v7") _, out("v8") _, out("v9") _,
             out("v10") _, out("v11") _, out("v12") _, out("v13") _, out("v14") _,
             out("v15") _, out("v16") _, out("v17") _, out("v18") _, out("v19") _,
-            out("v20") _,
+            out("v20") _, out("v21") _, out("v22") _,
             options(nostack),
         );
     }

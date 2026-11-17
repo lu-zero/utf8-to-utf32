@@ -73,27 +73,33 @@ rvv` after a change to the validator or a decode path.
 
 ## Decoding
 
-At SEW=32 one loop iteration covers `vl` byte positions, where `vl` is the
-number of u32 lanes the hardware has. Four `vle8.v` loads are widened with
-`vzext.vf4`, so every candidate code point has its four source bytes in u32
-lanes. The code point is selected by the length class of `b0`:
+Decoding is two phases. At SEW=8, one pass over the whole block computes the
+three bytes of every candidate code point. The length class comes from three
+unsigned compares against C0, E0 and F0; `vmerge.vvm` selects among the 1-, 2-,
+3- and 4-byte candidates for each byte:
 
-| Length | Code point |
-|---|---|
-| 1 | `b0` |
-| 2 | `((b0 & 0x1F) << 6) \| (b1 & 0x3F)` |
-| 3 | `((b0 & 0x0F) << 12) \| ((b1 & 0x3F) << 6) \| (b2 & 0x3F)` |
-| 4 | `((b0 & 7) << 18) \| ((b1 & 0x3F) << 12) \| ((b2 & 0x3F) << 6) \| (b3 & 0x3F)` |
+| Byte | 1-byte | 2-byte | 3-byte | 4-byte |
+|---|---|---|---|---|
+| low | `b0` | `(b0 << 6) \| (b1 & 0x3F)` | `(b1 << 6) \| (b2 & 0x3F)` | `(b2 << 6) \| (b3 & 0x3F)` |
+| high | 0 | `(b0 >> 2) & 7` | `((b0 & 0x0F) << 4) \| ((b1 & 0x3C) >> 2)` | `((b1 & 0x0F) << 4) \| ((b2 & 0x3C) >> 2)` |
+| top | 0 | 0 | 0 | `((b0 & 7) << 2) \| ((b1 & 0x30) >> 4)` |
 
-The length class comes from three unsigned compares against C0, E0 and F0;
-`vmerge.vvm` picks the matching result. The lead mask is the inverse of
-"continuation" (`b0 >= 0x80 && b0 < 0xC0`), ANDed with `idx < rem` and built
-from `vid.v`. `vpopc.m` returns the number of output characters and
-`vcompress.vm` packs the selected lanes into the first positions of the
-destination vector. The whole vector is stored; lanes past the count are
-overwritten by the next store, which is why `dst` must be at least `src.len()`
-long. The loop then advances the source by `vl`, the destination by four times
-the character count, and `rem` by `vl`.
+`vsll`/`vsrl` at SEW=8 keep only the low byte of each shift, which is exactly
+the byte needed. The three byte vectors and the original `b0` are stored to
+four 32-byte stack buffers.
+
+At SEW=32 the second phase runs a short loop: `vl` bytes from each buffer are
+widened with `vzext.vf4`, combined as `lo | hi << 8 | top << 16`, and compacted
+with `vcompress.vm` under a lead mask rebuilt from the widened `b0`. `vpopc.m`
+returns the character count. The lead mask is the inverse of "continuation"
+(`b0 >= 0x80 && b0 < 0xC0`), ANDed with `idx < rem` and built from `vid.v`.
+The whole vector is stored; lanes past the count are overwritten by the next
+store, which is why `dst` must be at least `src.len()` long.
+
+This replaced an earlier design that computed full u32 candidates four times
+(four SEW=32 iterations per block). The byte-domain form does that arithmetic
+once at SEW=8 and reduces the non-ASCII benchmark rows from 0.05 to 0.07 GB/s
+on the X60, with ASCII unchanged.
 
 An LMUL=4 variant would cover the whole region in one SEW=32 iteration and
 remove the loop, but `vzext.vf4` with `e32, m4` raises SIGILL on the Spacemit
@@ -117,16 +123,15 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.61 | 0.05 | 0.05 | 0.05 | 0.05 | – |
-| RVV lossy_into (C1) | 0.81 | 0.05 | 0.05 | 0.05 | 0.05 | 0.08 |
+| RVV slice fn | 0.61 | 0.07 | 0.07 | 0.07 | 0.07 | – |
+| RVV lossy_into (C1) | 0.81 | 0.07 | 0.07 | 0.07 | 0.07 | 0.08 |
 
 RVV wins on ASCII (1.53x for the slice function, 2.0x for `lossy_into`) and the
-`Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is about
-half the scalar speed: validation at SEW=8 plus the SEW=32 decode loop costs
-far more instructions than the scalar decoder uses for the same bytes. Dirty
-input is about even in lossy mode; the `Decoder` is slower there (0.02 against
-0.05), the same restart cost described in
-[the main architecture page](../architecture.md).
+`Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is still
+slower than scalar (0.07 against 0.09–0.11), but the byte-domain decode closed
+about a third of the gap. Dirty input is about even in lossy mode; the
+`Decoder` is slower there (0.02 against 0.05), the same restart cost described
+in [the main architecture page](../architecture.md).
 
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
