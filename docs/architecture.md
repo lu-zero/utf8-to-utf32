@@ -173,6 +173,17 @@ costs one extra kernel call. This is the reason the `Decoder` is slow on input
 with an error every few bytes (see the performance sections of the
 per-architecture pages).
 
+Counting the calls makes the cost concrete. On the `bench/` dirty input (an
+error every ~12 bytes, 820 KiB) there are 30,000 errors and **60,000 kernel
+entries**, one for the `Wide` prefix and one that resolves the pending
+`Invalid`.
+
+Each entry receives a window of 16 KiB but the kernel stops at the first
+error, so only the first block of that window does any work. Feeding the
+`Decoder` a lossy kernel, or adding a mode that returns all pieces of a window
+in one call, would remove those re-entries; both change the kernel contract
+and are design decisions rather than fixes to this loop.
+
 ## Tests and benchmarks
 
 | Path | What it covers |
