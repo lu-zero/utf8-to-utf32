@@ -131,16 +131,16 @@ macro_rules! has {
 macro_rules! has {
     ($($f:tt),*) => { true $(&& cfg!(target_feature = $f))* };
 }
-#[cfg(all(target_arch = "powerpc64", feature = "std"))]
+#[cfg(all(target_arch = "powerpc64", feature = "vsx", feature = "std"))]
 macro_rules! has_ppc {
-    ($f:tt) => {
-        std::arch::is_powerpc_feature_detected!($f)
+    ($detected:tt, $target_feature:tt) => {
+        std::arch::is_powerpc_feature_detected!($detected)
     };
 }
-#[cfg(all(target_arch = "powerpc64", not(feature = "std")))]
+#[cfg(all(target_arch = "powerpc64", feature = "vsx", not(feature = "std")))]
 macro_rules! has_ppc {
-    ($f:tt) => {
-        cfg!(target_feature = $f)
+    ($detected:tt, $target_feature:tt) => {
+        cfg!(target_feature = $target_feature)
     };
 }
 
@@ -169,7 +169,7 @@ impl Level {
             #[cfg(target_arch = "aarch64")]
             Level::Neon => true,
             #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
-            Level::Vsx => has_ppc!("power9"),
+            Level::Vsx => has_ppc!("power9", "power9-vector"),
             #[allow(unreachable_patterns)]
             _ => false,
         }

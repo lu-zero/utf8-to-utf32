@@ -165,6 +165,7 @@ const fn cnt8() -> [u8; 256] {
 }
 static CNT8: [u8; 256] = cnt8();
 
+// Inherited from the NEON kernel and kept on error-dense box drawing, not tuned on POWER9.
 const ERR_STRETCH: usize = 32;
 const ERR_BACKOFF_MAX: u32 = 5;
 

@@ -40,11 +40,11 @@ decoders' shifted loads. Anything shorter goes to the scalar tail.
 
 ## Masks without movemask
 
-`vec_cmpgt` leaves 0x00 or 0xFF in each byte. AND with 0x80 extracts the high
-bit, giving a 64-bit integer whose byte `k` is either 0 or `1 << (8k)`. Reading
-the two halves little-endian and multiplying each by `0x0002040810204081`
-moves bit `7 + 8k` into bit `k` of the top byte. Two multiplies produce one
-16-bit mask per vector; four vectors give the 64-bit lead mask.
+`vec_cmpgt` leaves 0x00 or 0xFF in each byte. AND with 0x80 leaves byte `k` as
+0 or 0x80, i.e. bit `7 + 8k` of the 64-bit word. Reading the two halves
+little-endian and multiplying each by `0x0002040810204081` moves that bit into
+bit `k` of the top byte. Two multiplies produce one 16-bit mask per vector;
+four vectors give the 64-bit lead mask.
 
 ## Measured behaviour
 
@@ -59,22 +59,24 @@ is in `bench/results/ppc64.md`; it was produced with
 | scalar | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
 | VSX | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
 
-VSX wins on every input class here, from 1.4x on Latin to 2.8x on ASCII. Three
+VSX wins on every input class here, from 1.34x on Latin to 2.8x on ASCII. Three
 changes got it there. The first version of `decode_wide` interleaved and
 compacted in two separate `vec_perm` stages (10 permutes per quarter) and ran
 emoji at 0.24 GB/s, below scalar; folding both into one mask-indexed table
 (6 permutes) raised it to 0.48. Enabling the POWER9 vector instructions then
-raised ASCII from 3.33 to 5.56 and emoji to 0.59. OR-ing the four validation
-results before one `vec_any_ne` added about 0.05 GB/s on emoji.
+raised ASCII from 3.33 to 5.56 and emoji to 0.59. The four validation results
+are also OR-ed before a single `vec_any_ne`, which removes three compare-records
+per block.
 
 On P9, `vperm` and `vbpermq` are 3-cycle PM operations with only two PM units
-per chip. Replacing the SWAR movemask with `vbpermq` gained only 3 to 5% and
-would add two internal nightly features (`link_llvm_intrinsics`, `simd_ffi`).
+per chip. Using `vbpermq` for the movemask would add two internal nightly
+features (`link_llvm_intrinsics`, `simd_ffi`), so the SWAR multiply stays.
 
 Three lookups per 16 bytes is the floor for a 128-bit shuffle: one permute has
-a single 5-bit index per lane, so it cannot read two tables at once, and a
-256-byte table needs at least eight permutes. A compare-based replacement for
-one table was correct but slower (latin 0.80 to 0.64 GB/s).
+a single index per lane, so it can read either 16-byte table but not combine
+two independent nibble lookups in the same lane, and a 256-byte table needs at
+least eight permutes. A compare-based replacement for one table was correct but
+slower (latin 0.80 to 0.64 GB/s, `utf32-bench`, median of 7, `sol`).
 
 ![GB/s by implementation and input type on POWER9](../performance-ppc64.svg)
 
@@ -115,8 +117,9 @@ after moving the whole-vector ASCII test ahead of the SWAR movemask in
 
 ## Correctness
 
-`tests/conformance.rs` and `tests/exhaustive_neon.rs` both run every supported
-level, so VSX is checked against `core::str::from_utf8` and `utf8_chunks` on
-random, structured and exhaustive inputs, including block boundaries. Run
-`cargo +nightly test --release --features vsx` on a powerpc64 machine after a
-change to the validator, the tables or a decode path.
+`tests/conformance.rs` runs every supported level, so VSX is checked against
+`core::str::from_utf8` and `utf8_chunks` on random and structured inputs with
+block-boundary sweeps. `tests/exhaustive_neon.rs` also runs every level, but its
+64-byte buffers never enter the SIMD loop, so on powerpc64 it only exercises the
+scalar path. Run `cargo +nightly test --release --features vsx` on a POWER9
+machine after a change to the validator, the tables or a decode path.

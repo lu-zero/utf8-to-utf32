@@ -40,7 +40,7 @@ while let Some(p) = pieces.next_piece() {
 }
 ```
 
-There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmarking. With `std`, the `UTF32_LEVEL=scalar|sse4.1|avx2|avx512|neon` environment variable sets the default level.
+There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmarking. With `std`, the `UTF32_LEVEL=scalar|sse4.1|avx2|avx512|neon|vsx` environment variable sets the default level.
 
 ## Implementations
 
