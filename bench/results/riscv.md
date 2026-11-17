@@ -6,6 +6,6 @@
 | ours scalar slice fn         |      0.40 |      0.09 |      0.11 |      0.08 |      0.09 |         - |
 | ours scalar lossy_into (C1)  |      0.40 |      0.09 |      0.11 |      0.08 |      0.09 |      0.08 |
 | ours scalar Decoder pieces   |      0.69 |      0.09 |      0.11 |      0.08 |      0.09 |      0.05 |
-| ours rvv slice fn            |      0.51 |      0.05 |      0.05 |      0.05 |      0.05 |         - |
-| ours rvv lossy_into (C1)     |      0.72 |      0.05 |      0.05 |      0.05 |      0.05 |      0.08 |
+| ours rvv slice fn            |      0.61 |      0.05 |      0.05 |      0.05 |      0.05 |         - |
+| ours rvv lossy_into (C1)     |      0.81 |      0.05 |      0.05 |      0.05 |      0.05 |      0.08 |
 | ours rvv Decoder pieces      |      2.19 |      0.05 |      0.05 |      0.05 |      0.05 |      0.02 |

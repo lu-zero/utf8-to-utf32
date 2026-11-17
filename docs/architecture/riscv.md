@@ -112,10 +112,10 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.51 | 0.05 | 0.05 | 0.05 | 0.05 | – |
-| RVV lossy_into (C1) | 0.72 | 0.05 | 0.05 | 0.05 | 0.05 | 0.08 |
+| RVV slice fn | 0.61 | 0.05 | 0.05 | 0.05 | 0.05 | – |
+| RVV lossy_into (C1) | 0.81 | 0.05 | 0.05 | 0.05 | 0.05 | 0.08 |
 
-RVV wins on ASCII (1.28x for the slice function, 1.8x for `lossy_into`) and the
+RVV wins on ASCII (1.53x for the slice function, 2.0x for `lossy_into`) and the
 `Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is about
 half the scalar speed: validation at SEW=8 plus the SEW=32 decode loop costs
 far more instructions than the scalar decoder uses for the same bytes. Dirty
@@ -123,9 +123,12 @@ input is about even in lossy mode; the `Decoder` is slower there (0.02 against
 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
 
-The ASCII path needed a cheap `vfirst.m` non-ASCII test before the full
-validator: running the validator on every block had made ASCII 0.15 GB/s, well
-below scalar. Going VLA kept the same throughput on this machine, where a full
-register is already 32 bytes; it should use the wider registers of other
-implementations without a rewrite. A full-width LMUL=4 form would remove the
-SEW=32 loop but traps on this CPU; see above.
+The ASCII path needed two changes: a cheap `vfirst.m` non-ASCII test before the
+full validator (running it on every block had made ASCII 0.15 GB/s), and
+widening with `e32, m4` in one instruction group instead of an m1 loop. The
+first version used `v1`/`v2` for the widening, which overlap the `v0..=v3`
+register group and trap with SIGILL; using `v4` as the byte source and `v8` as
+the widened destination avoids the overlap. LMUL=4 with `vcompress.vm` does trap
+on this CPU, so decoding stays at m1. Going VLA kept throughput on this machine,
+where a full register is already 32 bytes; it should use wider registers of
+other implementations without a rewrite.

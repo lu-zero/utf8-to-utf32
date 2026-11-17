@@ -85,7 +85,7 @@ Measured on one Spacemit X60 machine with the V extension, Rust 1.102 nightly,
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.51 | 0.05 | 0.05 | 0.05 | 0.05 | – |
+| this crate, rvv slice fn | 0.61 | 0.05 | 0.05 | 0.05 | 0.05 | – |
 
 RVV is vector-length agnostic. It wins on ASCII but is about half the scalar
 speed on non-ASCII input; see `docs/architecture/riscv.md`.
