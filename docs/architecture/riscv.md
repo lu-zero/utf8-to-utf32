@@ -13,19 +13,19 @@ tables be loaded into vector registers **once** instead of once per block, and
 removes the compiler barriers between the phases. The error path stays in Rust
 so `scalar::run` and `scalar::step` keep ownership of the error semantics.
 
-Upstream tracks the missing intrinsics in `rust-lang/stdarch#1817`, blocked on
-scalable vector types (`rust-lang/rust#145052`, RFC #3838). SVE has them on
-nightly, RVV does not. Issue #1 in this repository records the compiler-side
-gaps and the rationale for the global-asm approach.
+Rust has no stable RVV intrinsics: they need scalable vector types that are
+still experimental upstream. SVE has them on nightly, RVV does not. The
+repository's RVV issue records the compiler-side gaps and the rationale for the
+global-asm approach.
 
-The kernel is **vector-length agnostic**. `vlmax` is read once at entry, and
-each iteration takes `n = min(remaining - 3, vlmax)` bytes. `Level::is_supported`
-requires the V extension (with `std`) and `vlmax >= 32`; that is a conservative
-minimum for the tested hardware, not a fixed block width.
+The decode path uses two fixed 16-lane groups and 32-byte stack buffers, so it
+requires **VLEN=256**. `vlmax` is read once and each iteration takes
+`n = min(remaining - 3, vlmax)` bytes; the level is unsupported on wider or
+narrower vectors.
 
 ## Overview
 
-There is no fixed block size. Each iteration sets `vl` from `n` bytes, where the
+The block is at most 32 bytes. Each iteration sets `vl` from `n` bytes, where the
 three bytes not counted are lookahead for the shifted loads. `adv` is `n`,
 shortened by up to three when a character starts near the end of the region;
 `i` advances by `adv`, so every block starts on a character boundary and no
@@ -141,8 +141,8 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.49 | 0.11 | 0.10 | 0.10 | 0.10 | – |
-| RVV lossy_into (C1) | 0.81 | 0.11 | 0.10 | 0.10 | 0.10 | 0.08 |
+| RVV slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
+| RVV lossy_into (C1) | 0.81 | 0.10 | 0.10 | 0.10 | 0.10 | 0.08 |
 
 The figures above are one run; the `bench/results/riscv.md` file is another,
 and differ by a few hundredths from run to run on this machine. The
@@ -151,7 +151,7 @@ back-to-back on the same machine; ASCII is essentially unchanged (0.47 to 0.49,
 within run variance) because that path was already a single tight asm block.
 RVV now beats scalar on Latin (0.11 against 0.09), box (0.10 against 0.08) and
 emoji (0.10 against 0.09), and is close behind on CJK (0.10 against 0.11) for
-the reason given above. On ASCII it stays ahead at 0.49 against scalar's 0.40;
+the reason given above. On ASCII it stays ahead at 0.48 against scalar's 0.40;
 the `Decoder`'s ASCII path is 2.19 against scalar's 0.69.
 Dirty input is about even in lossy mode; the `Decoder` is slower there (0.03
 against 0.05), the same restart cost described in
@@ -206,9 +206,8 @@ for a bare `global_asm!` block. The tables are Rust statics referenced with
   SIGBUS rather than a compile error.
 - **`vsetvli` state is not modelled by rustc.** Emitting `~{vtype}`/`~{vl}`
   clobbers means LLVM assumes the state dies at each `asm!` boundary. Real RVV
-  intrinsics with scalable vector types (the work behind
-  `rust-lang/stdarch#1817`, `rust-lang/rust#145052` and RFC #3838) would let the
-  kernel be ordinary Rust like NEON/VSX. The vreg prototype in rustc PR #166108
-  helps operand naming but does not model this state.
+  intrinsics with scalable vector types would let the kernel be ordinary Rust
+  like NEON/VSX. Typed vector operands in inline assembly help with operand
+  naming but do not model this state.
 - **`vrgather.vv` is a general gather**, not a dedicated table shuffle like
   NEON `tbl` or VSX `vec_perm`. This one is hardware, not compiler.

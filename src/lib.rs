@@ -14,14 +14,14 @@
 //! | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48-byte blocks, `vpcompressw`/`vpcompressd` (x86/x86_64) |
 //! | `Neon` | NEON | 64-byte blocks, `tbl` validation and compaction (aarch64) |
 //! | `Vsx` | VSX (nightly, `vsx` feature) | 64-byte blocks, `vec_perm` validation and compaction (POWER9) |
-//! | `Rvv` | RVV (nightly, `rvv` feature) | vl-sized blocks, SEW=8 validation and SEW=32 `vcompress` (riscv64) |
+//! | `Rvv` | RVV (nightly, `rvv` feature) | 32-byte blocks on VLEN=256, SEW=8 validation, SEW=32 compaction (riscv64) |
 //!
 //! With the `std` feature (default) the best level is detected at runtime and
 //! cached as a function pointer; the `UTF32_LEVEL` environment variable
 //! (`scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`, `rvv`) can force a level. Without
 //! `std` the level is chosen from compile-time target features. `Vsx` needs a nightly
 //! toolchain and the `vsx` Cargo feature. `Rvv` needs a nightly toolchain, the `rvv`
-//! Cargo feature and the `V` ISA extension.
+//! Cargo feature, the `V` ISA extension and VLEN=256.
 //!
 //! # Examples
 //!

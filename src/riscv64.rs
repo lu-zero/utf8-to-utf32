@@ -1,4 +1,4 @@
-//! riscv64 RVV kernel, vector-length agnostic.
+//! riscv64 RVV kernel for 256-bit vector registers.
 //!
 //! Rust's `core::arch` has no RVV intrinsics yet, so the vector work is inline
 //! assembly. The hot loop is one `global_asm!` function, `rvv_blocks`, which
@@ -8,11 +8,11 @@
 //! semantics stay in `scalar`: Rust computes the cut, decodes the valid prefix
 //! with `decode_block`, then resolves the error and re-enters.
 //!
-//! No block width is hardcoded: `vl` comes from `vsetvli(min(remaining - 3,
-//! vlmax))`. Validation must load `n` lanes rather than the shortened `adv`,
-//! so a lead just before the cut can claim a byte past it. Decode computes
-//! candidate code points at SEW=8, then widens and compacts them in two
-//! unrolled SEW=32 groups with `vzext.vf4` and `vcompress.vm`.
+//! `vl` comes from `vsetvli(min(remaining - 3, vlmax))`. Validation loads `n`
+//! lanes rather than the shortened `adv`, so a lead just before the cut can
+//! claim a byte past it. Decode computes candidate code points at SEW=8, then
+//! widens and compacts them in two unrolled SEW=32 groups of 16 lanes each.
+//! The 32-byte stack buffers and the two fixed groups require VLEN=256.
 
 #![cfg_attr(not(feature = "alloc"), allow(dead_code))]
 
@@ -32,13 +32,17 @@ unsafe fn vlen_bytes() -> usize {
     v
 }
 
-/// The kernel needs at least 32 byte lanes; wider registers are used in full.
+/// The decode path uses two fixed 16-lane groups, so it requires VLEN=256.
 pub(crate) fn supported() -> bool {
+    #[cfg(not(feature = "std"))]
+    if !cfg!(target_feature = "v") {
+        return false;
+    }
     #[cfg(feature = "std")]
     if !std::arch::is_riscv_feature_detected!("v") {
         return false;
     }
-    unsafe { vlen_bytes() >= 32 }
+    unsafe { vlen_bytes() == 32 }
 }
 
 /// Offset of the first non-ASCII byte in the first `n` bytes at `p`, or -1.
@@ -85,10 +89,10 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
     let mut hi = [0u8; 32];
     let mut top = [0u8; 32];
     let mut b0buf = [0u8; 32];
-    let mut lo_ptr = lo.as_mut_ptr();
-    let mut hi_ptr = hi.as_mut_ptr();
-    let mut top_ptr = top.as_mut_ptr();
-    let mut b0_ptr = b0buf.as_mut_ptr();
+    let lo_ptr = lo.as_mut_ptr();
+    let hi_ptr = hi.as_mut_ptr();
+    let top_ptr = top.as_mut_ptr();
+    let b0_ptr = b0buf.as_mut_ptr();
     let mut cnt = 0usize;
     unsafe {
         asm!(
@@ -166,10 +170,10 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
             p = in(reg) p, p1 = in(reg) p.add(1),
             p2 = in(reg) p.add(2), p3 = in(reg) p.add(3),
             d = in(reg) dst.add(o),
-            dlo = inout(reg) lo_ptr,
-            dhi = inout(reg) hi_ptr,
-            dtop = inout(reg) top_ptr,
-            db0 = inout(reg) b0_ptr,
+            dlo = inout(reg) lo_ptr => _,
+            dhi = inout(reg) hi_ptr => _,
+            dtop = inout(reg) top_ptr => _,
+            db0 = inout(reg) b0_ptr => _,
             rem = out(reg) _,
             dd = out(reg) _,
             cnt = out(reg) cnt,
