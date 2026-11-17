@@ -1,6 +1,6 @@
 # utf8-to-utf32
 
-This crate converts UTF-8 to UTF-32 in pure Rust. It validates as it converts and uses SIMD kernels for SSE4.1, AVX2 and AVX-512 (chosen at runtime on x86/x86_64) and NEON (on aarch64). It has no C or C++ dependencies.
+This crate converts UTF-8 to UTF-32 in pure Rust, validating as it goes. It uses SIMD kernels on supported platforms and has no C or C++ dependencies.
 
 - **Strict conversion.** Errors follow `core::str::from_utf8` exactly (`valid_up_to`, `error_len`, maximal-subpart lengths), and the error also reports how many code points were written.
 - **Lossy conversion.** Each maximal invalid subpart becomes one U+FFFD, which gives the same output as `String::from_utf8_lossy`. An optional *C1 mode* passes a lone `0x80..=0x9F` byte through as its raw value, which is what terminal emulators want for C1 controls.
@@ -65,56 +65,19 @@ The minimum supported Rust version is **1.89**, the release that stabilized the 
 
 ## Performance
 
-These numbers come from **one machine**: an Intel Xeon with AVX-512 VBMI2 (the CPU model string just says "Intel(R) Xeon(R) Processor"), measured on 2026-11-14 with Rust 1.99.1, an LTO release build and default `RUSTFLAGS`, so runtime dispatch is in use. Each figure is GB/s of UTF-8 input, the median of 7 runs over inputs of about 1 MB. Run-to-run noise is about 5–10%. Run `cargo run --release -p utf32-bench` to reproduce them.
+SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower. The graph compares each level to scalar on the same machine; full tables, per-architecture notes and the raw results are in [docs/performance.md](docs/performance.md).
 
-| GB/s | ascii | latin | cjk | box drawing | dirty (box + C1 + 0xFF) |
-|---|---|---|---|---|---|
-| simdutf 0.7 (C++) `convert_utf8_to_utf32_with_errors` | 5.24 | 3.80 | 3.99 | 3.80 | – |
-| simdutf8 + `chars()` | 1.45 | 1.59 | 2.48 | 1.74 | – |
-| std `from_utf8` + `chars()` | 1.50 | 0.93 | 0.97 | 0.94 | – |
-| `utf8_chunks` + `chars()` (C1) | 0.52 | 0.59 | 0.98 | 0.65 | 1.04 |
-| this crate, scalar | 5.22 | 1.34 | 1.08 | 1.07 | 0.96 |
-| this crate, sse4.1 | 6.54 | 1.55 | 1.59 | 1.29 | 1.06 |
-| this crate, avx2 | 6.52 | 2.77 | 2.81 | 2.70 | 1.09 |
-| this crate, avx512 | 6.76 | 5.23 | 4.81 | 4.63 | 1.04 |
-
-The "dirty" column uses lossy conversion in C1 mode. The other columns use the strict slice function. The `bench/` directory has the full output, including the `Decoder` rows and a `-C target-cpu=native` run. These figures have not been checked on AMD or on other Intel generations.
-
-![GB/s by implementation and input type on x86: simdutf, std, scalar, SSE4.1, AVX2 and AVX-512](docs/performance-x86.svg)
-
-### aarch64 (NEON)
-
-Measured on one aarch64 Linux machine (ARMv8.x with `i8mm`/`bf16`, no SVE; CPU model not identified), Rust 1.100, LTO release build, same method as above. See `bench/results/neon.md` for the full output.
-
-| GB/s | ascii | latin | cjk | box drawing | emoji | dirty |
+| Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
 |---|---|---|---|---|---|---|
-| simdutf 0.7 (C++) | 10.15 | 1.33 | 2.01 | 1.11 | 1.19 | – |
-| std `from_utf8` + `chars()` | 0.82 | 0.47 | 0.55 | 0.47 | 0.54 | – |
-| this crate, scalar | 4.51 | 1.06 | 0.79 | 0.82 | 0.91 | 0.88 |
-| this crate, neon | 7–9 | 2.16 | 1.96 | 1.85 | 1.32 | 0.82 |
+| x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
+| aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
+| POWER9 / VSX | 2.77x | 1.34x | 1.44x | 1.51x | 1.40x | 1.16x |
 
-"Dirty" input (an error every ~12 bytes) is the one case where NEON is slightly slower than scalar; after an error the kernel backs off to scalar for a growing stretch. ASCII varies by about 20% between builds with code layout.
-
-![GB/s by implementation and input type on aarch64: simdutf, std, scalar and NEON](docs/performance-aarch64.svg)
-
-### powerpc64 (VSX)
-
-Measured on one POWER9 ppc64le machine with Rust 1.102 nightly, `--features
-vsx`, LTO release build, same method as above. See `bench/results/ppc64.md` for
-the full output.
-
-| GB/s | ascii | latin | cjk | box drawing | emoji |
-|---|---|---|---|---|---|
-| this crate, scalar slice fn | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
-| this crate, vsx slice fn | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
-
-The VSX `Decoder` is faster than scalar on ASCII (13.46 against 10.45 GB/s)
-but about half the speed on error-dense input; see `docs/architecture/ppc64.md`.
-
-![GB/s by implementation and input type on POWER9: simdutf, std, scalar and VSX](docs/performance-ppc64.svg)
+![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
 ## Documentation
 
+- [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.
 - [docs/architecture.md](docs/architecture.md): layers, dispatch, the kernel contract, the scalar module and the `Decoder`.
 - [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.

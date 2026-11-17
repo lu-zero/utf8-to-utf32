@@ -18,6 +18,16 @@ cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/vsx | grep 
 scripts/performance.py bench/results/ppc64.md docs/performance-ppc64.svg "POWER9, one machine, median of 7."
 ```
 
+`performance_summary.py` builds a cross-architecture graph from the same result
+files and prints its markdown table:
+
+```sh
+scripts/performance_summary.py > /tmp/opencode/performance-summary.md
+```
+
+It compares each SIMD level to scalar on the same machine, so absolute GB/s from
+different machines are never compared.
+
 The caption names the machine. It needs only Python 3. The colours are those
 of the winnow-args figures: teal titles, grey axes, green for this crate
 (darker for wider vectors), red for simdutf, blue-grey for `std`.
