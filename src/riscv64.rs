@@ -59,105 +59,91 @@ unsafe fn non_ascii_at(p: *const u8, n: usize) -> isize {
     first
 }
 
-/// First invalid position below `adv` in the block at `p`, or -1.
-///
-/// `n = adv + up to 3` is the number of loaded lanes, so a lead just before
-/// `adv` can still claim a continuation beyond it. Such a claim is reported as
-/// bad, which makes the caller cut the block before that lead.
+static B1_HIGH: [u8; 32] = [
+    2, 2, 2, 2, 2, 2, 2, 2, 128, 128, 128, 128, 33, 1, 21, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0,
+];
+static B1_LOW: [u8; 32] = [
+    231, 163, 131, 131, 139, 203, 203, 203, 203, 203, 203, 203, 203, 219, 203, 203, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+];
+static B2_HIGH: [u8; 32] = [
+    1, 1, 1, 1, 1, 1, 1, 1, 230, 174, 186, 186, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0,
+];
+
+/// First invalid position below `adv`, or -1. Keiser-Lemire lookup validator:
+/// three `vrgather.vv` nibble lookups, then all boolean logic in mask registers.
 #[target_feature(enable = "v")]
 unsafe fn validate_block(p: *const u8, adv: usize, n: usize) -> isize {
     let first: isize;
     unsafe {
         asm!(
             "vsetvli {vl}, {n}, e8, m1, ta, ma",
-            "vle8.v v1, ({p})",
-            "vle8.v v2, ({p1})",
-            "vle8.v v3, ({p2})",
-            "vle8.v v4, ({p3})",
+            "vle8.v v8, ({p})", "vle8.v v9, ({p1})",
+            "vle8.v v20, ({t1h})", "vle8.v v21, ({t1l})", "vle8.v v22, ({t2h})",
 
-            // hi, c0, e0, f0, c2, f5 for b0
-            "li t0, 0x80",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v20, v0",
-            "li t0, 0xc0",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v21, v0",
-            "li t0, 0xe0",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v22, v0",
-            "li t0, 0xf0",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v23, v0",
-            "li t0, 0xc2",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v24, v0",
-            "li t0, 0xf5",
-            "vmsgeu.vx v0, v1, t0", "vmv.v.v v25, v0",
+            "vmv.v.i v10, 0", "vslideup.vi v10, v8, 1",
+            "vmv.v.i v11, 0", "vslideup.vi v11, v8, 2",
+            "vmv.v.i v12, 0", "vslideup.vi v12, v8, 3",
 
-            // previous byte, two back, three back
-            "vmv.v.i v5, 0", "vslideup.vi v5, v1, 1",
-            "vmv.v.i v6, 0", "vslideup.vi v6, v1, 2",
-            "vmv.v.i v7, 0", "vslideup.vi v7, v1, 3",
-            "li t0, 0xc0",
-            "vmsgeu.vx v0, v5, t0", "vmv.v.v v8, v0",
-            "li t0, 0xe0",
-            "vmsgeu.vx v0, v6, t0", "vmv.v.v v9, v0",
-            "li t0, 0xf0",
-            "vmsgeu.vx v0, v7, t0", "vmv.v.v v10, v0",
-            "vor.vv v8, v8, v9", "vor.vv v8, v8, v10",
+            "vsrl.vi v13, v10, 4", "vand.vi v14, v10, 15", "vsrl.vi v15, v8, 4",
+            "vrgather.vv v16, v20, v13",
+            "vrgather.vv v17, v21, v14",
+            "vrgather.vv v18, v22, v15",
+            "vand.vv v16, v16, v17", "vand.vv v16, v16, v18",
+            "vmsne.vi v0, v16, 0",
 
-            // cont ^ claimed
-            "vmv.v.v v0, v21", "vmnot.m v0, v0", "vmv.v.v v26, v0",
-            "vand.vv v26, v20, v26",
-            "vxor.vv v11, v26, v8",
-
-            // invalid lead = (c0 && !c2) || f5
-            "vmv.v.v v0, v24", "vmnot.m v0, v0", "vmv.v.v v12, v0",
-            "vand.vv v12, v21, v12", "vor.vv v12, v12, v25",
-            "vor.vv v11, v11, v12",
+            // must: a 3-byte lead two back or 4-byte lead three back requires
+            // this lane to be a continuation. sc already carries TWO_CONTS.
+            "li {t0}, 0xe0", "vmsgeu.vx v2, v11, {t0}",
+            "li {t0}, 0xf0", "vmsgeu.vx v3, v12, {t0}",
+            "vmor.mm v1, v2, v3",
+            "vmxor.mm v0, v0, v1",
 
             // range checks after E0 / ED / F0 / F4
-            "li t0, 0xe0",
-            "vmseq.vx v0, v1, t0", "vmv.v.v v13, v0",
-            "li t0, 0xa0",
-            "vmsgeu.vx v0, v2, t0", "vmv.v.v v14, v0",
-            "vmv.v.v v0, v14", "vmnot.m v0, v0", "vmv.v.v v15, v0",
-            "vand.vv v13, v13, v15",
-            "li t0, 0xed",
-            "vmseq.vx v0, v1, t0", "vmv.v.v v15, v0",
-            "vand.vv v15, v15, v14", "vor.vv v13, v13, v15",
-            "li t0, 0xf0",
-            "vmseq.vx v0, v1, t0", "vmv.v.v v15, v0",
-            "li t0, 0x90",
-            "vmsgeu.vx v0, v2, t0", "vmv.v.v v16, v0",
-            "vmv.v.v v0, v16", "vmnot.m v0, v0", "vmv.v.v v17, v0",
-            "vand.vv v15, v15, v17", "vor.vv v13, v13, v15",
-            "li t0, 0xf4",
-            "vmseq.vx v0, v1, t0", "vmv.v.v v15, v0",
-            "vand.vv v15, v15, v16", "vor.vv v13, v13, v15",
-            "vor.vv v11, v11, v13",
+            "li {t0}, 0xe0", "vmseq.vx v2, v8, {t0}",
+            "li {t0}, 0xa0", "vmsltu.vx v3, v9, {t0}",
+            "vmand.mm v2, v2, v3",
+            "li {t0}, 0xed", "vmseq.vx v3, v8, {t0}",
+            "li {t0}, 0xa0", "vmsgeu.vx v4, v9, {t0}",
+            "vmand.mm v3, v3, v4", "vmor.mm v2, v2, v3",
+            "li {t0}, 0xf0", "vmseq.vx v3, v8, {t0}",
+            "li {t0}, 0x90", "vmsltu.vx v4, v9, {t0}",
+            "vmand.mm v3, v3, v4", "vmor.mm v2, v2, v3",
+            "li {t0}, 0xf4", "vmseq.vx v3, v8, {t0}",
+            "li {t0}, 0x90", "vmsgeu.vx v4, v9, {t0}",
+            "vmand.mm v3, v3, v4", "vmor.mm v2, v2, v3",
+            "vmor.mm v0, v0, v2",
 
-            // base checks only below adv; claims beyond adv also fail
-            "vid.v v18", "vmsltu.vx v0, v18, {adv}", "vmv.v.v v19, v0",
-            "vand.vv v11, v11, v19",
-            "vmv.v.v v0, v19", "vmnot.m v0, v0", "vmv.v.v v23, v0",
-            "vand.vv v23, v8, v23",
-            "vmv.v.v v0, v26", "vmnot.m v0, v0", "vmv.v.v v24, v0",
-            "vand.vv v23, v23, v24",
-            "vor.vv v11, v11, v23",
+            // keep only positions below adv; add claims past the cut
+            "vid.v v23", "vmsltu.vx v5, v23, {adv}",
+            "vmand.mm v0, v0, v5",
+            "li {t0}, 0xc0", "vmsgeu.vx v7, v10, {t0}",
+            "vmor.mm v7, v7, v1",
+            "vmnot.m v6, v5",
+            "vmand.mm v6, v6, v7",
+            "li {t0}, 0x80", "vmsgeu.vx v7, v8, {t0}",
+            "li {t0}, 0xc0", "vmsltu.vx v4, v8, {t0}",
+            "vmand.mm v7, v7, v4", "vmnot.m v4, v7",
+            "vmand.mm v6, v6, v4", "vmor.mm v0, v0, v6",
 
-            "vfirst.m {first}, v11",
+            "vfirst.m {first}, v0",
 
             vl = out(reg) _,
             n = in(reg) n,
-            p = in(reg) p,
-            p1 = in(reg) p.add(1),
-            p2 = in(reg) p.add(2),
-            p3 = in(reg) p.add(3),
+            p = in(reg) p, p1 = in(reg) p.add(1),
+            t1h = in(reg) B1_HIGH.as_ptr(),
+            t1l = in(reg) B1_LOW.as_ptr(),
+            t2h = in(reg) B2_HIGH.as_ptr(),
             adv = in(reg) adv,
+            t0 = out(reg) _,
             first = out(reg) first,
-            out("t0") _,
             out("v0") _, out("v1") _, out("v2") _, out("v3") _, out("v4") _,
-            out("v5") _, out("v6") _, out("v7") _, out("v8") _, out("v9") _,
-            out("v10") _, out("v11") _, out("v12") _, out("v13") _, out("v14") _,
-            out("v15") _, out("v16") _, out("v17") _, out("v18") _, out("v19") _,
-            out("v20") _, out("v21") _, out("v22") _, out("v23") _, out("v24") _,
-            out("v25") _, out("v26") _,
+            out("v5") _, out("v6") _, out("v7") _,
+            out("v8") _, out("v9") _, out("v10") _, out("v11") _, out("v12") _,
+            out("v13") _, out("v14") _, out("v15") _, out("v16") _, out("v17") _,
+            out("v18") _, out("v20") _, out("v21") _, out("v22") _, out("v23") _,
             options(nostack),
         );
     }

@@ -37,16 +37,21 @@ the scalar tail.
 
 ## Validation
 
-The check is the one the [x86 kernels](x86.md) use, in the vector domain. For
-each byte position `j` it classifies `b0` and compares it with the bytes one,
-two and three positions back (obtained with `vslideup.vi`):
+The check is the Keiser–Lemire lookup scheme, as in the
+[NEON](aarch64.md) and [VSX](ppc64.md) kernels. Three 16-byte tables are padded
+to 32 bytes so one full-width `vle8.v` loads each. The previous byte (and the
+two before it) come from `vslideup.vi` shifts of the loaded block; nibble
+indices feed three `vrgather.vv` lookups whose AND is the error-class vector.
 
-- `cont` is a continuation byte (`0x80..=0xBF`) that is not a lead.
-- `claimed` is set when a preceding lead claims this position: a lead one byte
-  back, a 3-byte lead two back, or a 4-byte lead three back.
-- `cont ^ claimed` is bad: a continuation nobody claimed, or a byte a lead
-  claimed that is not a continuation.
-- C0, C1 and F5+ leads are invalid outright.
+All boolean combining happens in **mask registers** with `vmand.mm`, `vmor.mm`,
+`vmxor.mm` and `vmnot.m`. Doing it in data registers after `vmv.v.v` is wrong:
+mask registers hold one bit per lane and the upper bits of a copied lane are
+undefined, so AND/OR on those bytes produces spurious errors. The check:
+
+- `must` is set where a 3-byte lead two back or a 4-byte lead three back needs
+  a continuation here. XOR with the lookup's `TWO_CONTS` bit catches both a
+  missing continuation and an unexpected one.
+- A 4-byte lead one back is invalid outright (C0, C1 and F5+ too).
 - After E0, ED, F0 and F4 the next byte must be in range (overlong, surrogate
   and above-U+10FFFF checks).
 
@@ -122,6 +127,13 @@ far more instructions than the scalar decoder uses for the same bytes. Dirty
 input is about even in lossy mode; the `Decoder` is slower there (0.02 against
 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
+
+The validator was changed from a ~90-instruction compare tree to three
+`vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
+2,000,000 calls on 32-byte CJK input ran in 236 ms against 363 ms for the
+compare tree (1.54x) on this machine, same release build and tool. The
+end-to-end bench cannot resolve it: non-ASCII rows stay at 0.05 GB/s because
+the SEW=32 decode loop dominates.
 
 The ASCII path needed two changes: a cheap `vfirst.m` non-ASCII test before the
 full validator (running it on every block had made ASCII 0.15 GB/s), and
