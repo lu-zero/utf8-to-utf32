@@ -52,8 +52,11 @@ undefined, so AND/OR on those bytes produces spurious errors. The check:
   a continuation here. XOR with the lookup's `TWO_CONTS` bit catches both a
   missing continuation and an unexpected one.
 - A 4-byte lead one back is invalid outright (C0, C1 and F5+ too).
-- After E0, ED, F0 and F4 the next byte must be in range (overlong, surrogate
-  and above-U+10FFFF checks).
+
+Overlong, surrogate and above-U+10FFFF sequences need no explicit range check:
+the table entries already distinguish the second-byte classes after E0, ED, F0
+and F4. An earlier version carried those compares over from the x86 bitmask
+scheme; removing them kept conformance and the exhaustive sweep green.
 
 The first bad lane marks where a problem becomes *visible*, which can be one
 byte after the offending lead. The kernel never uses it as an error position:
@@ -88,10 +91,12 @@ unsigned compares against C0, E0 and F0; `vmerge.vvm` selects among the 1-, 2-,
 the byte needed. The three byte vectors and the original `b0` are stored to
 four 32-byte stack buffers.
 
-At SEW=32 the second phase runs a short loop: `vl` bytes from each buffer are
-widened with `vzext.vf4`, combined as `lo | hi << 8 | top << 16`, and compacted
-with `vcompress.vm` under a lead mask rebuilt from the widened `b0`. `vpopc.m`
-returns the character count. The lead mask is the inverse of "continuation"
+At SEW=32 with **LMUL=2** the second phase runs a short loop: `vl` bytes from
+each buffer are widened with `vzext.vf4`, combined as `lo | hi << 8 | top << 16`,
+and compacted with `vcompress.vm` under a lead mask rebuilt from the widened
+`b0`. `vpopc.m` returns the character count. LMUL=2 gives 16 u32 lanes at
+VLEN=256, halving the loop to two iterations per block; the simpler byte-domain
+arithmetic leaves enough registers for the wider groups. The lead mask is the inverse of "continuation"
 (`b0 >= 0x80 && b0 < 0xC0`), ANDed with `idx < rem` and built from `vid.v`.
 The whole vector is stored; lanes past the count are overwritten by the next
 store, which is why `dst` must be at least `src.len()` long.
@@ -123,13 +128,17 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.61 | 0.07 | 0.07 | 0.07 | 0.07 | – |
-| RVV lossy_into (C1) | 0.81 | 0.07 | 0.07 | 0.07 | 0.07 | 0.08 |
+| RVV slice fn | 0.61 | 0.09 | 0.09 | 0.09 | 0.09 | – |
+| RVV lossy_into (C1) | 0.82 | 0.09 | 0.09 | 0.09 | 0.09 | 0.08 |
 
 RVV wins on ASCII (1.53x for the slice function, 2.0x for `lossy_into`) and the
-`Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is still
-slower than scalar (0.07 against 0.09–0.11), but the byte-domain decode closed
-about a third of the gap. Dirty input is about even in lossy mode; the
+`Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is now
+about equal to scalar at 0.09 GB/s: removing the redundant range checks and
+halving the widen loop with LMUL=2 lifted it from 0.07. CJK remains the one
+class where scalar is ahead (0.11 against 0.09). ASCII varies by about 20%
+between runs on this machine (the table above and `bench/results/riscv.md`
+come from different runs); the back-to-back comparison used for the commit
+numbers had 0.61 for both the previous and this version. Dirty input is about even in lossy mode; the
 `Decoder` is slower there (0.02 against 0.05), the same restart cost described
 in [the main architecture page](../architecture.md).
 
