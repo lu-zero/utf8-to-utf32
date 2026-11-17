@@ -192,6 +192,7 @@ and are design decisions rather than fixes to this loop.
 | `tests/exhaustive_neon.rs` | Every 3-byte combination at several offsets, and sampled 4-byte tails, against `std`. It runs every supported level, not only NEON, and is the check to run after touching any validator. |
 | `bench/` | `utf32-bench` compares all levels with simdutf (C++), simdutf8 and `std`. `bench/results/` keeps the output per machine. |
 
-VSX is gated behind the `vsx` Cargo feature and needs a nightly toolchain;
-on every other target, and on stable builds, the level is absent and the tree
+VSX is gated behind the `vsx` Cargo feature and needs a nightly toolchain and
+a POWER9 CPU; on POWER8 the level is unsupported and scalar runs instead. On
+every other target, and on stable builds, the level is absent and the tree
 builds unchanged.

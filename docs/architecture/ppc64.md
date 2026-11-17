@@ -1,8 +1,14 @@
 # powerpc64: the VSX kernel
 
 `src/powerpc64.rs` holds one kernel, `vsx_impl`. It is gated behind the `vsx`
-Cargo feature and needs a nightly toolchain (`stdarch_powerpc` and
-`powerpc_target_feature`). Default stable builds do not compile it.
+Cargo feature and needs a nightly toolchain (`stdarch_powerpc`,
+`powerpc_target_feature` and, with `std`, `stdarch_powerpc_feature_detection`).
+Default stable builds do not compile it. The kernel enables `power9-vector`:
+`vec_xl`/`vec_xst` then lower to `lxv`/`stxv` instead of POWER8's `lxvd2x`/
+`stxvd2x`, which was worth 3.33 to 5.56 GB/s on ASCII in the same benchmark.
+`Level::Vsx::is_supported()` checks `is_powerpc_feature_detected!("power9")`
+with `std`, or `cfg!(target_feature = "power9-vector")` without it, so POWER8
+falls back to scalar.
 
 The design mirrors the [NEON kernel](aarch64.md): 64-byte blocks that start on
 a character boundary, Keiser–Lemire lookup validation, one 64-bit lead mask,
@@ -50,20 +56,27 @@ is in `bench/results/ppc64.md`; it was produced with
 
 | GB/s | ascii | latin | cjk | box | emoji |
 |---|---|---|---|---|---|
-| scalar | 2.01 | 0.63 | 0.54 | 0.54 | 0.48 |
-| VSX | 3.33 | 0.68 | 0.74 | 0.63 | 0.48 |
+| scalar | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
+| VSX | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
 
-VSX wins on ASCII (1.65x), box drawing (1.17x) and CJK (1.37x); Latin and
-emoji are about equal in the full bench. The first version of `decode_wide`
-interleaved and compacted in two separate `vec_perm` stages (10 permutes per
-quarter) and ran emoji at 0.24 GB/s, well below scalar; folding both into one
-mask-indexed table (6 permutes) raised it to 0.48.
+VSX wins on every input class here, from 1.4x on Latin to 2.8x on ASCII. Two
+changes got it there. The first version of `decode_wide` interleaved and
+compacted in two separate `vec_perm` stages (10 permutes per quarter) and ran
+emoji at 0.24 GB/s, below scalar; folding both into one mask-indexed table
+(6 permutes) raised it to 0.48. Enabling the POWER9 vector instructions then
+raised ASCII from 3.33 to 5.56 and emoji to 0.59. OR-ing the four validation
+results before one `vec_any_ne` added about 0.05 GB/s on emoji.
+
+On P9, `vperm` and `vbpermq` are 3-cycle PM operations with only two PM units
+per chip. That is why reducing permute counts, rather than scalar work, is the
+lever here: replacing the SWAR movemask with `vbpermq` gained only 3 to 5% and
+would add two internal nightly features (`link_llvm_intrinsics`, `simd_ffi`).
 
 ![GB/s by implementation and input type on POWER9](../performance-ppc64.svg)
 
 ## Why the Decoder regresses on error-dense input
 
-On the `bench/` dirty input the VSX `Decoder` runs at 0.09 GB/s against scalar's
+On the `bench/` dirty input the VSX `Decoder` runs at 0.10 GB/s against scalar's
 0.18 (same machine and method as the table above). An instrumented run over
 that input counted 60,000 kernel entries for 30,000 errors: the `Decoder`
 starts a fresh 16 KiB window after every error and the kernel stops at the
@@ -92,9 +105,9 @@ Letting the `Decoder` consume lossy kernel output, or adding a kernel mode
 that returns all pieces of a window in one call, would remove the restarts,
 but both change the kernel contract and need an explicit design decision.
 
-The ASCII `Decoder`, by contrast, is slightly faster than scalar (10.96 against
-10.45) after moving the whole-vector ASCII test ahead of the SWAR movemask in
-`ascii_len_vsx`.
+The ASCII `Decoder`, by contrast, is faster than scalar (13.46 against 10.45)
+after moving the whole-vector ASCII test ahead of the SWAR movemask in
+`ascii_len_vsx` and enabling the POWER9 instructions.
 
 ## Correctness
 

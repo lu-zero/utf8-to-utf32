@@ -349,7 +349,7 @@ unsafe fn decode_block(
     o
 }
 
-#[target_feature(enable = "vsx")]
+#[target_feature(enable = "vsx,power9-vector")]
 unsafe fn vsx_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32Error> {
     let len = src.len();
     let p = src.as_ptr();
@@ -407,10 +407,8 @@ unsafe fn vsx_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32Er
                 validate::<false>(a[2], a[3], &tables),
             ]
         };
-        let bad = vec_any_ne(e[0], z)
-            || vec_any_ne(e[1], z)
-            || vec_any_ne(e[2], z)
-            || vec_any_ne(e[3], z);
+        let all_e = vec_or(vec_or(e[0], e[1]), vec_or(e[2], e[3]));
+        let bad = vec_any_ne(all_e, z);
         // A byte is a continuation iff it is 0x80..=0xBF, i.e. -128..=-65
         // as i8. Every i8 is >= -128, so one signed compare suffices.
         let c_neg64 = vec_splats(-64i8);
@@ -481,7 +479,7 @@ pub(crate) unsafe fn convert_vsx(src: &[u8], dst: *mut u32, mode: u8) -> Result<
 }
 
 #[cfg(feature = "alloc")]
-#[target_feature(enable = "vsx")]
+#[target_feature(enable = "vsx,power9-vector")]
 unsafe fn ascii_len_vsx_impl(src: &[u8]) -> usize {
     let mut i = 0;
     let c80 = vec_splats(0x80u8);

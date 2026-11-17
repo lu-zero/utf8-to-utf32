@@ -18,7 +18,7 @@ default = ["std"]
 std = ["alloc"]
 # Vec-based APIs: utf8_to_utf32_lossy_into and Decoder.
 alloc = []
-# powerpc64 VSX kernel. Requires a nightly toolchain (`stdarch_powerpc`).
+# POWER9 VSX kernel. Requires a nightly toolchain (`stdarch_powerpc`).
 vsx = []
 
 [dependencies]

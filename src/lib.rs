@@ -13,7 +13,7 @@
 //! | `Avx2` | AVX2, POPCNT | 32-byte blocks (x86/x86_64) |
 //! | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48-byte blocks, `vpcompressw`/`vpcompressd` (x86/x86_64) |
 //! | `Neon` | NEON | 64-byte blocks, `tbl` validation and compaction (aarch64) |
-//! | `Vsx` | VSX (nightly, `vsx` feature) | 64-byte blocks, `vec_perm` validation and compaction (powerpc64) |
+//! | `Vsx` | VSX (nightly, `vsx` feature) | 64-byte blocks, `vec_perm` validation and compaction (POWER9) |
 //!
 //! With the `std` feature (default) the best level is detected at runtime and
 //! cached as a function pointer; the `UTF32_LEVEL` environment variable
@@ -39,12 +39,17 @@
 //!
 //! - `std` (default): runtime CPU feature detection; implies `alloc`.
 //! - `alloc`: `Vec`-based APIs ([`utf8_to_utf32_lossy_into`], [`Decoder`]).
-//! - `vsx`: powerpc64 VSX kernel; needs a nightly toolchain.
+//! - `vsx`: POWER9 VSX kernel; needs a nightly toolchain. On POWER8 the level
+//!   is unsupported and the scalar kernel runs instead.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(
     all(target_arch = "powerpc64", feature = "vsx"),
     feature(stdarch_powerpc, powerpc_target_feature)
+)]
+#![cfg_attr(
+    all(target_arch = "powerpc64", feature = "vsx", feature = "std"),
+    feature(stdarch_powerpc_feature_detection)
 )]
 #![deny(missing_docs)]
 #![warn(clippy::all)]
@@ -114,7 +119,7 @@ pub enum Level {
     Avx512 = 4,
     /// ARM NEON, 128-bit.
     Neon = 5,
-    /// PowerPC VSX, 128-bit (nightly + `vsx` feature).
+    /// POWER9 VSX, 128-bit (nightly + `vsx` feature).
     Vsx = 6,
 }
 
@@ -125,6 +130,18 @@ macro_rules! has {
 #[cfg(all(any(target_arch = "x86", target_arch = "x86_64"), not(feature = "std")))]
 macro_rules! has {
     ($($f:tt),*) => { true $(&& cfg!(target_feature = $f))* };
+}
+#[cfg(all(target_arch = "powerpc64", feature = "std"))]
+macro_rules! has_ppc {
+    ($f:tt) => {
+        std::arch::is_powerpc_feature_detected!($f)
+    };
+}
+#[cfg(all(target_arch = "powerpc64", not(feature = "std")))]
+macro_rules! has_ppc {
+    ($f:tt) => {
+        cfg!(target_feature = $f)
+    };
 }
 
 impl Level {
@@ -152,7 +169,7 @@ impl Level {
             #[cfg(target_arch = "aarch64")]
             Level::Neon => true,
             #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
-            Level::Vsx => true,
+            Level::Vsx => has_ppc!("power9"),
             #[allow(unreachable_patterns)]
             _ => false,
         }
