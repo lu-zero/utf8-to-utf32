@@ -58,8 +58,6 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 | `Vsx` | VSX (nightly, `vsx` feature) | 64 B | the NEON design with `vec_perm` lookups and compaction; SWAR movemask; POWER9 `lxv`/`stxv` (POWER9 only) |
 | `Rvv` | RVV (nightly, `rvv` feature, V extension) | vl B | SEW=8 validation, SEW=32 code-point arithmetic and `vcompress` compaction (riscv64) |
 
-The x86 kernels validate with bitmasks built from byte comparisons. A block is valid when its continuation bytes are exactly the ones its lead bytes claim, it has no C0, C1 or F5+ leads, and the second byte after E0, ED, F0 or F4 is in range. A block that fails this check is decoded by the scalar path, which reports the exact error. Inputs with many errors therefore run at roughly scalar speed. The NEON kernel validates with lookup tables instead; when a block fails, it still decodes the characters before the first bad lane with SIMD, then lets the scalar path resolve one character before SIMD resumes.
-
 ## Features
 
 - `std` (default): runtime CPU detection and `UTF32_LEVEL`. It implies `alloc`.
@@ -85,7 +83,7 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 
 - [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.
 - [docs/architecture.md](docs/architecture.md): layers, dispatch, the kernel contract, the scalar module and the `Decoder`.
-- [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels.
+- [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels on x86 and x86_64.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.
 - [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its SWAR masks and the measured `Decoder` cost on error-dense input.
 - [docs/architecture/riscv.md](docs/architecture/riscv.md): the RVV kernel, its inline-asm design and the VLA block contract.
