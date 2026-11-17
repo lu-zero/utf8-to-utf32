@@ -61,9 +61,37 @@ mask-indexed table (6 permutes) raised it to 0.48.
 
 ![GB/s by implementation and input type on POWER9](../performance-ppc64.svg)
 
-**Known weak spot:** the `Decoder` on error-dense input runs at 0.09 GB/s
-against scalar's 0.18. As on NEON, it asks the kernel for a window and gets one
-error per call, so every error costs a block validation and a kernel entry.
+## Why the Decoder regresses on error-dense input
+
+On the `bench/` dirty input the VSX `Decoder` runs at 0.09 GB/s against scalar's
+0.18 (same machine and method as the table above). An instrumented run over
+that input counted 60,000 kernel entries for 30,000 errors: the `Decoder`
+starts a fresh 16 KiB window after every error and the kernel stops at the
+first bad byte, so each entry validates only the first 64-byte block.
+
+For that block the kernel does four unaligned loads, up to four validation
+calls (three `vec_perm` lookups each, plus two shifts and two saturating
+subtracts when a byte is `>= 0xE0`), builds the lead mask with the SWAR
+multiply, decodes the valid prefix, and only then calls `scalar::run` to
+resolve one character. The scalar kernel goes straight to `decode_one`.
+
+This is the same tradeoff NEON makes on dirty input (0.21 against scalar's
+0.33 on its machine), not a VSX-specific bug.
+
+The backoff in the error path does not help here. It runs only after
+`scalar::step` returns, and `step` returns the error immediately in `STRICT`
+mode, which is what the `Decoder` uses. It pays off in the lossy modes, where
+it lets SIMD skip a stretch after an isolated error.
+
+Two changes were considered and not made. Checking the first byte with
+`scalar::decode_one` before SIMD validation would skip this setup when the
+window starts on an error, but adds a scalar check to every clean block and
+needs a measurement on clean text first.
+
+Letting the `Decoder` consume lossy kernel output, or adding a kernel mode
+that returns all pieces of a window in one call, would remove the restarts,
+but both change the kernel contract and need an explicit design decision.
+
 The ASCII `Decoder`, by contrast, is slightly faster than scalar (10.96 against
 10.45) after moving the whole-vector ASCII test ahead of the SWAR movemask in
 `ascii_len_vsx`.
