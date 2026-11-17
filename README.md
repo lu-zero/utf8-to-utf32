@@ -77,22 +77,6 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
-### riscv64 (RVV)
-
-Measured on one Spacemit X60 machine with 256-bit vectors, Rust 1.102 nightly,
-`--features rvv`, LTO release build: GB/s of UTF-8 input, median of 7 runs over
-about 1 MB. See
-`bench/results/riscv.md` for the full output.
-
-| GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
-|---|---|---|---|---|---|---|
-| this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
-
-RVV requires 256-bit vectors and its hot loop is one `global_asm!` function. It
-wins on ASCII, Latin, box drawing and emoji but is slightly behind scalar on
-CJK; see `docs/architecture/riscv.md`.
-
 ## Documentation
 
 - [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.

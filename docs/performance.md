@@ -84,14 +84,16 @@ but about half the speed on error-dense input; see
 
 ## riscv64 (RVV)
 
-One Spacemit X60 machine with 256-bit vector registers, Rust 1.102 nightly,
-`--features rvv`, LTO release build, same method as above.
+Measured on one Spacemit X60 machine with 256-bit vectors, Rust 1.102 nightly,
+`--features rvv`, LTO release build: GB/s of UTF-8 input, median of 7 runs over
+about 1 MB.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
 | this crate, rvv slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
 
-RVV requires VLEN=256 and wins on ASCII, Latin, box drawing and emoji, but is
-slightly behind scalar on CJK; see [the RVV architecture page](architecture/riscv.md).
-Full output: [`riscv.md`](../bench/results/riscv.md).
+RVV requires 256-bit vectors and its hot loop is one `global_asm!` function. It
+wins on ASCII, Latin, box drawing and emoji, but is slightly behind scalar on
+CJK; see [the RVV architecture page](architecture/riscv.md). Full output:
+[`riscv.md`](../bench/results/riscv.md).
