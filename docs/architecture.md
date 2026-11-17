@@ -5,6 +5,7 @@ chosen, what every kernel has to do, and where to look for each architecture.
 
 - [x86 / x86_64](architecture/x86.md): SSE4.1, AVX2 and AVX-512 kernels.
 - [aarch64](architecture/aarch64.md): the NEON kernel.
+- [powerpc64](architecture/ppc64.md): the VSX kernel (nightly, `vsx` feature).
 
 The diagrams use mermaid. Teal boxes are the main path, green boxes are
 decoding, and dashed grey boxes are fallbacks.
@@ -31,6 +32,7 @@ flowchart TB
         direction LR
         x86["x86.rs<br/>SSE4.1, AVX2, AVX-512"]:::green
         arm["aarch64.rs<br/>NEON"]:::green
+        ppc["powerpc64.rs<br/>VSX"]:::green
         sc["scalar.rs<br/>portable, exact errors"]:::grey
     end
 
@@ -39,9 +41,11 @@ flowchart TB
     dec --> disp
     disp --> x86
     disp --> arm
+    disp --> ppc
     disp --> sc
     x86 -. "tails, bad blocks" .-> sc
     arm -. "tails, bad blocks" .-> sc
+    ppc -. "tails, bad blocks" .-> sc
 ```
 
 Every public function ends up in one *kernel*, a function of this shape:
@@ -59,7 +63,7 @@ SIMD kernels do not need to know about it beyond passing it on.
 ## Dispatch
 
 `Level` lists the implementations (`Scalar`, `Sse41`, `Avx2`, `Avx512`,
-`Neon`). `Level::is_supported` uses runtime detection with `std` and
+`Neon`, `Vsx`). `Level::is_supported` uses runtime detection with `std` and
 compile-time target features without it. `active_level()` picks the best
 supported level, or the one named by `UTF32_LEVEL`, and caches it. The kernel
 pointer is cached in an `AtomicPtr`, so the hot path is one relaxed load and
@@ -176,3 +180,7 @@ per-architecture pages).
 | `tests/conformance.rs` | Every supported level against `core::str::from_utf8`, `utf8_chunks` and the lossy modes, on random and structured inputs, with block-boundary sweeps. |
 | `tests/exhaustive_neon.rs` | Every 3-byte combination at several offsets, and sampled 4-byte tails, against `std`. It runs every supported level, not only NEON, and is the check to run after touching any validator. |
 | `bench/` | `utf32-bench` compares all levels with simdutf (C++), simdutf8 and `std`. `bench/results/` keeps the output per machine. |
+
+VSX is gated behind the `vsx` Cargo feature and needs a nightly toolchain;
+on every other target, and on stable builds, the level is absent and the tree
+builds unchanged.

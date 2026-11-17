@@ -51,6 +51,7 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 | `Avx2` | AVX2, POPCNT | 32 B | the same, with 16 u16 lanes or 8 u32 lanes (x86/x86_64) |
 | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48 B | the same, with 32 u16 lanes (`vpcompressw`) or 16 u32 lanes (`vpcompressd`) (x86/x86_64) |
 | `Neon` | NEON | 64 B | ASCII widening; Keiser–Lemire `tbl` validation; blocks with only 1–3-byte characters decoded in the byte domain (16 positions per vector, `vsli` bit-inserts), 4-byte characters add a third output byte; compaction by `tbl` straight into u32 lanes (aarch64) |
+| `Vsx` | VSX (nightly, `vsx` feature) | 64 B | the NEON design with `vec_perm` lookups and compaction; SWAR movemask (powerpc64) |
 
 The x86 kernels validate with bitmasks built from byte comparisons. A block is valid when its continuation bytes are exactly the ones its lead bytes claim, it has no C0, C1 or F5+ leads, and the second byte after E0, ED, F0 or F4 is in range. A block that fails this check is decoded by the scalar path, which reports the exact error. Inputs with many errors therefore run at roughly scalar speed. The NEON kernel validates with lookup tables instead; when a block fails, it still decodes the characters before the first bad lane with SIMD, then lets the scalar path resolve one character before SIMD resumes.
 
@@ -60,7 +61,7 @@ The x86 kernels validate with bitmasks built from byte comparisons. A block is v
 - `alloc`: the Vec-based APIs (`utf8_to_utf32_lossy_into`, `Decoder`).
 - Without `std`, the crate is `no_std`. The level comes from compile-time target features, for example `-C target-feature=+avx2`.
 
-The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; other non-x86 targets use the scalar path.
+The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; powerpc64 can enable the VSX kernel with `--features vsx` on a nightly toolchain; other non-x86 targets use the scalar path.
 
 ## Performance
 
@@ -96,11 +97,28 @@ Measured on one aarch64 Linux machine (ARMv8.x with `i8mm`/`bf16`, no SVE; CPU m
 
 ![GB/s by implementation and input type on aarch64: simdutf, std, scalar and NEON](docs/performance-aarch64.svg)
 
+### powerpc64 (VSX)
+
+Measured on one POWER9 ppc64le machine with Rust 1.102 nightly, `--features
+vsx`, LTO release build, same method as above. See `bench/results/ppc64.md` for
+the full output.
+
+| GB/s | ascii | latin | cjk | box drawing | emoji | dirty |
+|---|---|---|---|---|---|---|
+| this crate, scalar slice fn | 2.01 | 0.63 | 0.54 | 0.54 | 0.48 | – |
+| this crate, vsx slice fn | 3.33 | 0.68 | 0.74 | 0.63 | 0.48 | – |
+
+The VSX `Decoder` is slightly faster than scalar on ASCII but about half the
+speed on error-dense input; see `docs/architecture/ppc64.md`.
+
+![GB/s by implementation and input type on POWER9: simdutf, std, scalar and VSX](docs/performance-ppc64.svg)
+
 ## Documentation
 
 - [docs/architecture.md](docs/architecture.md): layers, dispatch, the kernel contract, the scalar module and the `Decoder`.
 - [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.
+- [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its masks and its measured weak spot on 4-byte text.
 
 ## License
 

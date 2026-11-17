@@ -18,6 +18,7 @@ SERIES = [
     ("avx2", "ours avx2", "#5faf87"),
     ("avx512", "ours avx512", "#5faf5f"),
     ("neon", "ours neon", "#5faf5f"),
+    ("vsx", "ours vsx", "#3f8f6f"),
 ]
 TITLES = {
     "ascii": "ASCII",

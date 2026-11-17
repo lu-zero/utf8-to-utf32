@@ -13,11 +13,13 @@
 //! | `Avx2` | AVX2, POPCNT | 32-byte blocks (x86/x86_64) |
 //! | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48-byte blocks, `vpcompressw`/`vpcompressd` (x86/x86_64) |
 //! | `Neon` | NEON | 64-byte blocks, `tbl` validation and compaction (aarch64) |
+//! | `Vsx` | VSX (nightly, `vsx` feature) | 64-byte blocks, `vec_perm` validation and compaction (powerpc64) |
 //!
 //! With the `std` feature (default) the best level is detected at runtime and
 //! cached as a function pointer; the `UTF32_LEVEL` environment variable
-//! (`scalar`, `sse4.1`, `avx2`, `avx512`, `neon`) can force a level. Without `std`
-//! the level is chosen from compile-time target features.
+//! (`scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`) can force a level. Without `std`
+//! the level is chosen from compile-time target features. `Vsx` needs a nightly
+//! toolchain and the `vsx` Cargo feature.
 //!
 //! # Examples
 //!
@@ -37,8 +39,13 @@
 //!
 //! - `std` (default): runtime CPU feature detection; implies `alloc`.
 //! - `alloc`: `Vec`-based APIs ([`utf8_to_utf32_lossy_into`], [`Decoder`]).
+//! - `vsx`: powerpc64 VSX kernel; needs a nightly toolchain.
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(
+    all(target_arch = "powerpc64", feature = "vsx"),
+    feature(stdarch_powerpc, powerpc_target_feature)
+)]
 #![deny(missing_docs)]
 #![warn(clippy::all)]
 
@@ -54,6 +61,8 @@ use core::sync::atomic::{AtomicPtr, AtomicU8, Ordering};
 mod aarch64;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 mod mask;
+#[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
+mod powerpc64;
 mod scalar;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 mod x86;
@@ -105,6 +114,8 @@ pub enum Level {
     Avx512 = 4,
     /// ARM NEON, 128-bit.
     Neon = 5,
+    /// PowerPC VSX, 128-bit (nightly + `vsx` feature).
+    Vsx = 6,
 }
 
 #[cfg(all(any(target_arch = "x86", target_arch = "x86_64"), feature = "std"))]
@@ -118,12 +129,13 @@ macro_rules! has {
 
 impl Level {
     /// All levels, lowest first.
-    pub const ALL: [Level; 5] = [
+    pub const ALL: [Level; 6] = [
         Level::Scalar,
         Level::Sse41,
         Level::Avx2,
         Level::Avx512,
         Level::Neon,
+        Level::Vsx,
     ];
 
     /// Whether this level can run here (runtime detection with `std`,
@@ -139,6 +151,8 @@ impl Level {
             Level::Avx512 => has!("avx512f", "avx512bw", "avx512vbmi", "avx512vbmi2", "popcnt"),
             #[cfg(target_arch = "aarch64")]
             Level::Neon => true,
+            #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
+            Level::Vsx => true,
             #[allow(unreachable_patterns)]
             _ => false,
         }
@@ -154,7 +168,7 @@ impl Level {
         Level::ALL.iter().copied().filter(|l| l.is_supported())
     }
 
-    /// Short name: `scalar`, `sse4.1`, `avx2`, `avx512`, `neon`.
+    /// Short name: `scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`.
     pub fn name(self) -> &'static str {
         match self {
             Level::Scalar => "scalar",
@@ -162,6 +176,7 @@ impl Level {
             Level::Avx2 => "avx2",
             Level::Avx512 => "avx512",
             Level::Neon => "neon",
+            Level::Vsx => "vsx",
         }
     }
 
@@ -192,6 +207,8 @@ impl Level {
             Level::Avx512 => x86::convert_avx512,
             #[cfg(target_arch = "aarch64")]
             Level::Neon => aarch64::convert_neon,
+            #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
+            Level::Vsx => powerpc64::convert_vsx,
             #[allow(unreachable_patterns)]
             _ => scalar::convert,
         }
@@ -209,6 +226,8 @@ impl Level {
             Level::Avx512 => x86::ascii_len_avx512,
             #[cfg(target_arch = "aarch64")]
             Level::Neon => aarch64::ascii_len_neon,
+            #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
+            Level::Vsx => powerpc64::ascii_len_vsx,
             #[allow(unreachable_patterns)]
             _ => scalar::ascii_len,
         }

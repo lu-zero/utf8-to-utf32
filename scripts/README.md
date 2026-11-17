@@ -10,6 +10,14 @@ scripts/performance.py bench/results/neon.md docs/performance-aarch64.svg "aarch
 scripts/performance.py bench/results/default.md docs/performance-x86.svg "Intel Xeon with AVX-512 VBMI2, median of 7."
 ```
 
+The VSX level needs nightly and the `vsx` feature; run the benchmark on a
+powerpc64 machine:
+
+```sh
+cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/vsx | grep '^|' > bench/results/ppc64.md
+scripts/performance.py bench/results/ppc64.md docs/performance-ppc64.svg "POWER9, one machine, median of 7."
+```
+
 The caption names the machine. It needs only Python 3. The colours are those
 of the winnow-args figures: teal titles, grey axes, green for this crate
 (darker for wider vectors), red for simdutf, blue-grey for `std`.

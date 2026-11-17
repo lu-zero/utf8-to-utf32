@@ -18,12 +18,13 @@ default = ["std"]
 std = ["alloc"]
 # Vec-based APIs: utf8_to_utf32_lossy_into and Decoder.
 alloc = []
+# powerpc64 VSX kernel. Requires a nightly toolchain (`stdarch_powerpc`).
+vsx = []
 
 [dependencies]
 
 [package.metadata.docs.rs]
-all-features = true
-targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu"]
+targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "powerpc64le-unknown-linux-gnu"]
 
 [workspace]
 members = ["bench"]
