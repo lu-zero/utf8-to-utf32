@@ -6,6 +6,7 @@ chosen, what every kernel has to do, and where to look for each architecture.
 - [x86 / x86_64](architecture/x86.md): SSE4.1, AVX2 and AVX-512 kernels.
 - [aarch64](architecture/aarch64.md): the NEON kernel.
 - [powerpc64](architecture/ppc64.md): the VSX kernel (nightly, `vsx` feature).
+- [riscv64](architecture/riscv.md): the RVV kernel (nightly, `rvv` feature).
 
 The diagrams use mermaid. Teal boxes are the main path, green boxes are
 decoding, and dashed grey boxes are fallbacks.
@@ -33,6 +34,7 @@ flowchart TB
         x86["x86.rs<br/>SSE4.1, AVX2, AVX-512"]:::green
         arm["aarch64.rs<br/>NEON"]:::green
         ppc["powerpc64.rs<br/>VSX"]:::green
+        riscv["riscv64.rs<br/>RVV"]:::green
         sc["scalar.rs<br/>portable, exact errors"]:::grey
     end
 
@@ -42,10 +44,12 @@ flowchart TB
     disp --> x86
     disp --> arm
     disp --> ppc
+    disp --> riscv
     disp --> sc
     x86 -. "tails, bad blocks" .-> sc
     arm -. "tails, bad blocks" .-> sc
     ppc -. "tails, bad blocks" .-> sc
+    riscv -. "tails, bad blocks" .-> sc
 ```
 
 Every public function ends up in one *kernel*, a function of this shape:
@@ -63,7 +67,7 @@ SIMD kernels do not need to know about it beyond passing it on.
 ## Dispatch
 
 `Level` lists the implementations (`Scalar`, `Sse41`, `Avx2`, `Avx512`,
-`Neon`, `Vsx`). `Level::is_supported` uses runtime detection with `std` and
+`Neon`, `Vsx`, `Rvv`). `Level::is_supported` uses runtime detection with `std` and
 compile-time target features without it. `active_level()` picks the best
 supported level, or the one named by `UTF32_LEVEL`, and caches it. The kernel
 pointer is cached in an `AtomicPtr`, so the hot path is one relaxed load and
@@ -195,4 +199,5 @@ and are design decisions rather than fixes to this loop.
 VSX is gated behind the `vsx` Cargo feature and needs a nightly toolchain and
 a POWER9 CPU; on POWER8 the level is unsupported and scalar runs instead. On
 every other target, and on stable builds, the level is absent and the tree
-builds unchanged.
+builds unchanged. RVV is gated behind the `rvv` Cargo feature in the same way;
+it needs a nightly toolchain and a CPU with the V extension.

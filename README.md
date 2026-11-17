@@ -52,6 +52,7 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48 B | the same, with 32 u16 lanes (`vpcompressw`) or 16 u32 lanes (`vpcompressd`) (x86/x86_64) |
 | `Neon` | NEON | 64 B | ASCII widening; Keiser–Lemire `tbl` validation; blocks with only 1–3-byte characters decoded in the byte domain (16 positions per vector, `vsli` bit-inserts), 4-byte characters add a third output byte; compaction by `tbl` straight into u32 lanes (aarch64) |
 | `Vsx` | VSX (nightly, `vsx` feature) | 64 B | the NEON design with `vec_perm` lookups and compaction; SWAR movemask; POWER9 `lxv`/`stxv` (POWER9 only) |
+| `Rvv` | RVV (nightly, `rvv` feature, V extension) | vl B | SEW=8 validation, SEW=32 code-point arithmetic and `vcompress` compaction (riscv64) |
 
 The x86 kernels validate with bitmasks built from byte comparisons. A block is valid when its continuation bytes are exactly the ones its lead bytes claim, it has no C0, C1 or F5+ leads, and the second byte after E0, ED, F0 or F4 is in range. A block that fails this check is decoded by the scalar path, which reports the exact error. Inputs with many errors therefore run at roughly scalar speed. The NEON kernel validates with lookup tables instead; when a block fails, it still decodes the characters before the first bad lane with SIMD, then lets the scalar path resolve one character before SIMD resumes.
 
@@ -61,7 +62,7 @@ The x86 kernels validate with bitmasks built from byte comparisons. A block is v
 - `alloc`: the Vec-based APIs (`utf8_to_utf32_lossy_into`, `Decoder`).
 - Without `std`, the crate is `no_std`. The level comes from compile-time target features, for example `-C target-feature=+avx2`.
 
-The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; POWER9 can enable the VSX kernel with `--features vsx` on a nightly toolchain (POWER8 falls back to scalar); other non-x86 targets use the scalar path.
+The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; POWER9 can enable the VSX kernel with `--features vsx` on a nightly toolchain (POWER8 falls back to scalar); riscv64 can enable the RVV kernel with `--features rvv` on a nightly toolchain; other non-x86 targets use the scalar path.
 
 ## Performance
 
@@ -75,6 +76,20 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
+### riscv64 (RVV)
+
+Measured on one Spacemit X60 machine with the V extension, Rust 1.102 nightly,
+`--features rvv`, LTO release build, same method as above. See
+`bench/results/riscv.md` for the full output.
+
+| GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
+|---|---|---|---|---|---|---|
+| this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
+| this crate, rvv slice fn | 0.51 | 0.05 | 0.05 | 0.05 | 0.05 | – |
+
+RVV is vector-length agnostic. It wins on ASCII but is about half the scalar
+speed on non-ASCII input; see `docs/architecture/riscv.md`.
+
 ## Documentation
 
 - [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.
@@ -82,6 +97,7 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 - [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.
 - [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its SWAR masks and the measured `Decoder` cost on error-dense input.
+- [docs/architecture/riscv.md](docs/architecture/riscv.md): the RVV kernel, its inline-asm design and the VLA block contract.
 
 ## License
 

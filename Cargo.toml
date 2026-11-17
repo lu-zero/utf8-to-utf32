@@ -19,11 +19,13 @@ std = ["alloc"]
 alloc = []
 # POWER9 VSX kernel. Requires a nightly toolchain.
 vsx = []
+# riscv64 RVV kernel. Requires a nightly toolchain (`riscv_target_feature`).
+rvv = []
 
 [dependencies]
 
 [package.metadata.docs.rs]
-targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "powerpc64le-unknown-linux-gnu"]
+targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "powerpc64le-unknown-linux-gnu", "riscv64gc-unknown-linux-gnu"]
 
 [workspace]
 members = ["bench"]

@@ -14,12 +14,14 @@
 //! | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 48-byte blocks, `vpcompressw`/`vpcompressd` (x86/x86_64) |
 //! | `Neon` | NEON | 64-byte blocks, `tbl` validation and compaction (aarch64) |
 //! | `Vsx` | VSX (nightly, `vsx` feature) | 64-byte blocks, `vec_perm` validation and compaction (POWER9) |
+//! | `Rvv` | RVV (nightly, `rvv` feature) | vl-sized blocks, SEW=8 validation and SEW=32 `vcompress` (riscv64) |
 //!
 //! With the `std` feature (default) the best level is detected at runtime and
 //! cached as a function pointer; the `UTF32_LEVEL` environment variable
-//! (`scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`) can force a level. Without `std`
-//! the level is chosen from compile-time target features. `Vsx` needs a nightly
-//! toolchain and the `vsx` Cargo feature.
+//! (`scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`, `rvv`) can force a level. Without
+//! `std` the level is chosen from compile-time target features. `Vsx` needs a nightly
+//! toolchain and the `vsx` Cargo feature. `Rvv` needs a nightly toolchain, the `rvv`
+//! Cargo feature and the `V` ISA extension.
 //!
 //! # Examples
 //!
@@ -41,6 +43,7 @@
 //! - `alloc`: `Vec`-based APIs ([`utf8_to_utf32_lossy_into`], [`Decoder`]).
 //! - `vsx`: POWER9 VSX kernel; needs a nightly toolchain. On POWER8 the level
 //!   is unsupported and the scalar kernel runs instead.
+//! - `rvv`: riscv64 RVV kernel; needs a nightly toolchain.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(
@@ -50,6 +53,14 @@
 #![cfg_attr(
     all(target_arch = "powerpc64", feature = "vsx", feature = "std"),
     feature(stdarch_powerpc_feature_detection)
+)]
+#![cfg_attr(
+    all(target_arch = "riscv64", feature = "rvv"),
+    feature(riscv_target_feature)
+)]
+#![cfg_attr(
+    all(target_arch = "riscv64", feature = "rvv", feature = "std"),
+    feature(stdarch_riscv_feature_detection)
 )]
 #![deny(missing_docs)]
 #![warn(clippy::all)]
@@ -68,6 +79,8 @@ mod aarch64;
 mod mask;
 #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
 mod powerpc64;
+#[cfg(all(target_arch = "riscv64", feature = "rvv"))]
+mod riscv64;
 mod scalar;
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 mod x86;
@@ -121,6 +134,8 @@ pub enum Level {
     Neon = 5,
     /// POWER9 VSX, 128-bit (nightly + `vsx` feature).
     Vsx = 6,
+    /// RISC-V RVV, 256-bit (nightly + `rvv` feature, requires V).
+    Rvv = 7,
 }
 
 #[cfg(all(any(target_arch = "x86", target_arch = "x86_64"), feature = "std"))]
@@ -146,13 +161,14 @@ macro_rules! has_ppc {
 
 impl Level {
     /// All levels, lowest first.
-    pub const ALL: [Level; 6] = [
+    pub const ALL: [Level; 7] = [
         Level::Scalar,
         Level::Sse41,
         Level::Avx2,
         Level::Avx512,
         Level::Neon,
         Level::Vsx,
+        Level::Rvv,
     ];
 
     /// Whether this level can run here (runtime detection with `std`,
@@ -170,6 +186,8 @@ impl Level {
             Level::Neon => true,
             #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
             Level::Vsx => has_ppc!("power9", "power9-vector"),
+            #[cfg(all(target_arch = "riscv64", feature = "rvv"))]
+            Level::Rvv => riscv64::supported(),
             #[allow(unreachable_patterns)]
             _ => false,
         }
@@ -185,7 +203,7 @@ impl Level {
         Level::ALL.iter().copied().filter(|l| l.is_supported())
     }
 
-    /// Short name: `scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`.
+    /// Short name: `scalar`, `sse4.1`, `avx2`, `avx512`, `neon`, `vsx`, `rvv`.
     pub fn name(self) -> &'static str {
         match self {
             Level::Scalar => "scalar",
@@ -194,6 +212,7 @@ impl Level {
             Level::Avx512 => "avx512",
             Level::Neon => "neon",
             Level::Vsx => "vsx",
+            Level::Rvv => "rvv",
         }
     }
 
@@ -226,6 +245,8 @@ impl Level {
             Level::Neon => aarch64::convert_neon,
             #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
             Level::Vsx => powerpc64::convert_vsx,
+            #[cfg(all(target_arch = "riscv64", feature = "rvv"))]
+            Level::Rvv => riscv64::convert_rvv,
             #[allow(unreachable_patterns)]
             _ => scalar::convert,
         }
@@ -245,6 +266,8 @@ impl Level {
             Level::Neon => aarch64::ascii_len_neon,
             #[cfg(all(target_arch = "powerpc64", feature = "vsx"))]
             Level::Vsx => powerpc64::ascii_len_vsx,
+            #[cfg(all(target_arch = "riscv64", feature = "rvv"))]
+            Level::Rvv => riscv64::ascii_len_rvv,
             #[allow(unreachable_patterns)]
             _ => scalar::ascii_len,
         }

@@ -28,6 +28,13 @@ scripts/performance_summary.py > /tmp/opencode/performance-summary.md
 It compares each SIMD level to scalar on the same machine, so absolute GB/s from
 different machines are never compared.
 
+The RVV level needs nightly, the `rvv` feature and a CPU with the V extension;
+run the benchmark on a riscv64 machine:
+
+```sh
+cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv | grep '^|' > bench/results/riscv.md
+```
+
 The caption names the machine. It needs only Python 3. The colours are those
 of the winnow-args figures: teal titles, grey axes, green for this crate
 (darker for wider vectors), red for simdutf, blue-grey for `std`.
