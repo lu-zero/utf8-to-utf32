@@ -145,9 +145,10 @@ in [the main architecture page](../architecture.md).
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
 2,000,000 calls on 32-byte CJK input ran in 236 ms against 363 ms for the
-compare tree (1.54x) on this machine, same release build and tool. The
-end-to-end bench cannot resolve it: non-ASCII rows stay at 0.05 GB/s because
-the SEW=32 decode loop dominates.
+compare tree (1.54x) on this machine, same release build and tool. On the
+first end-to-end run the non-ASCII rows stayed at 0.05 GB/s because the SEW=32
+decode loop dominated; after the byte-domain decode and LMUL=2 they reached
+0.09 GB/s.
 
 The ASCII path needed two changes: a cheap `vfirst.m` non-ASCII test before the
 full validator (running it on every block had made ASCII 0.15 GB/s), and
@@ -155,6 +156,50 @@ widening with `e32, m4` in one instruction group instead of an m1 loop. The
 first version used `v1`/`v2` for the widening, which overlap the `v0..=v3`
 register group and trap with SIGILL; using `v4` as the byte source and `v8` as
 the widened destination avoids the overlap. LMUL=4 with `vcompress.vm` does trap
-on this CPU, so decoding stays at m1. Going VLA kept throughput on this machine,
+on this CPU, so decoding uses m2. Going VLA kept throughput on this machine,
 where a full register is already 32 bytes; it should use wider registers of
 other implementations without a rewrite.
+
+## Where the performance is hiding
+
+The remaining gap to the NEON and VSX kernels (1.4–2.8x over scalar on their
+machines, against roughly 1x here on non-ASCII) is not in the algorithms: this
+kernel now uses the same table lookups, byte-domain arithmetic and mask-driven
+compaction. It is in what the compiler lets the assembly do.
+
+- **Tables reload per block.** `vle8.v` loads B1_HIGH, B1_LOW and B2_HIGH into
+  vector registers on every 32-byte block. NEON loads its three tables once at
+  kernel entry. Keeping them across blocks needs vector values in Rust locals,
+  which today's `asm!` cannot express (vreg is clobber-only) or a hand-written
+  assembly function that owns the whole loop.
+- **Stack round-trip in decode.** Four 32-byte buffers carry lo/hi/top/b0 from
+  SEW=8 to SEW=32 because no vector value can cross the SEW change inside Rust.
+  In NEON a `tbl` with a mask-indexed table compacts and widens in one step.
+- **Every `asm!` is an optimisation barrier.** LLVM cannot schedule across the
+  helpers, cannot allocate registers across them, and inserts its own `vsetvli`
+  when it spills. The intrinsic-based kernels have none of these barriers.
+- **`vsetvli` state is deliberately not modelled.** Rust emits `~{vtype}` and
+  `~{vl}` clobbers for RISC-V vector asm, so LLVM assumes the state does not
+  survive a block. A compiler change that models `vtype`/`vl` as trackable
+  state, or real RVV intrinsics with scalable vector types (the work behind
+  `rust-lang/stdarch#1817` and RFC #3838), would let the helpers be ordinary
+  Rust code. The prototype vreg work in rustc PR #166108 helps with operand
+  naming but does not change this.
+- **LMUL=4 decode is blocked by register groups.** At `e32, m4` a mask group
+  overlaps the widened data group when `vcompress.vm` runs, raising SIGILL on
+  the X60. Fixed vector types with proper LMUL-aware allocation would let the
+  SEW=32 loop cover the whole block in one iteration.
+- **`vrgather.vv` is a general gather**, not a dedicated table shuffle like
+  NEON `tbl` or VSX `vec_perm`. This one is hardware, not compiler.
+
+A hand-written kernel via `global_asm!` could address the first three points
+today: one function owns the block loop, so tables, constants and pointers can
+be hoisted into registers once, and no compiler barrier sits between the
+validation and decode phases. The cost is that the error path must still reach
+`scalar::run` and `scalar::step` — writing that boundary in assembly means
+matching the Rust calling convention by hand, or duplicating the error logic
+(and the crate deliberately keeps error semantics in `scalar`). The practical
+shape would be one global-asm function that loops over whole blocks until an
+error, returning `(i, o, error_position)` to Rust, which then resolves the
+error and re-enters. That is a larger change than a tuning pass and has not
+been attempted here.
