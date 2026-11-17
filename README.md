@@ -1,5 +1,9 @@
 # utf8-to-utf32
 
+[![LICENSE](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
+[![Crates.io](https://img.shields.io/crates/v/utf8-to-utf32.svg)](https://crates.io/crates/utf8-to-utf32)
+[![docs.rs](https://docs.rs/utf8-to-utf32/badge.svg)](https://docs.rs/utf8-to-utf32)
+
 This crate converts UTF-8 to UTF-32 in pure Rust, validating as it goes. It uses SIMD kernels on supported platforms and has no C or C++ dependencies.
 
 - **Strict conversion.** Errors follow `core::str::from_utf8` exactly (`valid_up_to`, `error_len`, maximal-subpart lengths), and the error also reports how many code points were written.
