@@ -59,106 +59,21 @@ unsafe fn non_ascii_at(p: *const u8, n: usize) -> isize {
     first
 }
 
-static B1_HIGH: [u8; 32] = [
+static GB1_HIGH: [u8; 32] = [
     2, 2, 2, 2, 2, 2, 2, 2, 128, 128, 128, 128, 33, 1, 21, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0,
 ];
-static B1_LOW: [u8; 32] = [
+static GB1_LOW: [u8; 32] = [
     231, 163, 131, 131, 139, 203, 203, 203, 203, 203, 203, 203, 203, 219, 203, 203, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
-static B2_HIGH: [u8; 32] = [
+static GB2_HIGH: [u8; 32] = [
     1, 1, 1, 1, 1, 1, 1, 1, 230, 174, 186, 186, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0,
 ];
 
 /// First invalid position below `adv`, or -1. Keiser-Lemire lookup validator:
 /// three `vrgather.vv` nibble lookups, then all boolean logic in mask registers.
-#[target_feature(enable = "v")]
-unsafe fn validate_block(p: *const u8, adv: usize, n: usize) -> isize {
-    let first: isize;
-    unsafe {
-        asm!(
-            "vsetvli {vl}, {n}, e8, m1, ta, ma",
-            "vle8.v v8, ({p})", "vle8.v v9, ({p1})",
-            "vle8.v v20, ({t1h})", "vle8.v v21, ({t1l})", "vle8.v v22, ({t2h})",
-
-            "vmv.v.i v10, 0", "vslideup.vi v10, v8, 1",
-            "vmv.v.i v11, 0", "vslideup.vi v11, v8, 2",
-            "vmv.v.i v12, 0", "vslideup.vi v12, v8, 3",
-
-            "vsrl.vi v13, v10, 4", "vand.vi v14, v10, 15", "vsrl.vi v15, v8, 4",
-            "vrgather.vv v16, v20, v13",
-            "vrgather.vv v17, v21, v14",
-            "vrgather.vv v18, v22, v15",
-            "vand.vv v16, v16, v17", "vand.vv v16, v16, v18",
-            "vmsne.vi v0, v16, 0",
-
-            // must: a 3-byte lead two back or 4-byte lead three back requires
-            // this lane to be a continuation. sc already carries TWO_CONTS.
-            "li {t0}, 0xe0", "vmsgeu.vx v2, v11, {t0}",
-            "li {t0}, 0xf0", "vmsgeu.vx v3, v12, {t0}",
-            "vmor.mm v1, v2, v3",
-            "vmxor.mm v0, v0, v1",
-
-            // keep only positions below adv; add claims past the cut
-            "vid.v v23", "vmsltu.vx v5, v23, {adv}",
-            "vmand.mm v0, v0, v5",
-            "li {t0}, 0xc0", "vmsgeu.vx v7, v10, {t0}",
-            "vmor.mm v7, v7, v1",
-            "vmnot.m v6, v5",
-            "vmand.mm v6, v6, v7",
-            "li {t0}, 0x80", "vmsgeu.vx v7, v8, {t0}",
-            "li {t0}, 0xc0", "vmsltu.vx v4, v8, {t0}",
-            "vmand.mm v7, v7, v4", "vmnot.m v4, v7",
-            "vmand.mm v6, v6, v4", "vmor.mm v0, v0, v6",
-
-            "vfirst.m {first}, v0",
-
-            vl = out(reg) _,
-            n = in(reg) n,
-            p = in(reg) p, p1 = in(reg) p.add(1),
-            t1h = in(reg) B1_HIGH.as_ptr(),
-            t1l = in(reg) B1_LOW.as_ptr(),
-            t2h = in(reg) B2_HIGH.as_ptr(),
-            adv = in(reg) adv,
-            t0 = out(reg) _,
-            first = out(reg) first,
-            out("v0") _, out("v1") _, out("v2") _, out("v3") _, out("v4") _,
-            out("v5") _, out("v6") _, out("v7") _,
-            out("v8") _, out("v9") _, out("v10") _, out("v11") _, out("v12") _,
-            out("v13") _, out("v14") _, out("v15") _, out("v16") _, out("v17") _,
-            out("v18") _, out("v20") _, out("v21") _, out("v22") _, out("v23") _,
-            options(nostack),
-        );
-    }
-    first
-}
-
-/// Widen `adv` ASCII bytes to u32. The loop runs at SEW=32, so one iteration
-/// covers `vl` bytes and `vl` u32 lanes, whatever the vector width.
-#[target_feature(enable = "v")]
-unsafe fn ascii_widen(p: *const u8, dst: *mut u32, adv: usize) {
-    unsafe {
-        asm!(
-            "vsetvli {vl}, {adv}, e32, m4, ta, ma",
-            "vle8.v v4, ({p})",
-            "vzext.vf4 v8, v4",
-            "vse32.v v8, ({d})",
-            vl = out(reg) _,
-            adv = in(reg) adv,
-            p = in(reg) p,
-            d = in(reg) dst,
-            out("v4") _, out("v5") _,
-            out("v8") _, out("v9") _, out("v10") _, out("v11") _,
-            options(nostack),
-        );
-    }
-}
-
-/// Decode `adv` bytes. Phase 1 computes lo/hi/top bytes of every candidate
-/// code point at SEW=8 in one pass; phase 2 widens them to u32 at SEW=32 and
-/// compacts with vcompress. Scratch buffers live on the stack.
 #[target_feature(enable = "v")]
 unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usize {
     let mut lo = [0u8; 32];
@@ -169,12 +84,7 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
     let mut hi_ptr = hi.as_mut_ptr();
     let mut top_ptr = top.as_mut_ptr();
     let mut b0_ptr = b0buf.as_mut_ptr();
-    let mut rem = adv;
-    let mut pp = p;
-    let mut dd = dst.add(o);
     let mut cnt = 0usize;
-    let vl: usize;
-    let c: usize;
     unsafe {
         asm!(
             // ---- phase 1: SEW=8, all adv byte positions at once ----
@@ -255,11 +165,11 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
             dhi = inout(reg) hi_ptr,
             dtop = inout(reg) top_ptr,
             db0 = inout(reg) b0_ptr,
-            rem = out(reg) rem,
-            dd = out(reg) dd,
+            rem = out(reg) _,
+            dd = out(reg) _,
             cnt = out(reg) cnt,
-            vl = out(reg) vl, vl0 = out(reg) _,
-            c = out(reg) c,
+            vl = out(reg) _, vl0 = out(reg) _,
+            c = out(reg) _,
             t1 = out(reg) _,
             out("v0") _, out("v1") _, out("v2") _, out("v3") _, out("v4") _,
             out("v5") _, out("v6") _, out("v7") _, out("v8") _, out("v9") _,
@@ -272,56 +182,315 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
     o + cnt
 }
 
+core::arch::global_asm!(
+    r#"
+    .option arch, +v
+    .globl rvv_blocks
+    .type rvv_blocks, @function
+rvv_blocks:
+    addi sp, sp, -128
+    ld t0, 0(a4)
+    ld t1, 0(a5)
+    li a6, 32
+    vsetvli x0, a6, e8, m1, ta, ma
+    la a6, {t1h}
+    vle8.v v28, (a6)
+    la a6, {t1l}
+    vle8.v v29, (a6)
+    la a6, {t2h}
+    vle8.v v30, (a6)
+Lloop:
+    sub t3, a2, t0
+    addi a6, a3, 3
+    blt t3, a6, Ldone
+    addi t3, t3, -3
+    blt t3, a3, Ln_ok
+    mv t3, a3
+Ln_ok:
+    add t2, a0, t0
+    addi t6, t2, -1
+    add t6, t6, t3
+    lbu t6, 0(t6)
+    li a6, 0xc0
+    blt t6, a6, Ladv2
+    addi t4, t3, -1
+    j Ladv_done
+Ladv2:
+    addi t6, t2, -2
+    add t6, t6, t3
+    lbu t6, 0(t6)
+    li a6, 0xe0
+    blt t6, a6, Ladv3
+    addi t4, t3, -2
+    j Ladv_done
+Ladv3:
+    addi t6, t2, -3
+    add t6, t6, t3
+    lbu t6, 0(t6)
+    li a6, 0xf0
+    blt t6, a6, Ladv32
+    addi t4, t3, -3
+    j Ladv_done
+Ladv32:
+    mv t4, t3
+Ladv_done:
+    vsetvli zero, t3, e8, m1, ta, ma
+    vle8.v v8, (t2)
+    li a6, 0x80
+    vmsgeu.vx v0, v8, a6
+    vfirst.m a7, v0
+    bltz a7, Lascii
+    vmv.v.i v10, 0
+    vslideup.vi v10, v8, 1
+    vmv.v.i v11, 0
+    vslideup.vi v11, v8, 2
+    vmv.v.i v12, 0
+    vslideup.vi v12, v8, 3
+    vsrl.vi v13, v10, 4
+    vand.vi v14, v10, 15
+    vsrl.vi v15, v8, 4
+    vrgather.vv v16, v28, v13
+    vrgather.vv v17, v29, v14
+    vrgather.vv v18, v30, v15
+    vand.vv v16, v16, v17
+    vand.vv v16, v16, v18
+    vmsne.vi v0, v16, 0
+    li a6, 0xe0
+    vmsgeu.vx v2, v11, a6
+    li a6, 0xf0
+    vmsgeu.vx v3, v12, a6
+    vmor.mm v1, v2, v3
+    vmxor.mm v0, v0, v1
+    vid.v v23
+    vmsltu.vx v5, v23, t4
+    vmand.mm v0, v0, v5
+    li a6, 0xc0
+    vmsgeu.vx v7, v10, a6
+    vmor.mm v7, v7, v1
+    vmnot.m v6, v5
+    vmand.mm v6, v6, v7
+    li a6, 0x80
+    vmsgeu.vx v7, v8, a6
+    li a6, 0xc0
+    vmsltu.vx v4, v8, a6
+    vmand.mm v7, v7, v4
+    vmnot.m v4, v7
+    vmand.mm v6, v6, v4
+    vmor.mm v0, v0, v6
+    vfirst.m t5, v0
+    bgez t5, Lerror
+    addi t3, t2, 1
+    vle8.v v9, (t3)
+    addi t3, t2, 2
+    vle8.v v10, (t3)
+    addi t3, t2, 3
+    vle8.v v11, (t3)
+    li a6, 0x3f
+    vand.vx v16, v11, a6
+    vsll.vi v17, v10, 6
+    vor.vv v16, v17, v16
+    vand.vx v17, v10, a6
+    vsll.vi v18, v9, 6
+    vor.vv v17, v18, v17
+    vand.vx v18, v9, a6
+    vsll.vi v19, v8, 6
+    vor.vv v18, v19, v18
+    vmv.v.v v20, v8
+    li a6, 0xc0
+    vmsgeu.vx v5, v8, a6
+    li a6, 0xe0
+    vmsgeu.vx v6, v8, a6
+    li a6, 0xf0
+    vmsgeu.vx v7, v8, a6
+    vmv.v.v v0, v5
+    vmerge.vvm v20, v20, v18, v0
+    vmv.v.v v0, v6
+    vmerge.vvm v20, v20, v17, v0
+    vmv.v.v v0, v7
+    vmerge.vvm v20, v20, v16, v0
+    vse8.v v20, (sp)
+    vsrl.vi v16, v8, 2
+    vand.vi v16, v16, 7
+    li a6, 0x3c
+    vand.vx v17, v9, a6
+    vsrl.vi v17, v17, 2
+    li a6, 0x0f
+    vand.vx v18, v8, a6
+    vsll.vi v18, v18, 4
+    vor.vv v17, v17, v18
+    li a6, 0x3c
+    vand.vx v18, v10, a6
+    vsrl.vi v18, v18, 2
+    li a6, 0x0f
+    vand.vx v19, v9, a6
+    vsll.vi v19, v19, 4
+    vor.vv v18, v18, v19
+    vmv.v.i v20, 0
+    vmv.v.v v0, v5
+    vmerge.vvm v20, v20, v16, v0
+    vmv.v.v v0, v6
+    vmerge.vvm v20, v20, v17, v0
+    vmv.v.v v0, v7
+    vmerge.vvm v20, v20, v18, v0
+    addi t3, sp, 32
+    vse8.v v20, (t3)
+    vand.vi v16, v8, 7
+    vsll.vi v16, v16, 2
+    li a6, 0x30
+    vand.vx v17, v9, a6
+    vsrl.vi v17, v17, 4
+    vor.vv v16, v16, v17
+    vmv.v.i v20, 0
+    vmv.v.v v0, v7
+    vmerge.vvm v20, v20, v16, v0
+    addi t3, sp, 64
+    vse8.v v20, (t3)
+    addi t3, sp, 96
+    vse8.v v8, (t3)
+    li t5, 0
+    li t2, 16
+    slli a7, t1, 2
+    add a7, a1, a7
+
+    vsetvli x0, t2, e32, m2, ta, ma
+    vle8.v v2, (sp)
+    vzext.vf4 v10, v2
+    addi t3, sp, 32
+    vle8.v v4, (t3)
+    vzext.vf4 v12, v4
+    addi t3, sp, 64
+    vle8.v v6, (t3)
+    vzext.vf4 v14, v6
+    vsll.vi v12, v12, 8
+    vsll.vi v14, v14, 16
+    vor.vv v10, v10, v12
+    vor.vv v10, v10, v14
+    addi t3, sp, 96
+    vle8.v v8, (t3)
+    vzext.vf4 v16, v8
+    li a6, 0x80
+    vmsgeu.vx v0, v16, a6
+    li a6, 0xc0
+    vmsltu.vx v1, v16, a6
+    vmand.mm v0, v0, v1
+    vmnot.m v0, v0
+    vid.v v18
+    li a6, 16
+    vmsltu.vx v1, v18, a6
+    vmand.mm v0, v0, v1
+    vpopc.m t6, v0
+    vcompress.vm v20, v10, v0
+    vse32.v v20, (a7)
+    slli t3, t6, 2
+    add a7, a7, t3
+
+    add t5, t5, t6
+    li t2, 16
+    sub t2, t4, t2
+    vsetvli x0, t2, e32, m2, ta, ma
+    addi t3, sp, 16
+    vle8.v v2, (t3)
+    vzext.vf4 v10, v2
+    addi t3, sp, 48
+    vle8.v v4, (t3)
+    vzext.vf4 v12, v4
+    addi t3, sp, 80
+    vle8.v v6, (t3)
+    vzext.vf4 v14, v6
+    vsll.vi v12, v12, 8
+    vsll.vi v14, v14, 16
+    vor.vv v10, v10, v12
+    vor.vv v10, v10, v14
+    addi t3, sp, 112
+    vle8.v v8, (t3)
+    vzext.vf4 v16, v8
+    li a6, 0x80
+    vmsgeu.vx v0, v16, a6
+    li a6, 0xc0
+    vmsltu.vx v1, v16, a6
+    vmand.mm v0, v0, v1
+    vmnot.m v0, v0
+    vid.v v18
+    vmsltu.vx v1, v18, t2
+    vmand.mm v0, v0, v1
+    vpopc.m t6, v0
+    vcompress.vm v20, v10, v0
+    vse32.v v20, (a7)
+    slli t3, t6, 2
+    add a7, a7, t3
+
+    add t5, t5, t6
+    add t1, t1, t5
+    add t0, t0, t4
+    j Lloop
+Lascii:
+    vsetvli zero, t4, e32, m4, ta, ma
+    vle8.v v16, (t2)
+    vzext.vf4 v20, v16
+    slli a7, t1, 2
+    add a7, a1, a7
+    vse32.v v20, (a7)
+    add t0, t0, t4
+    add t1, t1, t4
+    j Lloop
+Lerror:
+    sd t0, 0(a4)
+    sd t1, 0(a5)
+    mv a0, t5
+    addi sp, sp, 128
+    ret
+Ldone:
+    sd t0, 0(a4)
+    sd t1, 0(a5)
+    li a0, -1
+    addi sp, sp, 128
+    ret
+    .size rvv_blocks, .-rvv_blocks
+"#,
+    t1h = sym GB1_HIGH,
+    t1l = sym GB1_LOW,
+    t2h = sym GB2_HIGH,
+);
+
+extern "C" {
+    fn rvv_blocks(
+        src: *const u8,
+        dst: *mut u32,
+        len: usize,
+        vlmax: usize,
+        ip: *mut usize,
+        op: *mut usize,
+    ) -> isize;
+}
+
 #[target_feature(enable = "v")]
 unsafe fn rvv_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32Error> {
-    let len = src.len();
     let p = src.as_ptr();
     let vlmax = vlen_bytes();
     let (mut i, mut o) = (0usize, 0usize);
     let mut streak = 0u32;
-    while len - i >= vlmax + 3 {
-        let n = vlmax.min(len - i - 3);
+    loop {
+        let first_bad = unsafe { rvv_blocks(p, dst, src.len(), vlmax, &mut i, &mut o) };
+        if first_bad < 0 {
+            return scalar::finish(src, i, dst, o, mode);
+        }
         let pi = p.add(i);
-        let adv = if *pi.add(n - 1) >= 0xC0 {
-            n - 1
-        } else if *pi.add(n - 2) >= 0xE0 {
-            n - 2
-        } else if *pi.add(n - 3) >= 0xF0 {
-            n - 3
-        } else {
-            n
-        };
-        if non_ascii_at(pi, adv) < 0 {
-            ascii_widen(pi, dst.add(o), adv);
-            i += adv;
-            o += adv;
-            streak = 0;
-            continue;
-        }
-        let first_bad = validate_block(pi, adv, n);
-        if first_bad >= 0 {
-            let mut cut = 0;
-            for j in (0..first_bad as usize).rev() {
-                if *pi.add(j) >= 0xC0 {
-                    cut = j;
-                    break;
-                }
+        let mut cut = 0;
+        for j in (0..first_bad as usize).rev() {
+            if *pi.add(j) >= 0xC0 {
+                cut = j;
+                break;
             }
-            o = decode_block(pi, dst, o, cut);
-            i += cut;
-            let stop = (i + (ERR_STRETCH << streak)).min(len);
-            streak = (streak + 1).min(ERR_BACKOFF_MAX);
-            (i, o) = scalar::step(scalar::run(src, i, i + 1, dst, o), src, dst, mode)?;
-            while i < stop {
-                (i, o) = scalar::step(scalar::run(src, i, stop, dst, o), src, dst, mode)?;
-            }
-            continue;
         }
-        o = decode_block(pi, dst, o, adv);
-        i += adv;
-        streak = 0;
+        o = decode_block(pi, dst, o, cut);
+        i += cut;
+        let stop = (i + (ERR_STRETCH << streak)).min(src.len());
+        streak = (streak + 1).min(ERR_BACKOFF_MAX);
+        (i, o) = scalar::step(scalar::run(src, i, i + 1, dst, o), src, dst, mode)?;
+        while i < stop {
+            (i, o) = scalar::step(scalar::run(src, i, stop, dst, o), src, dst, mode)?;
+        }
     }
-    scalar::finish(src, i, dst, o, mode)
 }
 
 pub(crate) unsafe fn convert_rvv(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32Error> {

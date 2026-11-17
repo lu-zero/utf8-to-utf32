@@ -6,11 +6,17 @@ Cargo feature and needs a nightly toolchain (`riscv_target_feature` and, with
 it.
 
 Rust's `core::arch` has no RVV intrinsics yet, so the vector work is inline
-`asm!`. Vector registers can only be clobbers in Rust inline assembly, so each
-helper sets its own `vsetvli`; the decode loop and its pointer updates live
-inside one asm block. Upstream tracks the missing intrinsics in
-`rust-lang/stdarch#1817`, blocked on scalable vector types
-(`rust-lang/rust#145052`, RFC #3838). SVE has them on nightly, RVV does not.
+assembly. The hot loop — validation, ASCII widening and decode — is one
+`global_asm!` function, `rvv_blocks`, which owns the block loop and returns to
+Rust only on an error or at the end of the input. That lets the three lookup
+tables be loaded into vector registers **once** instead of once per block, and
+removes the compiler barriers between the phases. The error path stays in Rust
+so `scalar::run` and `scalar::step` keep ownership of the error semantics.
+
+Upstream tracks the missing intrinsics in `rust-lang/stdarch#1817`, blocked on
+scalable vector types (`rust-lang/rust#145052`, RFC #3838). SVE has them on
+nightly, RVV does not. Issue #1 in this repository records the compiler-side
+gaps and the rationale for the global-asm approach.
 
 The kernel is **vector-length agnostic**. `vlmax` is read once at entry, and
 each iteration takes `n = min(remaining - 3, vlmax)` bytes. `Level::is_supported`
@@ -128,19 +134,19 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.61 | 0.09 | 0.09 | 0.09 | 0.09 | – |
-| RVV lossy_into (C1) | 0.82 | 0.09 | 0.09 | 0.09 | 0.09 | 0.08 |
+| RVV slice fn | 0.49 | 0.11 | 0.10 | 0.10 | 0.10 | – |
+| RVV lossy_into (C1) | 0.81 | 0.11 | 0.10 | 0.10 | 0.10 | 0.08 |
 
-RVV wins on ASCII (1.53x for the slice function, 2.0x for `lossy_into`) and the
-`Decoder`'s ASCII path is 2.19 against scalar's 0.69. Non-ASCII input is now
-about equal to scalar at 0.09 GB/s: removing the redundant range checks and
-halving the widen loop with LMUL=2 lifted it from 0.07. CJK remains the one
-class where scalar is ahead (0.11 against 0.09). ASCII varies by about 20%
-between runs on this machine (the table above and `bench/results/riscv.md`
-come from different runs); the back-to-back comparison used for the commit
-numbers had 0.61 for both the previous and this version. Dirty input is about even in lossy mode; the
-`Decoder` is slower there (0.02 against 0.05), the same restart cost described
-in [the main architecture page](../architecture.md).
+The global-asm loop lifts every non-ASCII class from 0.07 to 0.10–0.11 GB/s
+back-to-back on the same machine; ASCII is essentially unchanged (0.47 to 0.49,
+within run variance) because that path was already a single tight asm block.
+RVV now beats scalar on Latin (0.11 against 0.09), box (0.10 against 0.08) and
+emoji (0.10 against 0.09), and is close behind on CJK (0.10 against 0.11) for
+the reason given above. On ASCII it stays ahead at 0.49 against scalar's 0.40;
+the `Decoder`'s ASCII path is 2.19 against scalar's 0.69.
+Dirty input is about even in lossy mode; the `Decoder` is slower there (0.03
+against 0.05), the same restart cost described in
+[the main architecture page](../architecture.md).
 
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
@@ -160,46 +166,41 @@ on this CPU, so decoding uses m2. Going VLA kept throughput on this machine,
 where a full register is already 32 bytes; it should use wider registers of
 other implementations without a rewrite.
 
-## Where the performance is hiding
+## Why the hot loop is `global_asm!`
 
-The remaining gap to the NEON and VSX kernels (1.4–2.8x over scalar on their
-machines, against roughly 1x here on non-ASCII) is not in the algorithms: this
-kernel now uses the same table lookups, byte-domain arithmetic and mask-driven
-compaction. It is in what the compiler lets the assembly do.
+The first implementation used separate `asm!` helpers per phase. That costs
+three things the intrinsic-based NEON and VSX kernels do not pay:
 
-- **Tables reload per block.** `vle8.v` loads B1_HIGH, B1_LOW and B2_HIGH into
-  vector registers on every 32-byte block. NEON loads its three tables once at
-  kernel entry. Keeping them across blocks needs vector values in Rust locals,
-  which today's `asm!` cannot express (vreg is clobber-only) or a hand-written
-  assembly function that owns the whole loop.
-- **Stack round-trip in decode.** Four 32-byte buffers carry lo/hi/top/b0 from
-  SEW=8 to SEW=32 because no vector value can cross the SEW change inside Rust.
-  In NEON a `tbl` with a mask-indexed table compacts and widens in one step.
-- **Every `asm!` is an optimisation barrier.** LLVM cannot schedule across the
-  helpers, cannot allocate registers across them, and inserts its own `vsetvli`
-  when it spills. The intrinsic-based kernels have none of these barriers.
-- **`vsetvli` state is deliberately not modelled.** Rust emits `~{vtype}` and
-  `~{vl}` clobbers for RISC-V vector asm, so LLVM assumes the state does not
-  survive a block. A compiler change that models `vtype`/`vl` as trackable
-  state, or real RVV intrinsics with scalable vector types (the work behind
-  `rust-lang/stdarch#1817` and RFC #3838), would let the helpers be ordinary
-  Rust code. The prototype vreg work in rustc PR #166108 helps with operand
-  naming but does not change this.
-- **LMUL=4 decode is blocked by register groups.** At `e32, m4` a mask group
-  overlaps the widened data group when `vcompress.vm` runs, raising SIGILL on
-  the X60. Fixed vector types with proper LMUL-aware allocation would let the
-  SEW=32 loop cover the whole block in one iteration.
+- the three lookup tables reload on **every block** (`vle8.v` into fresh
+  registers), where NEON loads them once at kernel entry;
+- every `asm!` is a compiler barrier, so LLVM cannot schedule or allocate
+  registers across the phases and emits its own `vsetvli` when it spills;
+- the constants and pointers are re-materialised per helper.
+
+`rvv_blocks` fixes all three: one function owns the block loop, so the tables
+are loaded once at entry into `v28..=v30`, constants stay in registers, and no
+compiler barrier sits between validation and decode. It returns
+`(i, o, first_bad)` to Rust on an error; Rust computes the cut, uses the Rust
+`decode_block` helper for the valid prefix, then `scalar::run`/`step` resolve
+the error and re-enter. Error semantics therefore stay in `scalar`.
+
+The source still needs `.option arch, +v` — LLVM does not enable the extension
+for a bare `global_asm!` block. The tables are Rust statics referenced with
+`sym` operands rather than in an assembly `.rodata` section.
+
+## What still waits on compiler support
+
+- **The decode stack buffers.** Four 32-byte buffers carry lo/hi/top/b0 from
+  SEW=8 to SEW=32. Inside one asm function they could stay in vector registers,
+  but the extension state and register groups have to be managed by hand;
+  LMUL=2 groups overlap easily (writing `vle8.v v9` after `vzext.vf4 v8` corrupts
+  the `v8..=v9` widened value), and a real mistake here produces SIGILL or
+  SIGBUS rather than a compile error.
+- **`vsetvli` state is not modelled by rustc.** Emitting `~{vtype}`/`~{vl}`
+  clobbers means LLVM assumes the state dies at each `asm!` boundary. Real RVV
+  intrinsics with scalable vector types (the work behind
+  `rust-lang/stdarch#1817`, `rust-lang/rust#145052` and RFC #3838) would let the
+  kernel be ordinary Rust like NEON/VSX. The vreg prototype in rustc PR #166108
+  helps operand naming but does not model this state.
 - **`vrgather.vv` is a general gather**, not a dedicated table shuffle like
   NEON `tbl` or VSX `vec_perm`. This one is hardware, not compiler.
-
-A hand-written kernel via `global_asm!` could address the first three points
-today: one function owns the block loop, so tables, constants and pointers can
-be hoisted into registers once, and no compiler barrier sits between the
-validation and decode phases. The cost is that the error path must still reach
-`scalar::run` and `scalar::step` — writing that boundary in assembly means
-matching the Rust calling convention by hand, or duplicating the error logic
-(and the crate deliberately keeps error semantics in `scalar`). The practical
-shape would be one global-asm function that loops over whole blocks until an
-error, returning `(i, o, error_position)` to Rust, which then resolves the
-error and re-enters. That is a larger change than a tuning pass and has not
-been attempted here.

@@ -85,10 +85,10 @@ Measured on one Spacemit X60 machine with the V extension, Rust 1.102 nightly,
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.61 | 0.09 | 0.09 | 0.09 | 0.09 | – |
+| this crate, rvv slice fn | 0.49 | 0.11 | 0.10 | 0.10 | 0.10 | – |
 
-RVV is vector-length agnostic. It wins on ASCII and is about equal to scalar
-on non-ASCII input; see `docs/architecture/riscv.md`.
+RVV is vector-length agnostic and its hot loop is one `global_asm!` function.
+It wins on ASCII and most non-ASCII classes; see `docs/architecture/riscv.md`.
 
 ## Documentation
 
