@@ -33,11 +33,12 @@ character is decoded before its last byte has been validated. The rest goes to
 the scalar tail.
 
 1. A cheap SEW=8 `vmsgeu` + `vfirst.m` test detects an all-ASCII region.
-2. ASCII is widened to u32 at SEW=32, looping by the runtime `vl`.
-3. Otherwise validation runs at SEW=8 and produces the first invalid position.
-4. The decode loop runs at SEW=32: `vzext.vf4` widens the source bytes into u32
-   lanes, code-point arithmetic computes a candidate for every position, a lead
-   mask selects the real ones, and `vcompress.vm` compacts them.
+2. ASCII is widened to u32 in one `e32, m4` group.
+3. Otherwise validation runs at SEW=8 over **n** lanes and produces the first
+   invalid position. Using `n` rather than `adv` here is essential: see below.
+4. Decode computes candidate code points at SEW=8, then two unrolled SEW=32
+   groups widen them with `vzext.vf4`, select a lead mask and compact with
+   `vcompress.vm`.
 5. A failing block decodes the characters before the cut with SIMD, then scalar
    resolves one character and covers a growing stretch before SIMD retries.
 
@@ -72,7 +73,11 @@ it finds the last lead strictly before it and lets `scalar::run` and
 A lead inside the block whose continuation lies past the shortened advance is
 also bad. Without this term a lead just before the cut could be decoded with a
 continuation that belongs to the next block, and the invalid sequence would be
-missed.
+missed. For the term to work, validation must run with **`vl = n`, not
+`vl = adv`**: a claim by a lead at `adv - 1` lands on lane `adv`, which would be
+invisible if `adv` were the vector length. `adv` is applied only as a mask on
+the error result. Getting this wrong made the validator silently accept invalid
+input when the hot loop was first moved into global asm.
 
 `tests/conformance.rs` and `tests/exhaustive_neon.rs` run every supported level,
 so the RVV validator is checked against `core::str::from_utf8` and
@@ -97,24 +102,26 @@ unsigned compares against C0, E0 and F0; `vmerge.vvm` selects among the 1-, 2-,
 the byte needed. The three byte vectors and the original `b0` are stored to
 four 32-byte stack buffers.
 
-At SEW=32 with **LMUL=2** the second phase runs a short loop: `vl` bytes from
-each buffer are widened with `vzext.vf4`, combined as `lo | hi << 8 | top << 16`,
-and compacted with `vcompress.vm` under a lead mask rebuilt from the widened
-`b0`. `vpopc.m` returns the character count. LMUL=2 gives 16 u32 lanes at
-VLEN=256, halving the loop to two iterations per block; the simpler byte-domain
-arithmetic leaves enough registers for the wider groups. The lead mask is the inverse of "continuation"
-(`b0 >= 0x80 && b0 < 0xC0`), ANDed with `idx < rem` and built from `vid.v`.
-The whole vector is stored; lanes past the count are overwritten by the next
-store, which is why `dst` must be at least `src.len()` long.
+At SEW=32 with **LMUL=2** the second phase has two unrolled groups, each
+covering 16 bytes. Bytes from each buffer are widened with `vzext.vf4`,
+combined as `lo | hi << 8 | top << 16`, and compacted with `vcompress.vm` under
+a lead mask rebuilt from the widened `b0`. `vpopc.m` returns the character count
+and the destination pointer advances by four times that count. LMUL=2 gives 16
+u32 lanes at VLEN=256, so the two groups cover a 32-byte block. The lead mask is
+the inverse of "continuation" (`b0 >= 0x80 && b0 < 0xC0`), ANDed with `idx < vl`
+and built from `vid.v`. The whole vector is stored; lanes past the count are
+overwritten by the next store, which is why `dst` must be at least `src.len()`
+long.
 
 This replaced an earlier design that computed full u32 candidates four times
 (four SEW=32 iterations per block). The byte-domain form does that arithmetic
-once at SEW=8 and reduces the non-ASCII benchmark rows from 0.05 to 0.07 GB/s
-on the X60, with ASCII unchanged.
+once at SEW=8; combined with the global-asm loop it took the non-ASCII rows from
+0.05 to 0.10–0.11 GB/s on the X60.
 
-An LMUL=4 variant would cover the whole region in one SEW=32 iteration and
-remove the loop, but `vzext.vf4` with `e32, m4` raises SIGILL on the Spacemit
-X60, so the m1 loop is kept.
+An LMUL=4 variant would cover the block in one SEW=32 group. Widening alone
+works at `e32, m4` with non-overlapping registers (the ASCII path uses it), but
+`vcompress.vm` at m4 needs a mask group that overlaps the data group on this
+CPU and traps, so decode stays at m2.
 
 ## Error-dense input
 
@@ -137,7 +144,9 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | RVV slice fn | 0.49 | 0.11 | 0.10 | 0.10 | 0.10 | – |
 | RVV lossy_into (C1) | 0.81 | 0.11 | 0.10 | 0.10 | 0.10 | 0.08 |
 
-The global-asm loop lifts every non-ASCII class from 0.07 to 0.10–0.11 GB/s
+The figures above are one run; the `bench/results/riscv.md` file is another,
+and differ by a few hundredths from run to run on this machine. The
+global-asm loop lifts every non-ASCII class from 0.07 to 0.10–0.11 GB/s
 back-to-back on the same machine; ASCII is essentially unchanged (0.47 to 0.49,
 within run variance) because that path was already a single tight asm block.
 RVV now beats scalar on Latin (0.11 against 0.09), box (0.10 against 0.08) and
@@ -151,18 +160,17 @@ against 0.05), the same restart cost described in
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
 2,000,000 calls on 32-byte CJK input ran in 236 ms against 363 ms for the
-compare tree (1.54x) on this machine, same release build and tool. On the
-first end-to-end run the non-ASCII rows stayed at 0.05 GB/s because the SEW=32
-decode loop dominated; after the byte-domain decode and LMUL=2 they reached
-0.09 GB/s.
+compare tree (1.54x) on this machine, same release build and tool. That gain is
+not visible in the end-to-end table: the SEW=32 decode dominated until the
+byte-domain rewrite, and the global-asm loop then lifted the non-ASCII rows to
+0.10–0.11.
 
 The ASCII path needed two changes: a cheap `vfirst.m` non-ASCII test before the
 full validator (running it on every block had made ASCII 0.15 GB/s), and
 widening with `e32, m4` in one instruction group instead of an m1 loop. The
-first version used `v1`/`v2` for the widening, which overlap the `v0..=v3`
-register group and trap with SIGILL; using `v4` as the byte source and `v8` as
-the widened destination avoids the overlap. LMUL=4 with `vcompress.vm` does trap
-on this CPU, so decoding uses m2. Going VLA kept throughput on this machine,
+source and destination must not share the `v0..=v3` register group: `v1`/`v2`
+traps with SIGILL, while the first version's `v4`/`v8` and the current
+global-asm `v16`/`v20` are safe. Going VLA kept throughput on this machine,
 where a full register is already 32 bytes; it should use wider registers of
 other implementations without a rewrite.
 

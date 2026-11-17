@@ -1,13 +1,18 @@
 //! riscv64 RVV kernel, vector-length agnostic.
 //!
 //! Rust's `core::arch` has no RVV intrinsics yet, so the vector work is inline
-//! `asm!`. Vector registers can only be clobbers, so each helper sets its own
-//! `vsetvli` and reads what it needs from memory.
+//! assembly. The hot loop is one `global_asm!` function, `rvv_blocks`, which
+//! owns the block loop and returns to Rust on an error or at the end of the
+//! input. That lets the three lookup tables load once at entry instead of
+//! once per block, and keeps constants in registers across the loop. Error
+//! semantics stay in `scalar`: Rust computes the cut, decodes the valid prefix
+//! with `decode_block`, then resolves the error and re-enters.
 //!
 //! No block width is hardcoded: `vl` comes from `vsetvli(min(remaining - 3,
-//! vlmax))`, so every block uses the whole register. Validation runs at SEW=8
-//! with one byte per lane; the decode loops run at SEW=32 with `vzext.vf4` and
-//! `vcompress.vm`, advancing by the runtime `vl` each iteration.
+//! vlmax))`. Validation must load `n` lanes rather than the shortened `adv`,
+//! so a lead just before the cut can claim a byte past it. Decode computes
+//! candidate code points at SEW=8, then widens and compacts them in two
+//! unrolled SEW=32 groups with `vzext.vf4` and `vcompress.vm`.
 
 #![cfg_attr(not(feature = "alloc"), allow(dead_code))]
 
