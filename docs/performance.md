@@ -18,6 +18,7 @@ The graph shows the ratio to scalar on the **same** machine, which is.
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
 | aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.34x | 1.44x | 1.51x | 1.40x | 1.16x |
+| Spacemit X60 / RVV | 1.20x | 1.11x | 0.91x | 1.25x | 1.11x | 1.00x |
 
 ![SIMD speedup over scalar by input type and architecture](performance-summary.svg)
 
@@ -80,3 +81,17 @@ but about half the speed on error-dense input; see
 [`ppc64.md`](../bench/results/ppc64.md).
 
 ![GB/s by implementation and input type on POWER9: simdutf, std, scalar and VSX](performance-ppc64.svg)
+
+## riscv64 (RVV)
+
+One Spacemit X60 machine with 256-bit vector registers, Rust 1.102 nightly,
+`--features rvv`, LTO release build, same method as above.
+
+| GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
+|---|---|---|---|---|---|---|
+| this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
+| this crate, rvv slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
+
+RVV requires VLEN=256 and wins on ASCII, Latin, box drawing and emoji, but is
+slightly behind scalar on CJK; see [the RVV architecture page](architecture/riscv.md).
+Full output: [`riscv.md`](../bench/results/riscv.md).

@@ -10,7 +10,7 @@ This crate converts UTF-8 to UTF-32 in pure Rust, validating as it goes. It uses
 
 ```toml
 [dependencies]
-utf8-to-utf32 = "0.1"
+utf8-to-utf32 = "0.2"
 ```
 
 ```rust
@@ -73,22 +73,25 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
 | aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.34x | 1.44x | 1.51x | 1.40x | 1.16x |
+| Spacemit X60 / RVV | 1.20x | 1.11x | 0.91x | 1.25x | 1.11x | 1.00x |
 
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
 ### riscv64 (RVV)
 
-Measured on one Spacemit X60 machine with the V extension, Rust 1.102 nightly,
-`--features rvv`, LTO release build, same method as above. See
+Measured on one Spacemit X60 machine with 256-bit vectors, Rust 1.102 nightly,
+`--features rvv`, LTO release build: GB/s of UTF-8 input, median of 7 runs over
+about 1 MB. See
 `bench/results/riscv.md` for the full output.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.49 | 0.11 | 0.10 | 0.10 | 0.10 | – |
+| this crate, rvv slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
 
-RVV is vector-length agnostic and its hot loop is one `global_asm!` function.
-It wins on ASCII and most non-ASCII classes; see `docs/architecture/riscv.md`.
+RVV requires 256-bit vectors and its hot loop is one `global_asm!` function. It
+wins on ASCII, Latin, box drawing and emoji but is slightly behind scalar on
+CJK; see `docs/architecture/riscv.md`.
 
 ## Documentation
 

@@ -24,6 +24,7 @@ ARCHES = [
     ("x86 / AVX-512", "bench/results/default.md", "ours avx512", "#5faf5f"),
     ("aarch64 / NEON", "bench/results/neon.md", "ours neon", "#8a7faf"),
     ("POWER9 / VSX", "bench/results/ppc64.md", "ours vsx", "#3f8f6f"),
+    ("Spacemit X60 / RVV", "bench/results/riscv.md", "ours rvv", "#8f7f5f"),
 ]
 
 

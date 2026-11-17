@@ -1,6 +1,6 @@
 [package]
 name = "utf8-to-utf32"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.89"
 description = "Fast, SIMD-accelerated UTF-8 to UTF-32 conversion with std-compatible errors."

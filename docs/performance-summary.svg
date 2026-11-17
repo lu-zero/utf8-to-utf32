@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="529" viewBox="0 0 720 372" role="img" aria-label="SIMD speedup over scalar by input type and architecture.">
-<rect width="720" height="372" fill="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="614" viewBox="0 0 720 432" role="img" aria-label="SIMD speedup over scalar by input type and architecture.">
+<rect width="720" height="432" fill="none"/>
 <text x="8.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">ASCII</text>
-<line x1="126.0" y1="32" x2="126.0" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="126.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="182.7" y1="32" x2="182.7" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="182.7" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="239.3" y1="32" x2="239.3" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="239.3" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<line x1="296.0" y1="32" x2="296.0" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="296.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
+<line x1="126.0" y1="32" x2="126.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="126.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="182.7" y1="32" x2="182.7" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="182.7" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="239.3" y1="32" x2="239.3" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="239.3" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
+<line x1="296.0" y1="32" x2="296.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="296.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
 <text x="120.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
 <rect x="126" y="35" width="73.4" height="13" rx="2" fill="#5faf5f"/>
 <text x="204.4" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.30x</text>
@@ -18,17 +18,20 @@
 <text x="120.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="75" width="156.7" height="13" rx="2" fill="#3f8f6f"/>
 <text x="287.7" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.77x</text>
+<text x="120.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="126" y="95" width="68.0" height="13" rx="2" fill="#8f7f5f"/>
+<text x="199.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.20x</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
-<line x1="486.0" y1="32" x2="486.0" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="486.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="528.5" y1="32" x2="528.5" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="528.5" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="571.0" y1="32" x2="571.0" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="571.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<line x1="613.5" y1="32" x2="613.5" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="613.5" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
-<line x1="656.0" y1="32" x2="656.0" y2="92" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="656.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
+<line x1="486.0" y1="32" x2="486.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="486.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="528.5" y1="32" x2="528.5" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="528.5" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="571.0" y1="32" x2="571.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="571.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
+<line x1="613.5" y1="32" x2="613.5" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="613.5" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
+<line x1="656.0" y1="32" x2="656.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="656.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
 <text x="480.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
 <rect x="486" y="35" width="165.9" height="13" rx="2" fill="#5faf5f"/>
 <text x="656.9" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">3.90x</text>
@@ -38,82 +41,97 @@
 <text x="480.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="75" width="57.2" height="13" rx="2" fill="#3f8f6f"/>
 <text x="548.2" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.34x</text>
-<text x="8.0" y="138.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
-<line x1="126.0" y1="150" x2="126.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="126.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="160.0" y1="150" x2="160.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="160.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="194.0" y1="150" x2="194.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="194.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<line x1="228.0" y1="150" x2="228.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="228.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
-<line x1="262.0" y1="150" x2="262.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="262.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
-<line x1="296.0" y1="150" x2="296.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="296.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">5</text>
-<text x="120.0" y="164.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="126" y="153" width="151.4" height="13" rx="2" fill="#5faf5f"/>
-<text x="282.4" y="164.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">4.45x</text>
-<text x="120.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="173" width="84.4" height="13" rx="2" fill="#8a7faf"/>
-<text x="215.4" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.48x</text>
-<text x="120.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
-<rect x="126" y="193" width="49.1" height="13" rx="2" fill="#3f8f6f"/>
-<text x="180.1" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.44x</text>
-<text x="368.0" y="138.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
-<line x1="486.0" y1="150" x2="486.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="486.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="520.0" y1="150" x2="520.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="520.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="554.0" y1="150" x2="554.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="554.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<line x1="588.0" y1="150" x2="588.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="588.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
-<line x1="622.0" y1="150" x2="622.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="622.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
-<line x1="656.0" y1="150" x2="656.0" y2="210" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="656.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">5</text>
-<text x="480.0" y="164.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="486" y="153" width="147.1" height="13" rx="2" fill="#5faf5f"/>
-<text x="638.1" y="164.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">4.33x</text>
-<text x="480.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="486" y="173" width="76.7" height="13" rx="2" fill="#8a7faf"/>
-<text x="567.7" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.26x</text>
-<text x="480.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
-<rect x="486" y="193" width="51.4" height="13" rx="2" fill="#3f8f6f"/>
-<text x="542.4" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.51x</text>
-<text x="8.0" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
-<line x1="126.0" y1="268" x2="126.0" y2="308" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="126.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="182.7" y1="268" x2="182.7" y2="308" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="182.7" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
-<line x1="239.3" y1="268" x2="239.3" y2="308" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="239.3" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="296.0" y1="268" x2="296.0" y2="308" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="296.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="120.0" y="282.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="271" width="164.4" height="13" rx="2" fill="#8a7faf"/>
-<text x="295.4" y="282.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>
-<text x="120.0" y="302.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
-<rect x="126" y="291" width="159.2" height="13" rx="2" fill="#3f8f6f"/>
-<text x="290.2" y="302.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.40x</text>
-<text x="368.0" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
-<line x1="486.0" y1="268" x2="486.0" y2="328" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="486.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="542.7" y1="268" x2="542.7" y2="328" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="542.7" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
-<line x1="599.3" y1="268" x2="599.3" y2="328" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="599.3" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="656.0" y1="268" x2="656.0" y2="328" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="656.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="480.0" y="282.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="486" y="271" width="122.8" height="13" rx="2" fill="#5faf5f"/>
-<text x="613.8" y="282.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.08x</text>
-<text x="480.0" y="302.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="486" y="291" width="105.6" height="13" rx="2" fill="#8a7faf"/>
-<text x="596.6" y="302.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.93x</text>
-<text x="480.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
-<rect x="486" y="311" width="131.0" height="13" rx="2" fill="#3f8f6f"/>
-<text x="622.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.16x</text>
-<text x="360.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#8a8a8a" text-anchor="middle">SIMD speedup over scalar on the same machine. One machine per architecture; ratios only. median of 7.</text>
+<text x="480.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="486" y="95" width="47.2" height="13" rx="2" fill="#8f7f5f"/>
+<text x="538.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.11x</text>
+<text x="8.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
+<line x1="126.0" y1="170" x2="126.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="126.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="160.0" y1="170" x2="160.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="160.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="194.0" y1="170" x2="194.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="194.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
+<line x1="228.0" y1="170" x2="228.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="228.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
+<line x1="262.0" y1="170" x2="262.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="262.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
+<line x1="296.0" y1="170" x2="296.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="296.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">5</text>
+<text x="120.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
+<rect x="126" y="173" width="151.4" height="13" rx="2" fill="#5faf5f"/>
+<text x="282.4" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">4.45x</text>
+<text x="120.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
+<rect x="126" y="193" width="84.4" height="13" rx="2" fill="#8a7faf"/>
+<text x="215.4" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.48x</text>
+<text x="120.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
+<rect x="126" y="213" width="49.1" height="13" rx="2" fill="#3f8f6f"/>
+<text x="180.1" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.44x</text>
+<text x="120.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="126" y="233" width="30.9" height="13" rx="2" fill="#8f7f5f"/>
+<text x="161.9" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.91x</text>
+<text x="368.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
+<line x1="486.0" y1="170" x2="486.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="486.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="520.0" y1="170" x2="520.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="520.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="554.0" y1="170" x2="554.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="554.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
+<line x1="588.0" y1="170" x2="588.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="588.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">3</text>
+<line x1="622.0" y1="170" x2="622.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="622.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
+<line x1="656.0" y1="170" x2="656.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="656.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">5</text>
+<text x="480.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
+<rect x="486" y="173" width="147.1" height="13" rx="2" fill="#5faf5f"/>
+<text x="638.1" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">4.33x</text>
+<text x="480.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
+<rect x="486" y="193" width="76.7" height="13" rx="2" fill="#8a7faf"/>
+<text x="567.7" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.26x</text>
+<text x="480.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
+<rect x="486" y="213" width="51.4" height="13" rx="2" fill="#3f8f6f"/>
+<text x="542.4" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.51x</text>
+<text x="480.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="486" y="233" width="42.5" height="13" rx="2" fill="#8f7f5f"/>
+<text x="533.5" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.25x</text>
+<text x="8.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
+<line x1="126.0" y1="308" x2="126.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="126.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="182.7" y1="308" x2="182.7" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="182.7" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<line x1="239.3" y1="308" x2="239.3" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="239.3" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="296.0" y1="308" x2="296.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="296.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
+<text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
+<rect x="126" y="311" width="164.4" height="13" rx="2" fill="#8a7faf"/>
+<text x="295.4" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>
+<text x="120.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
+<rect x="126" y="331" width="159.2" height="13" rx="2" fill="#3f8f6f"/>
+<text x="290.2" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.40x</text>
+<text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="126" y="351" width="125.9" height="13" rx="2" fill="#8f7f5f"/>
+<text x="256.9" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.11x</text>
+<text x="368.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
+<line x1="486.0" y1="308" x2="486.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="486.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="542.7" y1="308" x2="542.7" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="542.7" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<line x1="599.3" y1="308" x2="599.3" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="599.3" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="656.0" y1="308" x2="656.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="656.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
+<text x="480.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
+<rect x="486" y="311" width="122.8" height="13" rx="2" fill="#5faf5f"/>
+<text x="613.8" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.08x</text>
+<text x="480.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
+<rect x="486" y="331" width="105.6" height="13" rx="2" fill="#8a7faf"/>
+<text x="596.6" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.93x</text>
+<text x="480.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
+<rect x="486" y="351" width="131.0" height="13" rx="2" fill="#3f8f6f"/>
+<text x="622.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.16x</text>
+<text x="480.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="486" y="371" width="113.3" height="13" rx="2" fill="#8f7f5f"/>
+<text x="604.3" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.00x</text>
+<text x="360.0" y="422.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#8a8a8a" text-anchor="middle">SIMD speedup over scalar on the same machine. One machine per architecture; ratios only. median of 7.</text>
 </svg>
