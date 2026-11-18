@@ -288,11 +288,16 @@ Ladv_done:
     vmor.mm v0, v0, v6
     vfirst.m t5, v0
     bgez t5, Lerror
+    li a6, 0xEF
+    vmsgtu.vx v1, v8, a6
+    vmand.mm v1, v1, v5
+    vfirst.m t6, v1
+    bgez t6, Ldecode_4byte
     li a6, 0xDF
     vmsgtu.vx v1, v8, a6
     vmand.mm v1, v1, v5
     vfirst.m t6, v1
-    bgez t6, Ldecode_full
+    bgez t6, Ldecode_3byte
     addi t3, t2, 1
     vle8.v v9, (t3)
     li a6, -65
@@ -324,7 +329,58 @@ Ladv_done:
     add t1, t1, t5
     add t0, t0, t4
     j Lloop
-Ldecode_full:
+Ldecode_3byte:
+    addi t3, t2, 1
+    vle8.v v9, (t3)
+    addi t3, t2, 2
+    vle8.v v10, (t3)
+    li a6, -65
+    vmsgt.vx v0, v8, a6
+    vmand.mm v0, v0, v5
+    vcpop.m t5, v0
+    vcompress.vm v16, v8, v0
+    vcompress.vm v17, v9, v0
+    vcompress.vm v18, v10, v0
+    vsetvli zero, t5, e8, m1, ta, ma
+    li a6, 0x3F
+    vand.vx v17, v17, a6
+    vand.vx v18, v18, a6
+    li a6, 0xBF
+    vmsgtu.vx v1, v16, a6
+    li a6, 0xDF
+    vmsgtu.vx v2, v16, a6
+    li a6, 0x3F
+    vand.vx v19, v16, a6
+    vmv1r.v v0, v1
+    vmerge.vvm v19, v16, v19, v0
+    li a6, 0x0F
+    vand.vx v20, v16, a6
+    vmv1r.v v0, v2
+    vmerge.vvm v19, v19, v20, v0
+    vmv.v.i v20, 1
+    li a6, 64
+    vmv.v.x v21, a6
+    vmv1r.v v0, v1
+    vmerge.vvm v20, v20, v21, v0
+    vwmulu.vv v10, v19, v20
+    vmv1r.v v0, v1
+    vwaddu.wv v10, v10, v17, v0.t
+    vsetvli zero, t5, e16, m2, ta, ma
+    vmv.v.v v12, v10
+    vsll.vi v12, v12, 6
+    vzext.vf2 v14, v18
+    vor.vv v12, v12, v14
+    vmv1r.v v0, v2
+    vmerge.vvm v10, v10, v12, v0
+    vsetvli zero, t5, e32, m4, ta, ma
+    vzext.vf2 v8, v10
+    slli a7, t1, 2
+    add a7, a1, a7
+    vse32.v v8, (a7)
+    add t1, t1, t5
+    add t0, t0, t4
+    j Lloop
+Ldecode_4byte:
     addi t3, t2, 1
     vle8.v v9, (t3)
     addi t3, t2, 2
