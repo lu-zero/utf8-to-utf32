@@ -361,6 +361,11 @@ Ladv_done:
     slli a7, t1, 2
     add a7, a1, a7
 
+    vsetvli x0, t2, e8, mf2, ta, ma
+    addi t3, sp, 96
+    vle8.v v8, (t3)
+    li a6, -65
+    vmsgt.vx v0, v8, a6
     vsetvli x0, t2, e32, m2, ta, ma
     vle8.v v2, (sp)
     vzext.vf4 v10, v2
@@ -374,15 +379,6 @@ Ladv_done:
     vsll.vi v14, v14, 16
     vor.vv v10, v10, v12
     vor.vv v10, v10, v14
-    addi t3, sp, 96
-    vle8.v v8, (t3)
-    vzext.vf4 v16, v8
-    li a6, 0x7f
-    vmsgtu.vx v0, v16, a6
-    li a6, 0xc0
-    vmsltu.vx v1, v16, a6
-    vmand.mm v0, v0, v1
-    vmnot.m v0, v0
     vpopc.m t6, v0
     vcompress.vm v20, v10, v0
     vse32.v v20, (a7)
@@ -391,6 +387,11 @@ Ladv_done:
 
     add t5, t5, t6
     addi t2, t4, -16
+    vsetvli x0, t2, e8, mf2, ta, ma
+    addi t3, sp, 112
+    vle8.v v8, (t3)
+    li a6, -65
+    vmsgt.vx v0, v8, a6
     vsetvli x0, t2, e32, m2, ta, ma
     addi t3, sp, 16
     vle8.v v2, (t3)
@@ -405,15 +406,6 @@ Ladv_done:
     vsll.vi v14, v14, 16
     vor.vv v10, v10, v12
     vor.vv v10, v10, v14
-    addi t3, sp, 112
-    vle8.v v8, (t3)
-    vzext.vf4 v16, v8
-    li a6, 0x7f
-    vmsgtu.vx v0, v16, a6
-    li a6, 0xc0
-    vmsltu.vx v1, v16, a6
-    vmand.mm v0, v0, v1
-    vmnot.m v0, v0
     vpopc.m t6, v0
     vcompress.vm v20, v10, v0
     vse32.v v20, (a7)
