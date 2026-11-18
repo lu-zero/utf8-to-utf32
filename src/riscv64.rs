@@ -208,6 +208,7 @@ rvv_blocks:
     vle8.v v29, (a6)
     la a6, {t2h}
     vle8.v v30, (a6)
+    vid.v v24
 Lloop:
     sub t3, a2, t0
     addi a6, a3, 3
@@ -217,6 +218,8 @@ Lloop:
     mv t3, a3
 Ln_ok:
     add t2, a0, t0
+    vsetvli zero, t3, e8, m1, ta, ma
+    vle8.v v8, (t2)
     addi t6, t2, -1
     add t6, t6, t3
     lbu t6, 0(t6)
@@ -243,8 +246,6 @@ Ladv3:
 Ladv32:
     mv t4, t3
 Ladv_done:
-    vsetvli zero, t3, e8, m1, ta, ma
-    vle8.v v8, (t2)
     li a6, 0x7f
     vmsgtu.vx v0, v8, a6
     vfirst.m t6, v0
@@ -270,8 +271,7 @@ Ladv_done:
     vmsgtu.vx v3, v12, a6
     vmor.mm v1, v2, v3
     vmxor.mm v0, v0, v1
-    vid.v v23
-    vmsltu.vx v5, v23, t4
+    vmsltu.vx v5, v24, t4
     vmand.mm v0, v0, v5
     li a6, 0xbf
     vmsgtu.vx v7, v10, a6
@@ -390,8 +390,7 @@ Ladv_done:
     add a7, a7, t3
 
     add t5, t5, t6
-    li t2, 16
-    sub t2, t4, t2
+    addi t2, t4, -16
     vsetvli x0, t2, e32, m2, ta, ma
     addi t3, sp, 16
     vle8.v v2, (t3)
@@ -418,8 +417,6 @@ Ladv_done:
     vpopc.m t6, v0
     vcompress.vm v20, v10, v0
     vse32.v v20, (a7)
-    slli t3, t6, 2
-    add a7, a7, t3
 
     add t5, t5, t6
     add t1, t1, t5
