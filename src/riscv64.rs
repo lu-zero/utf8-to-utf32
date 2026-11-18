@@ -53,8 +53,8 @@ unsafe fn non_ascii_at(p: *const u8, n: usize) -> isize {
         asm!(
             "vsetvli {vl}, {n}, e8, m1, ta, ma",
             "vle8.v v1, ({p})",
-            "li t0, 0x80",
-            "vmsgeu.vx v0, v1, t0",
+            "li t0, 0x7f",
+            "vmsgtu.vx v0, v1, t0",
             "vfirst.m {first}, v0",
             vl = out(reg) _,
             n = in(reg) n,
@@ -102,9 +102,9 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
             "vle8.v v1, ({p})", "vle8.v v2, ({p1})",
             "vle8.v v3, ({p2})", "vle8.v v4, ({p3})",
 
-            "vmsgeu.vx v5, v1, {cc0}",
-            "vmsgeu.vx v6, v1, {ce0}",
-            "vmsgeu.vx v7, v1, {cf0}",
+            "vmsgtu.vx v5, v1, {cbf}",
+            "vmsgtu.vx v6, v1, {cdf}",
+            "vmsgtu.vx v7, v1, {cef}",
 
             // low byte candidates
             "vand.vx v8, v4, {c3f}", "vsll.vi v9, v3, 6", "vor.vv v8, v9, v8",
@@ -148,7 +148,7 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
             "vsll.vi v8, v8, 8", "vsll.vi v10, v10, 16",
             "vor.vv v6, v6, v8", "vor.vv v6, v6, v10",
             "vle8.v v5, ({db0})", "vzext.vf4 v12, v5",
-            "vmsgeu.vx v0, v12, {c80}",
+            "vmsgtu.vx v0, v12, {c7f}",
             "vmsltu.vx v1, v12, {cc0}",
             "vmand.mm v0, v0, v1", "vmnot.m v0, v0",
             "vid.v v14", "vmsltu.vx v1, v14, {rem}", "vmand.mm v0, v0, v1",
@@ -165,8 +165,8 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
 
             adv = in(reg) adv,
             c3f = in(reg) 0x3fusize, c30 = in(reg) 0x30usize, c3c = in(reg) 0x3cusize,
-            c80 = in(reg) 0x80usize, cc0 = in(reg) 0xc0usize,
-            ce0 = in(reg) 0xe0usize, cf0 = in(reg) 0xf0usize,
+            c7f = in(reg) 0x7fusize, cc0 = in(reg) 0xc0usize,
+            cbf = in(reg) 0xbfusize, cdf = in(reg) 0xdfusize, cef = in(reg) 0xefusize,
             p = in(reg) p, p1 = in(reg) p.add(1),
             p2 = in(reg) p.add(2), p3 = in(reg) p.add(3),
             d = in(reg) dst.add(o),
