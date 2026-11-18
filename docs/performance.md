@@ -18,7 +18,7 @@ The graph shows the ratio to scalar on the **same** machine, which is.
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
 | aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.34x | 1.44x | 1.51x | 1.40x | 1.16x |
-| Spacemit X60 / RVV | 1.20x | 1.11x | 0.91x | 1.25x | 1.11x | 1.00x |
+| Spacemit X60 / RVV | 2.33x | 2.22x | 1.82x | 2.38x | 1.33x | 1.00x |
 
 ![SIMD speedup over scalar by input type and architecture](performance-summary.svg)
 
@@ -84,16 +84,18 @@ but about half the speed on error-dense input; see
 
 ## riscv64 (RVV)
 
-Measured on one Spacemit X60 machine with 256-bit vectors, Rust 1.102 nightly,
-`--features rvv`, LTO release build: GB/s of UTF-8 input, median of 7 runs over
-about 1 MB.
+Measured on one Spacemit X60 machine with 256-bit vectors (VLEN=256), Rust
+1.102 nightly, `--features rvv`, LTO release build: GB/s of UTF-8 input, median
+of 7 runs over about 1 MB.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
+| this crate, rvv slice fn | 0.93 | 0.20 | 0.20 | 0.19 | 0.12 | – |
 
-RVV requires 256-bit vectors and its hot loop is one `global_asm!` function. It
-wins on ASCII, Latin, box drawing and emoji, but is slightly behind scalar on
-CJK; see [the RVV architecture page](architecture/riscv.md). Full output:
+On this machine the RVV kernel is faster than scalar on ASCII, Latin, CJK, box
+drawing and emoji, and matches scalar on dirty lossy input; see
+[the RVV architecture page](architecture/riscv.md). Full output:
 [`riscv.md`](../bench/results/riscv.md).
+
+![GB/s by implementation and input type on Spacemit X60 (RVV)](performance-riscv.svg)

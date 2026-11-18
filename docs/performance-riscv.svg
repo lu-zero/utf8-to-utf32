@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="516" viewBox="0 0 720 363" role="img" aria-label="UTF-8 to UTF-32 throughput in GB/s, by input type and implementation.">
+<rect width="720" height="363" fill="none"/>
+<text x="8.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">ASCII</text>
+<line x1="102.0" y1="32" x2="102.0" y2="89" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="102.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="300.0" y1="32" x2="300.0" y2="89" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="300.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="96.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
+<rect x="102" y="35" width="158.4" height="13" rx="2" fill="#d78787"/>
+<text x="265.4" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.40</text>
+<text x="96.0" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
+<rect x="102" y="54" width="55.4" height="13" rx="2" fill="#87afaf"/>
+<text x="162.4" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.14</text>
+<text x="96.0" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="102" y="73" width="158.4" height="13" rx="2" fill="#8a8a8a"/>
+<text x="265.4" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.40</text>
+<text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
+<line x1="462.0" y1="32" x2="462.0" y2="89" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="462.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="660.0" y1="32" x2="660.0" y2="89" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="660.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="456.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
+<rect x="462" y="35" width="15.8" height="13" rx="2" fill="#d78787"/>
+<text x="482.8" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.04</text>
+<text x="456.0" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
+<rect x="462" y="54" width="35.6" height="13" rx="2" fill="#87afaf"/>
+<text x="502.6" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.09</text>
+<text x="456.0" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="462" y="73" width="35.6" height="13" rx="2" fill="#8a8a8a"/>
+<text x="502.6" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.09</text>
+<text x="8.0" y="135.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
+<line x1="102.0" y1="147" x2="102.0" y2="204" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="102.0" y="218.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="300.0" y1="147" x2="300.0" y2="204" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="300.0" y="218.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="96.0" y="161.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
+<rect x="102" y="150" width="27.7" height="13" rx="2" fill="#d78787"/>
+<text x="134.7" y="161.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.07</text>
+<text x="96.0" y="180.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
+<rect x="102" y="169" width="43.6" height="13" rx="2" fill="#87afaf"/>
+<text x="150.6" y="180.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.11</text>
+<text x="96.0" y="199.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="102" y="188" width="43.6" height="13" rx="2" fill="#8a8a8a"/>
+<text x="150.6" y="199.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.11</text>
+<text x="368.0" y="135.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
+<line x1="462.0" y1="147" x2="462.0" y2="204" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="462.0" y="218.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="660.0" y1="147" x2="660.0" y2="204" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="660.0" y="218.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="456.0" y="161.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
+<rect x="462" y="150" width="15.8" height="13" rx="2" fill="#d78787"/>
+<text x="482.8" y="161.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.04</text>
+<text x="456.0" y="180.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
+<rect x="462" y="169" width="35.6" height="13" rx="2" fill="#87afaf"/>
+<text x="502.6" y="180.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.09</text>
+<text x="456.0" y="199.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="462" y="188" width="31.7" height="13" rx="2" fill="#8a8a8a"/>
+<text x="498.7" y="199.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.08</text>
+<text x="8.0" y="250.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
+<line x1="102.0" y1="262" x2="102.0" y2="319" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="102.0" y="333.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="300.0" y1="262" x2="300.0" y2="319" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="300.0" y="333.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="96.0" y="276.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
+<rect x="102" y="265" width="19.8" height="13" rx="2" fill="#d78787"/>
+<text x="126.8" y="276.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.05</text>
+<text x="96.0" y="295.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
+<rect x="102" y="284" width="43.6" height="13" rx="2" fill="#87afaf"/>
+<text x="150.6" y="295.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.11</text>
+<text x="96.0" y="314.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="102" y="303" width="35.6" height="13" rx="2" fill="#8a8a8a"/>
+<text x="142.6" y="314.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.09</text>
+<text x="368.0" y="250.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
+<line x1="462.0" y1="262" x2="462.0" y2="281" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="462.0" y="295.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="660.0" y1="262" x2="660.0" y2="281" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="660.0" y="295.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<text x="456.0" y="276.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
+<rect x="462" y="265" width="31.7" height="13" rx="2" fill="#8a8a8a"/>
+<text x="498.7" y="276.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.08</text>
+<text x="360.0" y="353.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#8a8a8a" text-anchor="middle">GB/s of UTF-8 input, higher is better. Spacemit X60, 256-bit vectors (VLEN=256), median of 7.</text>
+</svg>

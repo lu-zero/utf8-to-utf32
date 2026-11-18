@@ -19,8 +19,8 @@
 <rect x="126" y="75" width="156.7" height="13" rx="2" fill="#3f8f6f"/>
 <text x="287.7" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.77x</text>
 <text x="120.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="95" width="68.0" height="13" rx="2" fill="#8f7f5f"/>
-<text x="199.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.20x</text>
+<rect x="126" y="95" width="131.8" height="13" rx="2" fill="#8f7f5f"/>
+<text x="262.8" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.33x</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
 <line x1="486.0" y1="32" x2="486.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -42,8 +42,8 @@
 <rect x="486" y="75" width="57.2" height="13" rx="2" fill="#3f8f6f"/>
 <text x="548.2" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.34x</text>
 <text x="480.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="486" y="95" width="47.2" height="13" rx="2" fill="#8f7f5f"/>
-<text x="538.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.11x</text>
+<rect x="486" y="95" width="94.4" height="13" rx="2" fill="#8f7f5f"/>
+<text x="585.4" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.22x</text>
 <text x="8.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
 <line x1="126.0" y1="170" x2="126.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="126.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -67,8 +67,8 @@
 <rect x="126" y="213" width="49.1" height="13" rx="2" fill="#3f8f6f"/>
 <text x="180.1" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.44x</text>
 <text x="120.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="233" width="30.9" height="13" rx="2" fill="#8f7f5f"/>
-<text x="161.9" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.91x</text>
+<rect x="126" y="233" width="61.8" height="13" rx="2" fill="#8f7f5f"/>
+<text x="192.8" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.82x</text>
 <text x="368.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
 <line x1="486.0" y1="170" x2="486.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -92,8 +92,8 @@
 <rect x="486" y="213" width="51.4" height="13" rx="2" fill="#3f8f6f"/>
 <text x="542.4" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.51x</text>
 <text x="480.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="486" y="233" width="42.5" height="13" rx="2" fill="#8f7f5f"/>
-<text x="533.5" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.25x</text>
+<rect x="486" y="233" width="80.8" height="13" rx="2" fill="#8f7f5f"/>
+<text x="571.8" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">2.38x</text>
 <text x="8.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
 <line x1="126.0" y1="308" x2="126.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="126.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -110,8 +110,8 @@
 <rect x="126" y="331" width="159.2" height="13" rx="2" fill="#3f8f6f"/>
 <text x="290.2" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.40x</text>
 <text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="351" width="125.9" height="13" rx="2" fill="#8f7f5f"/>
-<text x="256.9" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.11x</text>
+<rect x="126" y="351" width="151.1" height="13" rx="2" fill="#8f7f5f"/>
+<text x="282.1" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.33x</text>
 <text x="368.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="486.0" y1="308" x2="486.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
