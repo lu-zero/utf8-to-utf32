@@ -170,9 +170,10 @@ full validator (running it on every block had made ASCII 0.15 GB/s), and
 widening with `e32, m4` in one instruction group instead of an m1 loop. The
 source and destination must not share the `v0..=v3` register group: `v1`/`v2`
 traps with SIGILL, while the first version's `v4`/`v8` and the current
-global-asm `v16`/`v20` are safe. Going VLA kept throughput on this machine,
-where a full register is already 32 bytes; it should use wider registers of
-other implementations without a rewrite.
+global-asm `v16`/`v20` are safe. The ASCII path is VLA in `vl` and kept
+throughput on this machine, where a full register is already 32 bytes; the
+non-ASCII decode remains fixed to VLEN=256 because of its 32-byte buffers
+and two 16-lane groups.
 
 ## Why the hot loop is `global_asm!`
 
