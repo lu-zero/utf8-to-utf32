@@ -245,10 +245,10 @@ Ladv32:
 Ladv_done:
     vsetvli zero, t3, e8, m1, ta, ma
     vle8.v v8, (t2)
-    li a6, 0x80
-    vmsgeu.vx v0, v8, a6
-    vfirst.m a7, v0
-    bltz a7, Lascii
+    li a6, 0x7f
+    vmsgtu.vx v0, v8, a6
+    vfirst.m t6, v0
+    bltz t6, Lascii
     vmv.v.i v10, 0
     vslideup.vi v10, v8, 1
     vmv.v.i v11, 0
@@ -264,22 +264,22 @@ Ladv_done:
     vand.vv v16, v16, v17
     vand.vv v16, v16, v18
     vmsne.vi v0, v16, 0
-    li a6, 0xe0
-    vmsgeu.vx v2, v11, a6
-    li a6, 0xf0
-    vmsgeu.vx v3, v12, a6
+    li a6, 0xdf
+    vmsgtu.vx v2, v11, a6
+    li a6, 0xef
+    vmsgtu.vx v3, v12, a6
     vmor.mm v1, v2, v3
     vmxor.mm v0, v0, v1
     vid.v v23
     vmsltu.vx v5, v23, t4
     vmand.mm v0, v0, v5
-    li a6, 0xc0
-    vmsgeu.vx v7, v10, a6
+    li a6, 0xbf
+    vmsgtu.vx v7, v10, a6
     vmor.mm v7, v7, v1
     vmnot.m v6, v5
     vmand.mm v6, v6, v7
-    li a6, 0x80
-    vmsgeu.vx v7, v8, a6
+    li a6, 0x7f
+    vmsgtu.vx v7, v8, a6
     li a6, 0xc0
     vmsltu.vx v4, v8, a6
     vmand.mm v7, v7, v4
@@ -305,12 +305,12 @@ Ladv_done:
     vsll.vi v19, v8, 6
     vor.vv v18, v19, v18
     vmv.v.v v20, v8
-    li a6, 0xc0
-    vmsgeu.vx v5, v8, a6
-    li a6, 0xe0
-    vmsgeu.vx v6, v8, a6
-    li a6, 0xf0
-    vmsgeu.vx v7, v8, a6
+    li a6, 0xbf
+    vmsgtu.vx v5, v8, a6
+    li a6, 0xdf
+    vmsgtu.vx v6, v8, a6
+    li a6, 0xef
+    vmsgtu.vx v7, v8, a6
     vmv.v.v v0, v5
     vmerge.vvm v20, v20, v18, v0
     vmv.v.v v0, v6
@@ -377,16 +377,12 @@ Ladv_done:
     addi t3, sp, 96
     vle8.v v8, (t3)
     vzext.vf4 v16, v8
-    li a6, 0x80
-    vmsgeu.vx v0, v16, a6
+    li a6, 0x7f
+    vmsgtu.vx v0, v16, a6
     li a6, 0xc0
     vmsltu.vx v1, v16, a6
     vmand.mm v0, v0, v1
     vmnot.m v0, v0
-    vid.v v18
-    li a6, 16
-    vmsltu.vx v1, v18, a6
-    vmand.mm v0, v0, v1
     vpopc.m t6, v0
     vcompress.vm v20, v10, v0
     vse32.v v20, (a7)
@@ -413,15 +409,12 @@ Ladv_done:
     addi t3, sp, 112
     vle8.v v8, (t3)
     vzext.vf4 v16, v8
-    li a6, 0x80
-    vmsgeu.vx v0, v16, a6
+    li a6, 0x7f
+    vmsgtu.vx v0, v16, a6
     li a6, 0xc0
     vmsltu.vx v1, v16, a6
     vmand.mm v0, v0, v1
     vmnot.m v0, v0
-    vid.v v18
-    vmsltu.vx v1, v18, t2
-    vmand.mm v0, v0, v1
     vpopc.m t6, v0
     vcompress.vm v20, v10, v0
     vse32.v v20, (a7)
