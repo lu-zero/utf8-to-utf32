@@ -212,3 +212,11 @@ for a bare `global_asm!` block. The tables are Rust statics referenced with
   naming but do not model this state.
 - **`vrgather.vv` is a general gather**, not a dedicated table shuffle like
   NEON `tbl` or VSX `vec_perm`. This one is hardware, not compiler.
+
+## Acknowledgements
+
+The signed-byte non-continuation mask and the max-classified 1-2/1-3 byte
+decode fast paths are inspired by [Olaf Bernstein’s `rvv-bench`
+`vector-utf`](https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c)
+and its accompanying [article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html)
+(MIT). No code was copied from `rvv-bench`.

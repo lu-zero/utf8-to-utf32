@@ -88,6 +88,14 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 - [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its SWAR masks and the measured `Decoder` cost on error-dense input.
 - [docs/architecture/riscv.md](docs/architecture/riscv.md): the RVV kernel, its inline-asm design and the VLA block contract.
 
+## Acknowledgements
+
+Some RVV kernel optimizations (the signed-byte non-continuation mask and the
+1-2/1-3 byte decode fast paths) are inspired by [Olaf Bernstein’s `rvv-bench`
+`vector-utf`](https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c)
+([article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html),
+MIT). No code was copied from `rvv-bench`.
+
 ## License
 
 Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT), at your option.
