@@ -119,7 +119,8 @@ after moving the whole-vector ASCII test ahead of the SWAR movemask in
 
 `tests/conformance.rs` runs every supported level, so VSX is checked against
 `core::str::from_utf8` and `utf8_chunks` on random and structured inputs with
-block-boundary sweeps. `tests/exhaustive_neon.rs` also runs every level, but its
-64-byte buffers never enter the SIMD loop, so on powerpc64 it only exercises the
-scalar path. Run `cargo +nightly test --release --features vsx` on a POWER9
-machine after a change to the validator, the tables or a decode path.
+block-boundary sweeps. `tests/exhaustive_neon.rs` also runs every level. Its
+buffers are 96 bytes, so the `i + 80 <= len` loop runs and the lookup tables
+are checked, not only the scalar tail. Run
+`cargo +nightly test --release --features vsx` on a POWER9 machine after a
+change to the validator, the tables or a decode path.
