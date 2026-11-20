@@ -17,13 +17,13 @@ property of the code.
 
 - Before a commit: `cargo fmt --all -- --check`, `cargo test --release`, and
   `cargo build --no-default-features`. The release profile matters: the
-  `test` profile is `opt-level = 2` and `tests/exhaustive_neon.rs` takes about
+  `test` profile is `opt-level = 2` and `tests/exhaustive.rs` takes about
   a minute in release on the Ampere-1a machine.
 - Run `cargo test` on a machine of the architecture you changed. The kernels
   are `unsafe` and only the one your CPU supports runs. An x86 change made on
   aarch64 gets `cargo check --target x86_64-unknown-linux-gnu` and is reported
   as **not run**. Never describe it as tested.
-- `tests/exhaustive_neon.rs` runs every supported level, not only NEON. Run it
+- `tests/exhaustive.rs` runs every supported level. Run it
   after any change to a validator, a table, or a decode path.
 - The crate has no dependencies, and `bench/` is the only place that may have
   them. `rust-version` stays at 1.89, the release that stabilized the AVX-512

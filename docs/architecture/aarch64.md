@@ -106,7 +106,7 @@ Two points matter for correctness:
   and the saturating subtracts. That is what makes Latin text about 15%
   faster.
 
-`tests/exhaustive_neon.rs` checks these tables against `std` for every
+`tests/exhaustive.rs` checks these tables against `std` for every
 3-byte combination at offsets that straddle the vector boundaries.
 
 ## The lead mask

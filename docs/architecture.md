@@ -193,7 +193,7 @@ and are design decisions rather than fixes to this loop.
 | Path | What it covers |
 |---|---|
 | `tests/conformance.rs` | Every supported level against `core::str::from_utf8`, `utf8_chunks` and the lossy modes, on random and structured inputs, with block-boundary sweeps. |
-| `tests/exhaustive_neon.rs` | Every 3-byte combination at several offsets, and sampled 4-byte tails, against `std`. It runs every supported level, not only NEON, and is the check to run after touching any validator. |
+| `tests/exhaustive.rs` | Every 3-byte combination at several offsets, and sampled 4-byte tails, against `std`. It runs every supported level, and is the check to run after touching any validator. |
 | `bench/` | `utf32-bench` compares all levels with simdutf (C++), simdutf8 and `std`. `bench/results/` keeps the output per machine. |
 
 VSX is gated behind the `vsx` Cargo feature and needs a nightly toolchain and

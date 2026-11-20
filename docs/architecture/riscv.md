@@ -79,7 +79,7 @@ invisible if `adv` were the vector length. `adv` is applied only as a mask on
 the error result. Getting this wrong made the validator silently accept invalid
 input when the hot loop was first moved into global asm.
 
-`tests/conformance.rs` and `tests/exhaustive_neon.rs` run every supported level,
+`tests/conformance.rs` and `tests/exhaustive.rs` run every supported level,
 so the RVV validator is checked against `core::str::from_utf8` and
 `utf8_chunks` on random, structured and exhaustive inputs, including block
 boundaries. On a riscv64 machine run `cargo +nightly test --release --features
