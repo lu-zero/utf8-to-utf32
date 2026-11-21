@@ -16,7 +16,7 @@ The graph shows the ratio to scalar on the **same** machine, which is.
 | Speedup over scalar | ASCII | Latin (2-byte) | CJK (3-byte) | box drawing and ASCII | emoji (4-byte) | dirty: lossy, errors every ~12 B |
 |---|---|---|---|---|---|---|
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
-| aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
+| aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
 | Spacemit X60 / RVV | 2.47x | 2.22x | 1.82x | 2.38x | 1.44x | 1.00x |
 
@@ -34,7 +34,7 @@ input, where the strict rows cannot run, the competitor is `utf8_chunks` +
 | Our SIMD vs best other | ASCII | Latin (2-byte) | CJK (3-byte) | box drawing and ASCII | emoji (4-byte) | dirty: lossy, errors every ~12 B |
 |---|---|---|---|---|---|---|
 | x86 / AVX-512 | 1.29x | 1.38x | 1.21x | 1.22x | – | 1.05x |
-| aarch64 / NEON | 0.77x | 1.59x | 0.98x | 1.58x | 1.12x | 1.78x |
+| aarch64 / NEON | 0.83x | 1.61x | 0.96x | 1.68x | 1.10x | 1.78x |
 | POWER9 / VSX | 1.38x | 1.73x | 1.11x | 1.84x | 1.45x | 1.85x |
 | Spacemit X60 / RVV | 2.47x | 2.22x | 1.82x | 2.11x | 1.18x | 1.14x |
 
@@ -76,15 +76,17 @@ identified), Rust 1.100, same method as above.
 
 | GB/s | ascii | latin | cjk | box drawing | emoji | dirty |
 |---|---|---|---|---|---|---|
-| simdutf 0.7 (C++) | 10.15 | 1.33 | 2.01 | 1.11 | 1.19 | – |
-| std `from_utf8` + `chars()` | 0.82 | 0.47 | 0.55 | 0.47 | 0.54 | – |
-| this crate, scalar | 4.51 | 1.06 | 0.79 | 0.82 | 0.91 | 0.88 |
-| this crate, neon | 7–9 | 2.16 | 1.96 | 1.85 | 1.32 | 0.82 |
+| simdutf 0.7 (C++) | 9.70 | 1.36 | 2.01 | 1.11 | 1.19 | – |
+| std `from_utf8` + `chars()` | 0.82 | 0.46 | 0.55 | 0.47 | 0.54 | – |
+| this crate, scalar | 4.52 | 1.06 | 0.78 | 0.82 | 0.91 | 0.88 |
+| this crate, neon | 8.02 | 2.19 | 1.92 | 1.87 | 1.31 | 0.82 |
 
 "Dirty" input (an error every ~12 bytes) is the one case where NEON is slightly
 slower than scalar; after an error the kernel backs off to scalar for a growing
-stretch. ASCII varies by about 20% between builds with code layout. Full
-output: [`neon.md`](../bench/results/neon.md).
+stretch. ASCII is strongly build-dependent on this machine: four runs of the
+same code put this kernel at 7.6–9.0 GB/s and simdutf at 7.0–10.5 GB/s, so the
+ordering of those two rows is not stable. The other classes vary by a few
+hundredths. Full output: [`neon.md`](../bench/results/neon.md).
 
 ![GB/s by implementation and input type on aarch64](performance-aarch64.svg)
 

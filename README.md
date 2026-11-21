@@ -73,14 +73,15 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 | Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
 |---|---|---|---|---|---|---|
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
-| aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
+| aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
 | Spacemit X60 / RVV | 2.47x | 2.22x | 1.82x | 2.38x | 1.44x | 1.00x |
 
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
 Against other implementations on the same machine, our SIMD levels lead on every
-input class except NEON ASCII and CJK, where simdutf C++ is ahead; see the
+input class except NEON ASCII and CJK, where simdutf C++ is ahead in the recorded
+run; the ASCII ordering is not stable across builds on that machine. See the
 [cross-implementation graph](docs/performance-competitors.svg) and its table in
 [docs/performance.md](docs/performance.md#versus-other-implementations).
 

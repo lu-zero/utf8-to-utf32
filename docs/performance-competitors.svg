@@ -17,8 +17,8 @@
 <rect x="126" y="35" width="87.7" height="13" rx="2" fill="#5faf5f"/>
 <text x="218.7" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.29x</text>
 <text x="120.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="55" width="52.3" height="13" rx="2" fill="#8a7faf"/>
-<text x="183.3" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.77x</text>
+<rect x="126" y="55" width="56.2" height="13" rx="2" fill="#8a7faf"/>
+<text x="187.2" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.83x</text>
 <text x="120.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="75" width="93.8" height="13" rx="2" fill="#3f8f6f"/>
 <text x="224.8" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.38x</text>
@@ -42,8 +42,8 @@
 <rect x="486" y="35" width="93.6" height="13" rx="2" fill="#5faf5f"/>
 <text x="584.6" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.38x</text>
 <text x="480.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="486" y="55" width="108.0" height="13" rx="2" fill="#8a7faf"/>
-<text x="599.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.59x</text>
+<rect x="486" y="55" width="109.5" height="13" rx="2" fill="#8a7faf"/>
+<text x="600.5" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.61x</text>
 <text x="480.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="75" width="117.9" height="13" rx="2" fill="#3f8f6f"/>
 <text x="608.9" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.73x</text>
@@ -65,8 +65,8 @@
 <rect x="126" y="173" width="102.5" height="13" rx="2" fill="#5faf5f"/>
 <text x="233.5" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.21x</text>
 <text x="120.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="193" width="82.9" height="13" rx="2" fill="#8a7faf"/>
-<text x="213.9" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.98x</text>
+<rect x="126" y="193" width="81.2" height="13" rx="2" fill="#8a7faf"/>
+<text x="212.2" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.96x</text>
 <text x="120.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="213" width="94.6" height="13" rx="2" fill="#3f8f6f"/>
 <text x="225.6" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.11x</text>
@@ -90,8 +90,8 @@
 <rect x="486" y="173" width="82.9" height="13" rx="2" fill="#5faf5f"/>
 <text x="573.9" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.22x</text>
 <text x="480.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="486" y="193" width="107.5" height="13" rx="2" fill="#8a7faf"/>
-<text x="598.5" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.58x</text>
+<rect x="486" y="193" width="114.6" height="13" rx="2" fill="#8a7faf"/>
+<text x="605.6" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.68x</text>
 <text x="480.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="213" width="125.3" height="13" rx="2" fill="#3f8f6f"/>
 <text x="616.3" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.84x</text>
@@ -108,8 +108,8 @@
 <line x1="296.0" y1="308" x2="296.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="311" width="126.8" height="13" rx="2" fill="#8a7faf"/>
-<text x="257.8" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.12x</text>
+<rect x="126" y="311" width="124.8" height="13" rx="2" fill="#8a7faf"/>
+<text x="255.8" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.10x</text>
 <text x="120.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="331" width="164.6" height="13" rx="2" fill="#3f8f6f"/>
 <text x="295.6" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>

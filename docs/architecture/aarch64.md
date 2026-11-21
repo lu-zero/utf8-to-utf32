@@ -267,15 +267,16 @@ All numbers are GB/s on one aarch64 machine, from `bench/results/neon.md`
 | | ascii | latin | cjk | box | emoji | dirty |
 |---|---|---|---|---|---|---|
 | first NEON version (bitmasks) | 1.40 | 0.35 | 0.30 | 0.25 | – | 0.18 |
-| scalar | 4.53 | 1.06 | 0.79 | 0.82 | 0.91 | 0.88 |
-| **this kernel** | 8.05 | 2.16 | 1.96 | 1.85 | 1.32 | 0.82 |
-| simdutf 0.7 (C++) | 10.46 | 1.36 | 2.01 | 1.17 | 1.18 | – |
+| scalar | 4.52 | 1.06 | 0.78 | 0.82 | 0.91 | 0.88 |
+| **this kernel** | 8.02 | 2.19 | 1.92 | 1.87 | 1.31 | 0.82 |
+| simdutf 0.7 (C++) | 9.70 | 1.36 | 2.01 | 1.11 | 1.19 | – |
 
 ![GB/s by implementation and input type on aarch64](../performance-aarch64.svg)
 
 "Dirty" is lossy mode with C1 passthrough on input with an error every ~12
-bytes. ASCII moves by about 20% between builds with unrelated code changes
-(code layout), so read it as a range of 7 to 9.
+bytes. ASCII is strongly build-dependent here: four runs of the same code put
+this kernel at 7.6–9.0 GB/s and simdutf at 7.0–10.5 GB/s, so either row can come
+out ahead. The other classes vary by a few hundredths.
 
 ### Where the time goes
 
@@ -297,6 +298,7 @@ decoding replaced by a popcount) on the version before the last three tweaks:
 | `CNT8` instead of `count_ones` | Kept: 3 to 5%. |
 | Skip the second compaction store when the group has ≤ 4 characters | Kept: CJK 1.90 to about 2.0, others unchanged. |
 | `validate::<false>` for blocks below `0xE0` | Kept: Latin 1.87 to 2.17. |
+| Specialize uniform 3-byte quarters, skipping the `m2`/`m3` selects | Rejected. Detecting them needed an extra `movemask64` over four vectors, which cost more than the selects it removed: CJK 1.97 to 1.83, and every other class was slower too. A class signal has to come from masks the validator already computes, as on x86. |
 | Length-pattern tables (12-bit lead pattern → shuffle, as in simdutf) | Not built. The decomposition above bounds the gain: it would replace the two-`tbl` compaction but not the arithmetic, estimated at 0 to 10% for a 64 KiB table, serial steps and shorter advances on 3-byte text. |
 | SVE2 `COMPACT` | Not tried: no hardware with SVE available for testing, and the SVE intrinsics are not stable in Rust. It is the closest analogue of AVX-512 `vpcompress`. |
 
