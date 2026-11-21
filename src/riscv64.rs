@@ -226,6 +226,10 @@ Ln_ok:
     add t2, a0, t0
     vsetvli zero, t3, e8, m1, ta, ma
     vle8.v v8, (t2)
+    li a6, 0x7f
+    vmsgtu.vx v0, v8, a6
+    vfirst.m t6, v0
+    bltz t6, Lascii
     addi t6, t2, -1
     add t6, t6, t3
     lbu t6, 0(t6)
@@ -252,10 +256,6 @@ Ladv3:
 Ladv32:
     mv t4, t3
 Ladv_done:
-    li a6, 0x7f
-    vmsgtu.vx v0, v8, a6
-    vfirst.m t6, v0
-    bltz t6, Lascii
     vmv.v.i v10, 0
     vslideup.vi v10, v8, 1
     vmv.v.i v11, 0
@@ -440,9 +440,9 @@ Ldecode_4byte:
     add t0, t0, t4
     j Lloop
 Lascii:
+    mv t4, t3
     vsetvli zero, t4, e32, m4, ta, ma
-    vle8.v v16, (t2)
-    vzext.vf4 v20, v16
+    vzext.vf4 v20, v8
     slli a7, t1, 2
     add a7, a1, a7
     vse32.v v20, (a7)
