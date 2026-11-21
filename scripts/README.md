@@ -41,10 +41,12 @@ The competitor is the fastest of simdutf C++, simdutf8 + `chars()` and std
 `utf8_chunks` + `chars()` (C1).
 
 The RVV level needs nightly, the `rvv` feature and a CPU with the V extension;
-run the benchmark on a riscv64 machine:
+run the benchmark on a riscv64 machine. `CXXFLAGS` must enable the V extension
+for the bundled simdutf C++, otherwise its RVV backend is not compiled and the
+`simdutf C++ (strict)` row measures the generic scalar fallback instead:
 
 ```sh
-cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv | grep '^|' > bench/results/riscv.md
+CXXFLAGS="-march=rv64gcv" cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv | grep '^|' > bench/results/riscv.md
 ```
 
 The caption names the machine. It needs only Python 3. The colours are those

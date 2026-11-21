@@ -136,10 +136,14 @@ Measured on `f3_4`, a Spacemit X60 riscv64 machine with the V extension, with
 Rust 1.102 nightly, an LTO release build and `--features rvv`. Each figure is
 GB/s of UTF-8 input, the median of 7 runs of about 1 MB. The full table,
 including the other implementations, is in `bench/results/riscv.md`; it came
-from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
+from `CXXFLAGS="-march=rv64gcv" cargo +nightly run --release -p utf32-bench
+--features utf8-to-utf32/rvv`. The `CXXFLAGS` setting is required: without the V
+extension in the C++ build, simdutf's RVV backend is not compiled and its row
+measures the generic scalar fallback instead.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
+| simdutf 0.7 RVV | 1.28 | 0.28 | 0.37 | 0.30 | 0.27 | – |
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
 | RVV slice fn | 0.99 | 0.20 | 0.20 | 0.19 | 0.13 | – |
 | RVV lossy_into (C1) | 1.14 | 0.20 | 0.20 | 0.19 | 0.12 | 0.08 |
@@ -153,6 +157,16 @@ emoji keeps the full 4-byte path. The `Decoder`'s ASCII path is 2.59 against
 scalar's 0.69. Dirty input is about even in lossy mode; the `Decoder` is
 slower there (0.03 against 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
+
+The remaining headroom is substantial: simdutf's RVV backend, the `rvv-bench`
+implementation later upstreamed into simdutf, is faster on every clean class —
+1.28 against 0.99 on ASCII, 0.37 against 0.20 on CJK and 0.27 against 0.13 on
+emoji. It is VLA, streams b1..b4 through `vcompress` with an m2-to-2xm1 unroll,
+and has a dedicated 4-byte path. This kernel is fixed to VLEN=256, hands the
+SEW=8 result to SEW=32 through stack buffers, and keeps the general decode for
+emoji; removing the stack handoff was tried and regressed end-to-end, so it
+stays. Earlier result files recorded simdutf near scalar here, which was the
+scalar fallback from a C++ build without the V extension, not its vector code.
 
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
