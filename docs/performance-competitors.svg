@@ -19,8 +19,8 @@
 <rect x="126" y="75" width="156.4" height="13" rx="2" fill="#3f8f6f"/>
 <text x="287.4" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.38x</text>
 <text x="120.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="95" width="87.2" height="13" rx="2" fill="#8f7f5f"/>
-<text x="218.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.77x</text>
+<rect x="126" y="95" width="114.2" height="13" rx="2" fill="#8f7f5f"/>
+<text x="245.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.01x</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
 <line x1="486.0" y1="32" x2="486.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -104,8 +104,8 @@
 <rect x="126" y="331" width="164.6" height="13" rx="2" fill="#3f8f6f"/>
 <text x="295.6" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>
 <text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="351" width="76.9" height="13" rx="2" fill="#8f7f5f"/>
-<text x="207.9" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.68x</text>
+<rect x="126" y="351" width="79.8" height="13" rx="2" fill="#8f7f5f"/>
+<text x="210.8" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.70x</text>
 <text x="368.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="486.0" y1="308" x2="486.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>

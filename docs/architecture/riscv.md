@@ -148,29 +148,31 @@ measures the generic scalar fallback instead.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
-| simdutf 0.7 RVV | 1.30 | 0.28 | 0.37 | 0.30 | 0.28 | – |
-| scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 1.00 | 0.20 | 0.20 | 0.19 | 0.19 | – |
-| RVV lossy_into (C1) | 1.14 | 0.20 | 0.20 | 0.19 | 0.21 | 0.08 |
+| simdutf 0.7 RVV | 1.29 | 0.28 | 0.37 | 0.30 | 0.27 | – |
+| scalar slice fn | 0.39 | 0.09 | 0.11 | 0.08 | 0.09 | – |
+| RVV slice fn | 1.30 | 0.20 | 0.20 | 0.19 | 0.19 | – |
+| RVV lossy_into (C1) | 1.29 | 0.20 | 0.20 | 0.19 | 0.21 | 0.08 |
 
 The figures above are one run; the `bench/results/riscv.md` file is another,
 and the non-ASCII rows differ by a few hundredths between runs on this machine.
-RVV beats scalar on every clean class: 1.00 against 0.40 on ASCII, about 2x on
-Latin, CJK and box, and 0.19 against 0.09 on emoji. The non-ASCII gains come
-from the signed-byte lead mask, the max-classified 1-2/1-3 byte fast paths and
-the compress-then-widen 4-byte path. The `Decoder`'s ASCII path is 2.59 against
+RVV beats scalar on every clean class: 1.30 against 0.39 on ASCII, about 2x on
+Latin, CJK and box, and 0.19 against 0.09 on emoji. ASCII was sped up by testing
+for it right after the block load, before the scalar advance chain, and widening
+from the loaded vector instead of reloading it. The non-ASCII gains come from
+the signed-byte lead mask, the max-classified 1-2/1-3 byte fast paths and the
+compress-then-widen 4-byte path. The `Decoder`'s ASCII path is 2.59 against
 scalar's 0.69. Dirty input is about even in lossy mode; the `Decoder` is
 slower there (0.03 against 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
 
-The remaining headroom is smaller than it was: simdutf's RVV backend, the
-`rvv-bench` implementation later upstreamed into simdutf, is still faster on
-every clean class — 1.30 against 1.00 on ASCII, 0.37 against 0.20 on CJK and
-0.28 against 0.19 on emoji. The 4-byte path now uses the same compress-then-widen
-approach, with no stack handoff, so the remaining gap lies in the loop structure
-(vla and an m2-to-2xm1 unroll with early exit) and in our error and `Decoder`
-layering. Earlier result files recorded simdutf near scalar here, which was the
-scalar fallback from a C++ build without the V extension, not its vector code.
+The remaining headroom is now limited to the 2- to 4-byte classes: simdutf's
+RVV backend, the `rvv-bench` implementation later upstreamed into simdutf, is
+still faster there — 0.37 against 0.20 on CJK and 0.27 against 0.19 on emoji —
+but we match it on ASCII (1.30 against 1.29 GB/s). Both paths now use the same
+compress-then-widen arithmetic, so the gap lies in the loop structure (VLA and
+an m2-to-2xm1 unroll with early exit) and in our error and `Decoder` layering.
+Earlier result files recorded simdutf near scalar here, which was the scalar
+fallback from a C++ build without the V extension, not its vector code.
 
 The validator was changed from a ~90-instruction compare tree to three
 `vrgather.vv` lookups with mask-register boolean logic. A microbenchmark of
