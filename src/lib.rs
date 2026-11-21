@@ -32,9 +32,12 @@
 //! let n = utf8_to_utf32::utf8_to_utf32(src, &mut dst).unwrap();
 //! assert_eq!(n, 9);
 //!
+//! # #[cfg(feature = "alloc")]
+//! # {
 //! let mut out = Vec::new();
 //! utf8_to_utf32::utf8_to_utf32_lossy_into(b"a\x9bb\xff", &mut out, true);
 //! assert_eq!(out, [0x61, 0x9b, 0x62, 0xFFFD]);
+//! # }
 //! ```
 //!
 //! # Features

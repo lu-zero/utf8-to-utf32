@@ -142,6 +142,19 @@ fn check(level: Level, s: &[u8]) {
             assert_eq!(out, exp, "{level:?} prefix mismatch on {s:02x?}");
         }
     }
+    for c1 in [false, true] {
+        let mut d = vec![MaybeUninit::<u32>::uninit(); s.len()];
+        let n = utf8_to_utf32_lossy_with(level, s, &mut d, c1);
+        let got: Vec<u32> = d[..n].iter().map(|x| unsafe { x.assume_init() }).collect();
+        assert_eq!(got, reference_lossy(s, c1), "{level:?} lossy slice c1={c1}");
+    }
+    #[cfg(feature = "alloc")]
+    check_alloc(level, s);
+}
+
+/// The Vec-based APIs: `lossy_into` and the `Decoder`.
+#[cfg(feature = "alloc")]
+fn check_alloc(level: Level, s: &[u8]) {
     // lossy, both policies; also against String::from_utf8_lossy
     for c1 in [false, true] {
         let mut out = vec![7u32];
@@ -151,12 +164,6 @@ fn check(level: Level, s: &[u8]) {
             &reference_lossy(s, c1)[..],
             "{level:?} lossy c1={c1} on {s:02x?}"
         );
-    }
-    for c1 in [false, true] {
-        let mut d = vec![MaybeUninit::<u32>::uninit(); s.len()];
-        let n = utf8_to_utf32_lossy_with(level, s, &mut d, c1);
-        let got: Vec<u32> = d[..n].iter().map(|x| unsafe { x.assume_init() }).collect();
-        assert_eq!(got, reference_lossy(s, c1), "{level:?} lossy slice c1={c1}");
     }
     let mut out = Vec::new();
     utf8_to_utf32_lossy_into_with(level, s, &mut out, false);
@@ -327,6 +334,7 @@ fn all_scalars() {
     }
 }
 
+#[cfg(feature = "alloc")]
 #[test]
 fn dispatch_default() {
     let s = "héllo ─ 中 😀".repeat(50);
