@@ -18,8 +18,11 @@ still experimental upstream. SVE has them on nightly, RVV does not. The
 repository's RVV issue records the compiler-side gaps and the rationale for the
 global-asm approach.
 
-The decode path uses two fixed 16-lane groups and 32-byte stack buffers, so it
-requires **VLEN=256**. `vlmax` is read once and each iteration takes
+The decode paths use fixed-width register groups sized for 32-byte vectors, so
+the level requires **VLEN=256**. The Rust `decode_block` helper, which decodes
+the valid prefix before an error, uses two 16-lane groups and 32-byte stack
+buffers; the hot loop's 4-byte path compresses byte streams and widens them in
+registers. `vlmax` is read once and each iteration takes
 `n = min(remaining - 3, vlmax)` bytes; the level is unsupported on wider or
 narrower vectors.
 
@@ -100,7 +103,9 @@ unsigned compares against C0, E0 and F0; `vmerge.vvm` selects among the 1-, 2-,
 
 `vsll`/`vsrl` at SEW=8 keep only the low byte of each shift, which is exactly
 the byte needed. The three byte vectors and the original `b0` are stored to
-four 32-byte stack buffers.
+four 32-byte stack buffers. This is the `decode_block` helper in Rust, used only
+for the valid prefix before an error; the hot loop's 4-byte path no longer does
+this (see below).
 
 At SEW=32 with **LMUL=2** the second phase has two unrolled groups, each
 covering 16 bytes. Bytes from each buffer are widened with `vzext.vf4`,
@@ -143,29 +148,28 @@ measures the generic scalar fallback instead.
 
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
-| simdutf 0.7 RVV | 1.28 | 0.28 | 0.37 | 0.30 | 0.27 | – |
+| simdutf 0.7 RVV | 1.30 | 0.28 | 0.37 | 0.30 | 0.28 | – |
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.99 | 0.20 | 0.20 | 0.19 | 0.13 | – |
-| RVV lossy_into (C1) | 1.14 | 0.20 | 0.20 | 0.19 | 0.12 | 0.08 |
+| RVV slice fn | 1.00 | 0.20 | 0.20 | 0.19 | 0.19 | – |
+| RVV lossy_into (C1) | 1.14 | 0.20 | 0.20 | 0.19 | 0.21 | 0.08 |
 
 The figures above are one run; the `bench/results/riscv.md` file is another,
 and the non-ASCII rows differ by a few hundredths between runs on this machine.
-RVV beats scalar on every clean class: 0.99 against 0.40 on ASCII, about 2x on
-Latin, CJK and box, and 0.13 against 0.09 on emoji. The non-ASCII gains come
-from the signed-byte lead mask and the max-classified 1-2/1-3 byte fast paths;
-emoji keeps the full 4-byte path. The `Decoder`'s ASCII path is 2.59 against
+RVV beats scalar on every clean class: 1.00 against 0.40 on ASCII, about 2x on
+Latin, CJK and box, and 0.19 against 0.09 on emoji. The non-ASCII gains come
+from the signed-byte lead mask, the max-classified 1-2/1-3 byte fast paths and
+the compress-then-widen 4-byte path. The `Decoder`'s ASCII path is 2.59 against
 scalar's 0.69. Dirty input is about even in lossy mode; the `Decoder` is
 slower there (0.03 against 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
 
-The remaining headroom is substantial: simdutf's RVV backend, the `rvv-bench`
-implementation later upstreamed into simdutf, is faster on every clean class —
-1.28 against 0.99 on ASCII, 0.37 against 0.20 on CJK and 0.27 against 0.13 on
-emoji. It is VLA, streams b1..b4 through `vcompress` with an m2-to-2xm1 unroll,
-and has a dedicated 4-byte path. This kernel is fixed to VLEN=256, hands the
-SEW=8 result to SEW=32 through stack buffers, and keeps the general decode for
-emoji; removing the stack handoff was tried and regressed end-to-end, so it
-stays. Earlier result files recorded simdutf near scalar here, which was the
+The remaining headroom is smaller than it was: simdutf's RVV backend, the
+`rvv-bench` implementation later upstreamed into simdutf, is still faster on
+every clean class — 1.30 against 1.00 on ASCII, 0.37 against 0.20 on CJK and
+0.28 against 0.19 on emoji. The 4-byte path now uses the same compress-then-widen
+approach, with no stack handoff, so the remaining gap lies in the loop structure
+(vla and an m2-to-2xm1 unroll with early exit) and in our error and `Decoder`
+layering. Earlier result files recorded simdutf near scalar here, which was the
 scalar fallback from a C++ build without the V extension, not its vector code.
 
 The validator was changed from a ~90-instruction compare tree to three
@@ -183,8 +187,8 @@ source and destination must not share the `v0..=v3` register group: `v1`/`v2`
 traps with SIGILL, while the first version's `v4`/`v8` and the current
 global-asm `v16`/`v20` are safe. The ASCII path is VLA in `vl` and kept
 throughput on this machine, where a full register is already 32 bytes; the
-non-ASCII decode remains fixed to VLEN=256 because of its 32-byte buffers
-and two 16-lane groups.
+non-ASCII decode remains fixed to VLEN=256 by its register groups and the
+error-prefix helper's 32-byte buffers.
 
 ## Why the hot loop is `global_asm!`
 
@@ -210,9 +214,10 @@ for a bare `global_asm!` block. The tables are Rust statics referenced with
 
 ## What still waits on compiler support
 
-- **The decode stack buffers.** Four 32-byte buffers carry lo/hi/top/b0 from
-  SEW=8 to SEW=32. Inside one asm function they could stay in vector registers,
-  but the extension state and register groups have to be managed by hand;
+- **The error-prefix decode stack buffers.** Four 32-byte buffers carry
+  lo/hi/top/b0 from SEW=8 to SEW=32 in `decode_block`. Inside one asm function
+  they could stay in vector registers, but the extension state and groups
+  have to be managed by hand;
   LMUL=2 groups overlap easily (writing `vle8.v v9` after `vzext.vf4 v8` corrupts
   the `v8..=v9` widened value), and a real mistake here produces SIGILL or
   SIGBUS rather than a compile error.

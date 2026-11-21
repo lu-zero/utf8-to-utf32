@@ -10,9 +10,10 @@
 //!
 //! `vl` comes from `vsetvli(min(remaining - 3, vlmax))`. Validation loads `n`
 //! lanes rather than the shortened `adv`, so a lead just before the cut can
-//! claim a byte past it. Decode computes candidate code points at SEW=8, then
-//! widens and compacts them in two unrolled SEW=32 groups of 16 lanes each.
-//! The 32-byte stack buffers and the two fixed groups require VLEN=256.
+//! claim a byte past it. The 1-2 and 1-3 byte paths compress byte streams and
+//! widen them in registers; the 4-byte path does the same in one pass. The
+//! Rust `decode_block` helper for an error prefix still uses two 16-lane groups
+//! and 32-byte stack buffers. The fixed register groups require VLEN=256.
 
 #![cfg_attr(not(feature = "alloc"), allow(dead_code))]
 
@@ -32,7 +33,8 @@ unsafe fn vlen_bytes() -> usize {
     v
 }
 
-/// The decode path uses two fixed 16-lane groups, so it requires VLEN=256.
+/// The decode paths use fixed-width register groups sized for 32-byte
+/// vectors, so they require VLEN=256.
 pub(crate) fn supported() -> bool {
     #[cfg(not(feature = "std"))]
     if !cfg!(target_feature = "v") {

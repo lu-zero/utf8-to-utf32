@@ -10,20 +10,20 @@
 <line x1="300.0" y1="32" x2="300.0" y2="127" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="300.0" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <text x="96.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="102" y="35" width="169.0" height="13" rx="2" fill="#d78787"/>
-<text x="276.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.28</text>
+<rect x="102" y="35" width="171.6" height="13" rx="2" fill="#d78787"/>
+<text x="278.6" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.30</text>
 <text x="96.0" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="102" y="54" width="19.8" height="13" rx="2" fill="#d7a17f"/>
-<text x="126.8" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.15</text>
+<rect x="102" y="54" width="18.5" height="13" rx="2" fill="#d7a17f"/>
+<text x="125.5" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.14</text>
 <text x="96.0" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="102" y="73" width="19.8" height="13" rx="2" fill="#87afaf"/>
-<text x="126.8" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.15</text>
+<rect x="102" y="73" width="18.5" height="13" rx="2" fill="#87afaf"/>
+<text x="125.5" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.14</text>
 <text x="96.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
 <rect x="102" y="92" width="52.8" height="13" rx="2" fill="#8a8a8a"/>
 <text x="159.8" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.40</text>
 <text x="96.0" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">rvv</text>
-<rect x="102" y="111" width="130.7" height="13" rx="2" fill="#8f7f5f"/>
-<text x="237.7" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.99</text>
+<rect x="102" y="111" width="132.0" height="13" rx="2" fill="#8f7f5f"/>
+<text x="239.0" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.00</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
 <line x1="462.0" y1="32" x2="462.0" y2="127" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="462.0" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -90,20 +90,20 @@
 <line x1="300.0" y1="338" x2="300.0" y2="433" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="300.0" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
 <text x="96.0" y="352.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="102" y="341" width="106.9" height="13" rx="2" fill="#d78787"/>
-<text x="213.9" y="352.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.27</text>
+<rect x="102" y="341" width="110.9" height="13" rx="2" fill="#d78787"/>
+<text x="217.9" y="352.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.28</text>
 <text x="96.0" y="371.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="102" y="360" width="43.6" height="13" rx="2" fill="#d7a17f"/>
-<text x="150.6" y="371.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.11</text>
+<rect x="102" y="360" width="39.6" height="13" rx="2" fill="#d7a17f"/>
+<text x="146.6" y="371.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.10</text>
 <text x="96.0" y="390.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="102" y="379" width="43.6" height="13" rx="2" fill="#87afaf"/>
-<text x="150.6" y="390.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.11</text>
+<rect x="102" y="379" width="39.6" height="13" rx="2" fill="#87afaf"/>
+<text x="146.6" y="390.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.10</text>
 <text x="96.0" y="409.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
 <rect x="102" y="398" width="35.6" height="13" rx="2" fill="#8a8a8a"/>
 <text x="142.6" y="409.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.09</text>
 <text x="96.0" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">rvv</text>
-<rect x="102" y="417" width="51.5" height="13" rx="2" fill="#8f7f5f"/>
-<text x="158.5" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.13</text>
+<rect x="102" y="417" width="75.2" height="13" rx="2" fill="#8f7f5f"/>
+<text x="182.2" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.19</text>
 <text x="368.0" y="326.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="462.0" y1="338" x2="462.0" y2="376" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="462.0" y="390.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
