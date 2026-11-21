@@ -79,6 +79,11 @@ SIMD levels reach up to 4.45x scalar, with one error-dense case slightly slower.
 
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
+Against other implementations on the same machine, our SIMD levels lead on every
+input class except NEON ASCII and CJK, where simdutf C++ is ahead; see the
+[cross-implementation graph](docs/performance-competitors.svg) and its table in
+[docs/performance.md](docs/performance.md#versus-other-implementations).
+
 ## Documentation
 
 - [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.

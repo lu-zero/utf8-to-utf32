@@ -28,6 +28,18 @@ scripts/performance_summary.py > /tmp/opencode/performance-summary.md
 It compares each SIMD level to scalar on the same machine, so absolute GB/s from
 different machines are never compared.
 
+`performance_competitors.py` does the same for our best SIMD level against the
+fastest other implementation on the same machine. It writes
+`docs/performance-competitors.svg` and prints its markdown table:
+
+```sh
+scripts/performance_competitors.py > /tmp/opencode/performance-competitors.md
+```
+
+The competitor is the fastest of simdutf C++, simdutf8 + `chars()` and std
+`from_utf8` + `chars()`; on dirty input, where the strict rows do not run, it is
+`utf8_chunks` + `chars()` (C1).
+
 The RVV level needs nightly, the `rvv` feature and a CPU with the V extension;
 run the benchmark on a riscv64 machine:
 
