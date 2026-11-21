@@ -17,8 +17,8 @@ The graph shows the ratio to scalar on the **same** machine, which is.
 |---|---|---|---|---|---|---|
 | x86 / AVX-512 | 1.30x | 3.90x | 4.45x | 4.33x | – | 1.08x |
 | aarch64 / NEON | 1.78x | 2.04x | 2.48x | 2.26x | 1.45x | 0.93x |
-| POWER9 / VSX | 2.77x | 1.34x | 1.44x | 1.51x | 1.40x | 1.16x |
-| Spacemit X60 / RVV | 2.33x | 2.22x | 1.82x | 2.38x | 1.33x | 1.00x |
+| POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
+| Spacemit X60 / RVV | 2.47x | 2.22x | 1.82x | 2.38x | 1.44x | 1.00x |
 
 ![SIMD speedup over scalar by input type and architecture](performance-summary.svg)
 
@@ -72,11 +72,12 @@ release build, same method as above.
 
 | GB/s | ascii | latin | cjk | box drawing | emoji |
 |---|---|---|---|---|---|
-| this crate, scalar slice fn | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
-| this crate, vsx slice fn | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
+| this crate, scalar slice fn | 2.01 | 0.65 | 0.54 | 0.34 | 0.38 |
+| this crate, vsx slice fn | 5.56 | 0.78 | 0.79 | 0.70 | 0.61 |
 
-The VSX `Decoder` is faster than scalar on ASCII (13.46 against 10.45 GB/s)
-but about half the speed on error-dense input; see
+The scalar rows are noisier than the VSX rows on this machine, so the per-class
+ratios move between runs. The VSX `Decoder` is faster than scalar on ASCII
+(13.44 against 10.45 GB/s) but about half the speed on error-dense input; see
 [the VSX architecture page](architecture/ppc64.md). Full output:
 [`ppc64.md`](../bench/results/ppc64.md).
 
@@ -91,7 +92,7 @@ of 7 runs over about 1 MB.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | this crate, scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| this crate, rvv slice fn | 0.93 | 0.20 | 0.20 | 0.19 | 0.12 | – |
+| this crate, rvv slice fn | 0.99 | 0.20 | 0.20 | 0.19 | 0.13 | – |
 
 On this machine the RVV kernel is faster than scalar on ASCII, Latin, CJK, box
 drawing and emoji, and matches scalar on dirty lossy input; see

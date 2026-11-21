@@ -141,20 +141,17 @@ from `cargo +nightly run --release -p utf32-bench --features utf8-to-utf32/rvv`.
 | GB/s | ascii | latin | cjk | box/mixed | emoji | dirty |
 |---|---|---|---|---|---|---|
 | scalar slice fn | 0.40 | 0.09 | 0.11 | 0.08 | 0.09 | – |
-| RVV slice fn | 0.48 | 0.10 | 0.10 | 0.10 | 0.10 | – |
-| RVV lossy_into (C1) | 0.81 | 0.10 | 0.10 | 0.10 | 0.10 | 0.08 |
+| RVV slice fn | 0.99 | 0.20 | 0.20 | 0.19 | 0.13 | – |
+| RVV lossy_into (C1) | 1.14 | 0.20 | 0.20 | 0.19 | 0.12 | 0.08 |
 
 The figures above are one run; the `bench/results/riscv.md` file is another,
-and differ by a few hundredths from run to run on this machine. The
-global-asm loop lifts every non-ASCII class from 0.07 to 0.10–0.11 GB/s
-back-to-back on the same machine; ASCII is essentially unchanged (0.47 to 0.49,
-within run variance) because that path was already a single tight asm block.
-RVV now beats scalar on Latin (0.11 against 0.09), box (0.10 against 0.08) and
-emoji (0.10 against 0.09), and is close behind on CJK (0.10 against 0.11) for
-the reason given above. On ASCII it stays ahead at 0.48 against scalar's 0.40;
-the `Decoder`'s ASCII path is 2.19 against scalar's 0.69.
-Dirty input is about even in lossy mode; the `Decoder` is slower there (0.03
-against 0.05), the same restart cost described in
+and the non-ASCII rows differ by a few hundredths between runs on this machine.
+RVV beats scalar on every clean class: 0.99 against 0.40 on ASCII, about 2x on
+Latin, CJK and box, and 0.13 against 0.09 on emoji. The non-ASCII gains come
+from the signed-byte lead mask and the max-classified 1-2/1-3 byte fast paths;
+emoji keeps the full 4-byte path. The `Decoder`'s ASCII path is 2.59 against
+scalar's 0.69. Dirty input is about even in lossy mode; the `Decoder` is
+slower there (0.03 against 0.05), the same restart cost described in
 [the main architecture page](../architecture.md).
 
 The validator was changed from a ~90-instruction compare tree to three
@@ -163,7 +160,7 @@ The validator was changed from a ~90-instruction compare tree to three
 compare tree (1.54x) on this machine, same release build and tool. That gain is
 not visible in the end-to-end table: the SEW=32 decode dominated until the
 byte-domain rewrite, and the global-asm loop then lifted the non-ASCII rows to
-0.10–0.11.
+0.10–0.11; the later fast paths took them to 0.19–0.20.
 
 The ASCII path needed two changes: a cheap `vfirst.m` non-ASCII test before the
 full validator (running it on every block had made ASCII 0.15 GB/s), and

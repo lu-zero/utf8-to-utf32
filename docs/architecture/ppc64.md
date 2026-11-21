@@ -56,15 +56,16 @@ is in `bench/results/ppc64.md`; it was produced with
 
 | GB/s | ascii | latin | cjk | box | emoji |
 |---|---|---|---|---|---|
-| scalar | 2.01 | 0.58 | 0.54 | 0.47 | 0.42 |
-| VSX | 5.56 | 0.78 | 0.78 | 0.71 | 0.59 |
+| scalar | 2.01 | 0.65 | 0.54 | 0.34 | 0.38 |
+| VSX | 5.56 | 0.78 | 0.79 | 0.70 | 0.61 |
 
-VSX wins on every input class here, from 1.34x on Latin to 2.8x on ASCII. Three
+The scalar rows are noisier than the VSX rows between runs on this machine.
+VSX wins on every input class here, from 1.20x on Latin to 2.8x on ASCII. Three
 changes got it there. The first version of `decode_wide` interleaved and
 compacted in two separate `vec_perm` stages (10 permutes per quarter) and ran
 emoji at 0.24 GB/s, below scalar; folding both into one mask-indexed table
 (6 permutes) raised it to 0.48. Enabling the POWER9 vector instructions then
-raised ASCII from 3.33 to 5.56 and emoji to 0.59. The four validation results
+raised ASCII from 3.33 to 5.56 and emoji to 0.61. The four validation results
 are also OR-ed before a single `vec_any_ne`, which removes three compare-records
 per block.
 
@@ -111,7 +112,7 @@ Letting the `Decoder` consume lossy kernel output, or adding a kernel mode
 that returns all pieces of a window in one call, would remove the restarts,
 but both change the kernel contract and need an explicit design decision.
 
-The ASCII `Decoder`, by contrast, is faster than scalar (13.46 against 10.45)
+The ASCII `Decoder`, by contrast, is faster than scalar (13.44 against 10.45)
 after moving the whole-vector ASCII test ahead of the SWAR movemask in
 `ascii_len_vsx` and enabling the POWER9 instructions.
 

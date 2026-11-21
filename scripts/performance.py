@@ -12,6 +12,7 @@ TEAL, GREY = "#5fafaf", "#8a8a8a"
 # (label, row name in the table, colour). The first row that exists is used.
 SERIES = [
     ("simdutf (C++)", "simdutf C++ (strict)", "#d78787"),
+    ("simdutf8 + chars", "simdutf8 + chars", "#d7a17f"),
     ("std + chars", "std from_utf8 + chars", "#87afaf"),
     ("scalar", "ours scalar", GREY),
     ("sse4.1", "ours sse4.1", "#87af87"),
@@ -19,6 +20,7 @@ SERIES = [
     ("avx512", "ours avx512", "#5faf5f"),
     ("neon", "ours neon", "#5faf5f"),
     ("vsx", "ours vsx", "#3f8f6f"),
+    ("rvv", "ours rvv", "#8f7f5f"),
 ]
 TITLES = {
     "ascii": "ASCII",
