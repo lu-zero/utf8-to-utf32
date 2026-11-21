@@ -229,5 +229,6 @@ for a bare `global_asm!` block. The tables are Rust statics referenced with
 The signed-byte non-continuation mask and the max-classified 1-2/1-3 byte
 decode fast paths are inspired by [Olaf Bernstein’s `rvv-bench`
 `vector-utf`](https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c)
-and its accompanying [article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html)
-(MIT). No code was copied from `rvv-bench`.
+and its accompanying [article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html).
+The 4-byte decode path contains routines translated from `vector-utf`, under
+the MIT notice in [`LICENSE-rvv-bench`](../LICENSE-rvv-bench).

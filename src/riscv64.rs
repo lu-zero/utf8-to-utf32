@@ -191,6 +191,10 @@ unsafe fn decode_block(p: *const u8, dst: *mut u32, o: usize, adv: usize) -> usi
     o + cnt
 }
 
+// Some routines in the 4-byte decode path were translated from Olaf
+// Bernstein's `rvv-bench` vector-utf implementation (MIT):
+// https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c
+// The MIT notice is in LICENSE-rvv-bench.
 core::arch::global_asm!(
     r#"
     .option arch, +v
@@ -387,123 +391,49 @@ Ldecode_4byte:
     vle8.v v10, (t3)
     addi t3, t2, 3
     vle8.v v11, (t3)
+    li a6, -65
+    vmsgt.vx v0, v8, a6
+    vmand.mm v0, v0, v5
+    vcpop.m t5, v0
+    vcompress.vm v16, v8, v0
+    vcompress.vm v17, v9, v0
+    vcompress.vm v18, v10, v0
+    vcompress.vm v19, v11, v0
     li a6, 0x3f
-    vand.vx v16, v11, a6
-    vsll.vi v17, v10, 6
-    vor.vv v16, v17, v16
-    vand.vx v17, v10, a6
-    vsll.vi v18, v9, 6
-    vor.vv v17, v18, v17
-    vand.vx v18, v9, a6
-    vsll.vi v19, v8, 6
-    vor.vv v18, v19, v18
-    vmv.v.v v20, v8
-    li a6, 0xbf
-    vmsgtu.vx v5, v8, a6
-    li a6, 0xdf
-    vmsgtu.vx v6, v8, a6
-    li a6, 0xef
-    vmsgtu.vx v7, v8, a6
-    vmv.v.v v0, v5
-    vmerge.vvm v20, v20, v18, v0
-    vmv.v.v v0, v6
-    vmerge.vvm v20, v20, v17, v0
-    vmv.v.v v0, v7
-    vmerge.vvm v20, v20, v16, v0
-    vse8.v v20, (sp)
-    vsrl.vi v16, v8, 2
-    vand.vi v16, v16, 7
-    li a6, 0x3c
-    vand.vx v17, v9, a6
-    vsrl.vi v17, v17, 2
-    li a6, 0x0f
-    vand.vx v18, v8, a6
-    vsll.vi v18, v18, 4
-    vor.vv v17, v17, v18
-    li a6, 0x3c
-    vand.vx v18, v10, a6
-    vsrl.vi v18, v18, 2
-    li a6, 0x0f
-    vand.vx v19, v9, a6
-    vsll.vi v19, v19, 4
-    vor.vv v18, v18, v19
-    vmv.v.i v20, 0
-    vmv.v.v v0, v5
-    vmerge.vvm v20, v20, v16, v0
-    vmv.v.v v0, v6
-    vmerge.vvm v20, v20, v17, v0
-    vmv.v.v v0, v7
-    vmerge.vvm v20, v20, v18, v0
-    addi t3, sp, 32
-    vse8.v v20, (t3)
-    vand.vi v16, v8, 7
-    vsll.vi v16, v16, 2
-    li a6, 0x30
-    vand.vx v17, v9, a6
-    vsrl.vi v17, v17, 4
-    vor.vv v16, v16, v17
-    vmv.v.i v20, 0
-    vmv.v.v v0, v7
-    vmerge.vvm v20, v20, v16, v0
-    addi t3, sp, 64
-    vse8.v v20, (t3)
-    addi t3, sp, 96
-    vse8.v v8, (t3)
-    li t5, 0
-    li t2, 16
+    vand.vx v17, v17, a6
+    vand.vx v18, v18, a6
+    vand.vx v19, v19, a6
+    vsrl.vi v27, v16, 4
+    li a6, 10
+    vssubu.vx v2, v27, a6
+    li a6, 12
+    vmseq.vx v0, v27, a6
+    li a6, 3
+    vmerge.vxm v2, v2, a6, v0
+    li a6, 2
+    vssubu.vx v3, v2, a6
+    li a6, 3
+    vrsub.vx v3, v3, a6
+    li a6, 6
+    vmul.vx v3, v3, a6
+    vsll.vv v16, v16, v2
+    vsrl.vv v16, v16, v2
+    vsetvli x0, t5, e8, m1, ta, ma
+    li a6, 64
+    vwmulu.vx v20, v16, a6
+    vwaddu.wv v20, v20, v17
+    vwmulu.vx v22, v18, a6
+    vwaddu.wv v22, v22, v19
+    vsetvli x0, t5, e16, m2, ta, ma
+    li a6, 4096
+    vwmulu.vx v4, v20, a6
+    vwaddu.wv v4, v4, v22
+    vsetvli x0, t5, e32, m4, ta, ma
+    vzext.vf4 v12, v3
+    vsrl.vv v4, v4, v12
     slli a7, t1, 2
     add a7, a1, a7
-
-    vsetvli x0, t2, e8, mf2, ta, ma
-    addi t3, sp, 96
-    vle8.v v8, (t3)
-    li a6, -65
-    vmsgt.vx v0, v8, a6
-    vsetvli x0, t2, e32, m2, ta, ma
-    vle8.v v2, (sp)
-    vzext.vf4 v10, v2
-    addi t3, sp, 32
-    vle8.v v4, (t3)
-    vzext.vf4 v12, v4
-    addi t3, sp, 64
-    vle8.v v6, (t3)
-    vzext.vf4 v14, v6
-    vsll.vi v12, v12, 8
-    vsll.vi v14, v14, 16
-    vor.vv v10, v10, v12
-    vor.vv v10, v10, v14
-    vpopc.m t6, v0
-    vcompress.vm v20, v10, v0
-    vse32.v v20, (a7)
-    slli t3, t6, 2
-    add a7, a7, t3
-
-    add t5, t5, t6
-    addi t2, t4, -16
-    vsetvli x0, t2, e8, mf2, ta, ma
-    addi t3, sp, 112
-    vle8.v v8, (t3)
-    li a6, -65
-    vmsgt.vx v0, v8, a6
-    vsetvli x0, t2, e32, m2, ta, ma
-    addi t3, sp, 16
-    vle8.v v2, (t3)
-    vzext.vf4 v10, v2
-    addi t3, sp, 48
-    vle8.v v4, (t3)
-    vzext.vf4 v12, v4
-    addi t3, sp, 80
-    vle8.v v6, (t3)
-    vzext.vf4 v14, v6
-    vsll.vi v12, v12, 8
-    vsll.vi v14, v14, 16
-    vor.vv v10, v10, v12
-    vor.vv v10, v10, v14
-    vpopc.m t6, v0
-    vcompress.vm v20, v10, v0
-    vse32.v v20, (a7)
-
-    add t5, t5, t6
+    vse32.v v4, (a7)
     add t1, t1, t5
     add t0, t0, t4
     j Lloop
