@@ -12,18 +12,24 @@ This crate converts UTF-8 to UTF-32 in pure Rust, validating as it goes. It uses
 
 ## Performance
 
+Speedup over scalar, by input type and architecture (each row is one machine;
+the ratio is to scalar **on that machine**, so absolute GB/s are not compared
+across rows):
+
 ![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
 
-| Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
-|---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.32x | 3.21x | 4.86x | 3.93x | 2.27x | 1.13x |
-| aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
-| POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
-| Spacemit X60 / RVV | 3.33x | 2.22x | 1.82x | 2.38x | 2.11x | 1.00x |
+Our best SIMD level against the fastest other implementation on the same
+machine:
 
-Each row is one machine; the figure is the ratio to scalar **on that machine**, so absolute GB/s are not compared across rows. Full tables, benchmark method, per-architecture notes and raw results are in [docs/performance.md](docs/performance.md); [Documentation](#documentation) links the architecture pages.
+![Our SIMD throughput over the fastest other implementation by input type and architecture](docs/performance-competitors.svg)
 
-Against other implementations on the same machine, x86 and POWER9 lead on every class (x86's AVX-512 emoji is close to simdutf C++). NEON loses ASCII and CJK to simdutf C++ (the ASCII ordering is not stable across builds), and RVV matches simdutf's RVV backend on ASCII but loses the 2- to 4-byte classes, from 1.4x on Latin up to 1.9x on CJK. See the [cross-implementation graph](docs/performance-competitors.svg) and its table in [docs/performance.md](docs/performance.md#versus-other-implementations).
+x86 and POWER9 lead every class against the alternatives; NEON loses ASCII and
+CJK to simdutf C++ (the ASCII ordering is not stable across builds), and RVV
+matches simdutf's RVV backend on ASCII but loses the 2- to 4-byte classes.
+Full tables, benchmark method, per-architecture notes and raw results are in
+[docs/performance.md](docs/performance.md), including the
+[comparison table](docs/performance.md#versus-other-implementations);
+[Documentation](#documentation) links the architecture pages.
 
 ## Usage
 
@@ -63,11 +69,20 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 
 ## Features
 
-- `std` (default): runtime CPU detection and `UTF32_LEVEL`. It implies `alloc`.
-- `alloc`: the Vec-based APIs (`utf8_to_utf32_lossy_into`, `Decoder`).
-- Without `std`, the crate is `no_std`. The level comes from compile-time target features, for example `-C target-feature=+avx2`.
+`std` (default) enables runtime CPU detection and `UTF32_LEVEL`, and implies
+`alloc`, which provides the Vec-based APIs. Without `std` the crate is
+`no_std` and the level comes from compile-time target features, for example
+`-C target-feature=+avx2`.
 
-The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; POWER9 can enable the VSX kernel with `--features vsx` on a nightly toolchain (POWER8 falls back to scalar); riscv64 can enable the RVV kernel with `--features rvv` on a nightly toolchain; other non-x86 targets use the scalar path.
+| Target | SIMD levels | Toolchain |
+|---|---|---|
+| x86 / x86_64 | scalar, SSE4.1, AVX2, AVX-512 | stable, 1.89+ (AVX-512 intrinsics stabilized in 1.89) |
+| aarch64 | scalar, NEON | stable, 1.89+ |
+| powerpc64 | scalar | stable, 1.89+ |
+| POWER9 | scalar, VSX (`--features vsx`) | nightly for VSX; POWER8 falls back to scalar |
+| riscv64 | scalar | stable, 1.89+ |
+| riscv64 with V | scalar, RVV (`--features rvv`, VLEN=256) | nightly for RVV |
+| other | scalar | stable, 1.89+ |
 
 ## Documentation
 
