@@ -27,7 +27,7 @@ use core::arch::x86::*;
 #[cfg(target_arch = "x86_64")]
 use core::arch::x86_64::*;
 
-use crate::mask::{plan, plan_err, ranges_bad, PREFIX};
+use crate::mask::{plan, plan_err, ranges_bad, ERR_STREAK_MAX, PREFIX};
 
 // ---------- tables ----------
 
@@ -167,6 +167,7 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
     let len = src.len();
     let p = src.as_ptr();
     let (mut i, mut o) = (0usize, 0usize);
+    let mut streak = 0u32;
     let pat = _mm_loadu_si128(PAT4.as_ptr() as *const __m128i);
     while i + 32 <= len {
         let a = _mm_loadu_si128(p.add(i) as *const __m128i);
@@ -309,16 +310,19 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
         };
         match planned {
             Ok((leads, adv)) if f0 & ((1u64 << P) - 1) == 0 => {
+                streak = 0;
                 dec16!(leads);
                 i += adv;
             }
             Ok((leads, adv)) => {
+                streak = 0;
                 dec32!(leads);
                 i += adv;
             }
             Err((leads, cut)) => {
-                // Decode the valid prefix with SIMD, then the rest of the block in scalar.
-                let end = i + P as usize;
+                // With PREFIX, decode the valid prefix with SIMD first. Errors cluster, so stay
+                // in scalar for a stretch that doubles with each consecutive failing block.
+                let end = (i + ((P as usize) << streak)).min(len);
                 if PREFIX && leads != 0 {
                     if f0 & ((1u64 << cut) - 1) == 0 {
                         dec16!(leads);
@@ -329,7 +333,10 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
                 if PREFIX {
                     i += cut;
                 }
-                (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                while i < end {
+                    (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                }
+                streak = (streak + 1).min(ERR_STREAK_MAX);
             }
         }
     }
@@ -391,6 +398,7 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
     let len = src.len();
     let p = src.as_ptr();
     let (mut i, mut o) = (0usize, 0usize);
+    let mut streak = 0u32;
     let pat = _mm256_loadu_si256(PAT8.as_ptr() as *const __m256i);
     // The u32 path's last 16-byte load ends at i + P + 12.
     while i + 72 <= len {
@@ -550,16 +558,19 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
         };
         match planned {
             Ok((leads, adv)) if f0 & ((1u64 << P) - 1) == 0 => {
+                streak = 0;
                 dec16!(leads);
                 i += adv;
             }
             Ok((leads, adv)) => {
+                streak = 0;
                 dec32!(leads);
                 i += adv;
             }
             Err((leads, cut)) => {
-                // Decode the valid prefix with SIMD, then the rest of the block in scalar.
-                let end = i + P as usize;
+                // With PREFIX, decode the valid prefix with SIMD first. Errors cluster, so stay
+                // in scalar for a stretch that doubles with each consecutive failing block.
+                let end = (i + ((P as usize) << streak)).min(len);
                 if PREFIX && leads != 0 {
                     if f0 & ((1u64 << cut) - 1) == 0 {
                         dec16!(leads);
@@ -570,7 +581,10 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
                 if PREFIX {
                     i += cut;
                 }
-                (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                while i < end {
+                    (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                }
+                streak = (streak + 1).min(ERR_STREAK_MAX);
             }
         }
     }
@@ -633,6 +647,7 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
     let len = src.len();
     let p = src.as_ptr();
     let (mut i, mut o) = (0usize, 0usize);
+    let mut streak = 0u32;
     let idx = [
         _mm512_loadu_si512(VBMI_IDX[0].as_ptr() as *const _),
         _mm512_loadu_si512(VBMI_IDX[1].as_ptr() as *const _),
@@ -778,16 +793,19 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
         };
         match planned {
             Ok((leads, adv)) if f0 & ((1u64 << P) - 1) == 0 => {
+                streak = 0;
                 dec16!(leads);
                 i += adv;
             }
             Ok((leads, adv)) => {
+                streak = 0;
                 dec32!(leads);
                 i += adv;
             }
             Err((leads, cut)) => {
-                // Decode the valid prefix with SIMD, then the rest of the block in scalar.
-                let end = i + P as usize;
+                // With PREFIX, decode the valid prefix with SIMD first. Errors cluster, so stay
+                // in scalar for a stretch that doubles with each consecutive failing block.
+                let end = (i + ((P as usize) << streak)).min(len);
                 if PREFIX && leads != 0 {
                     if f0 & ((1u64 << cut) - 1) == 0 {
                         dec16!(leads);
@@ -798,7 +816,10 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
                 if PREFIX {
                     i += cut;
                 }
-                (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                while i < end {
+                    (i, o) = scalar::step(scalar::run(src, i, end, dst, o), src, dst, mode)?;
+                }
+                streak = (streak + 1).min(ERR_STREAK_MAX);
             }
         }
     }

@@ -57,5 +57,9 @@ pub(crate) fn ranges_bad(
     (eq_e0 & !na) | (eq_ed & na) | (eq_f0 & !n9) | (eq_f4 & n9)
 }
 
+/// After a failing block the kernels stay in scalar for `P << streak` bytes,
+/// where `streak` counts consecutive failing blocks, capped here.
+pub(crate) const ERR_STREAK_MAX: u32 = 4;
+
 /// Decode the valid prefix of a failing block with SIMD (else: whole block scalar).
 pub(crate) const PREFIX: bool = false;
