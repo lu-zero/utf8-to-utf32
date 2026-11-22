@@ -28,9 +28,10 @@ fn check(level: Level, buf: &[u8], dst: &mut [MaybeUninit<u32>]) {
 fn run(extra: &[u8]) {
     for level in Level::supported() {
         let mut dst = vec![MaybeUninit::<u32>::uninit(); BUF];
-        // 13..=16 and 29..=30 straddle 16-byte quarters. 61..=63 are the bytes
-        // the 64-byte block advance inspects.
-        for off in [0usize, 1, 13, 14, 15, 16, 29, 30, 61, 62, 63] {
+        // 13..=16 and 29..=30 straddle 16-byte quarters. 57..=59 are the last
+        // positions of the 60-position x86 blocks. 61..=63 are the bytes the
+        // 64-byte block advance inspects.
+        for off in [0usize, 1, 13, 14, 15, 16, 29, 30, 57, 58, 59, 61, 62, 63] {
             let mut buf = vec![b'a'; BUF];
             for b0 in 0..=255u8 {
                 for b1 in 0..=255u8 {

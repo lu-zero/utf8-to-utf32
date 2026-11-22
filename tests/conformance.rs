@@ -277,11 +277,34 @@ fn block_boundaries() {
     }
 }
 
+/// Runs of errors at several spacings between clean text, so that the x86 kernels'
+/// scalar stretch after a failing block grows, ends inside an error run, and resets.
+#[test]
+fn error_runs() {
+    let clean = "é─中😀 ascii ".repeat(40);
+    for level in levels() {
+        for gap in [0usize, 1, 2, 7, 13, 30, 61, 64, 200] {
+            for errs in [1usize, 3, 40] {
+                for bad in [&b"\xff"[..], b"\x9b", b"\xe2\x94", b"\xf0\x9f\x98"] {
+                    let mut s = clean.as_bytes()[..76].to_vec();
+                    for _ in 0..errs {
+                        s.extend_from_slice(bad);
+                        // A gap that cuts a character only adds an error.
+                        s.extend(clean.bytes().take(gap));
+                    }
+                    s.extend_from_slice(clean.as_bytes());
+                    check(level, &s);
+                }
+            }
+        }
+    }
+}
+
 /// All 2-byte pairs and all (lead, second) pairs of 3/4-byte leads, at several offsets.
 #[test]
 fn exhaustive_pairs() {
     for level in levels() {
-        for off in [0usize, 13, 15, 16, 29, 31, 45, 47, 63] {
+        for off in [0usize, 13, 15, 16, 29, 31, 45, 47, 57, 59, 63] {
             for a in 0x80u32..=0xFF {
                 for b in 0u32..=0xFF {
                     for tail in [
