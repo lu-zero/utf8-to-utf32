@@ -2,7 +2,7 @@
 //!
 //! 1. ASCII fast path: if the next bytes have no high bit, widen them
 //!    (`pmovzxbd`) straight to u32.
-//! 2. Otherwise take a block of P positions (16 / 60 / 60) plus 3 bytes of
+//! 2. Otherwise take a block of P positions (60 bytes at every level) plus 3 bytes of
 //!    lookahead and build u64 bitmasks from byte compares (high bit, at least
 //!    C0, C2, E0, F0, F5; for 3/4-byte leads E0/ED/F0/F4 also whether the next
 //!    byte is at least A0 / 90). The block is valid iff the continuation mask
@@ -10,10 +10,10 @@
 //!    and no overlong, surrogate or above-U+10FFFF second bytes.
 //! 3. Decode. If the block has no 4-byte leads, a u16-lane path is used
 //!    (8/16/32 lanes per register; AVX-512 compacts with VBMI2 `vpcompressw`).
-//!    Otherwise: gather bytes j..j+3 into u32 lane j (pshufb / vpermb), compute
+//!    Otherwise (AVX2, AVX-512): gather bytes j..j+3 into u32 lane j (pshufb / vpermb), compute
 //!    the 1/2/3/4-byte code point per lane with shifts/masks/blends, then
-//!    compact lanes that start a character (pshufb table / vpermd table /
-//!    vpcompressd) and store.
+//!    compact lanes that start a character (vpermd table / vpcompressd) and store.
+//!    SSE4.1 keeps u16 lanes and carries bits 16..=20 in a second vector.
 //! 4. A block failing the check is decoded by the scalar path, which reports
 //!    the exact error. Tails shorter than the load width are scalar.
 
@@ -30,29 +30,6 @@ use core::arch::x86_64::*;
 use crate::mask::{plan, plan_err, ranges_bad, ERR_STREAK_MAX, PREFIX};
 
 // ---------- tables ----------
-
-const fn sse_tbl() -> [[u8; 16]; 16] {
-    let mut t = [[0x80u8; 16]; 16];
-    let mut m = 0;
-    while m < 16 {
-        let mut k = 0;
-        let mut lane = 0;
-        while lane < 4 {
-            if m & (1 << lane) != 0 {
-                let mut b = 0;
-                while b < 4 {
-                    t[m][k * 4 + b] = (lane * 4 + b) as u8;
-                    b += 1;
-                }
-                k += 1;
-            }
-            lane += 1;
-        }
-        m += 1;
-    }
-    t
-}
-static SSE_TBL: [[u8; 16]; 16] = sse_tbl();
 
 /// pshufb masks compacting u16 lanes selected by an 8-bit mask.
 const fn sse16_tbl() -> [[u8; 16]; 256] {
@@ -125,7 +102,6 @@ static VBMI_IDX16: [[[u8; 64]; 2]; 2] = [
     [vbmi_idx16(32, 0), vbmi_idx16(32, 2)],
 ];
 
-static PAT4: [u8; 16] = [0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6];
 static PAT8: [u8; 32] = [
     0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3, 4, 5, 6, //
     4, 5, 6, 7, 5, 6, 7, 8, 6, 7, 8, 9, 7, 8, 9, 10,
@@ -138,28 +114,58 @@ const fn th(x: u8) -> i8 {
 
 // ---------- SSE4.1 ----------
 
-#[target_feature(enable = "sse2,ssse3,sse4.1")]
-#[inline]
-unsafe fn dec_sse(v: __m128i) -> __m128i {
-    let s1 = |x: i32| _mm_set1_epi32(x);
-    let t0 = _mm_and_si128(v, s1(0xFF));
-    let m3f = s1(0x3F);
-    let b1 = _mm_and_si128(_mm_srli_epi32::<8>(v), m3f);
-    let b2 = _mm_and_si128(_mm_srli_epi32::<16>(v), m3f);
-    let b3 = _mm_and_si128(_mm_srli_epi32::<24>(v), m3f);
-    let cp2 = _mm_or_si128(_mm_slli_epi32::<6>(_mm_and_si128(t0, s1(0x1F))), b1);
-    let b12 = _mm_or_si128(_mm_slli_epi32::<6>(b1), b2);
-    let cp3 = _mm_or_si128(_mm_slli_epi32::<12>(_mm_and_si128(t0, s1(0x0F))), b12);
-    let cp4 = _mm_or_si128(
-        _mm_or_si128(
-            _mm_slli_epi32::<18>(_mm_and_si128(t0, s1(0x07))),
-            _mm_slli_epi32::<6>(b12),
-        ),
-        b3,
-    );
-    let mut r = _mm_blendv_epi8(t0, cp2, _mm_cmpgt_epi32(t0, s1(0xBF)));
-    r = _mm_blendv_epi8(r, cp3, _mm_cmpgt_epi32(t0, s1(0xDF)));
-    _mm_blendv_epi8(r, cp4, _mm_cmpgt_epi32(t0, s1(0xEF)))
+/// Positions per SSE4.1 block: four 16-byte vectors give 64-bit masks, less the 3-byte lookahead.
+const SSE41_P: usize = 60;
+
+/// Decodes the characters starting at `leads` (bit k = byte `i + k`) of a validated
+/// block that holds 4-byte characters, 8 positions at a time: the low 16 bits of each
+/// code point in u16 lanes, bits 16..=20 in a second vector, interleaved into u32 on
+/// store. Out of line so the 1- to 3-byte loop keeps its register allocation.
+///
+/// Safety: as for the `sse41_impl` decode paths; `src[i..i + 72]` must be readable.
+#[target_feature(enable = "sse2,ssse3,sse4.1,popcnt")]
+#[inline(never)]
+unsafe fn sse41_wide(p: *const u8, i: usize, dst: *mut u32, mut o: usize, leads: u64) -> usize {
+    const P: usize = SSE41_P;
+    let m3f = _mm_set1_epi16(0x3F);
+    let mut g = 0;
+    while g < P {
+        let gm = ((leads >> g) & 0xFF) as usize;
+        if gm != 0 {
+            let ld =
+                |k: usize| _mm_cvtepu8_epi16(_mm_loadl_epi64(p.add(i + g + k) as *const __m128i));
+            let t0 = ld(0);
+            let b1 = _mm_and_si128(ld(1), m3f);
+            let b2 = _mm_and_si128(ld(2), m3f);
+            let b3 = _mm_and_si128(ld(3), m3f);
+            let cp2 = _mm_or_si128(
+                _mm_slli_epi16::<6>(_mm_and_si128(t0, _mm_set1_epi16(0x1F))),
+                b1,
+            );
+            let b12 = _mm_or_si128(_mm_slli_epi16::<6>(b1), b2);
+            let cp3 = _mm_or_si128(_mm_slli_epi16::<12>(t0), b12);
+            let cp4 = _mm_or_si128(_mm_slli_epi16::<6>(b12), b3);
+            let is4 = _mm_cmpgt_epi16(t0, _mm_set1_epi16(0xEF));
+            let mut r = _mm_blendv_epi8(t0, cp2, _mm_cmpgt_epi16(t0, _mm_set1_epi16(0xBF)));
+            r = _mm_blendv_epi8(r, cp3, _mm_cmpgt_epi16(t0, _mm_set1_epi16(0xDF)));
+            r = _mm_blendv_epi8(r, cp4, is4);
+            let top = _mm_and_si128(
+                _mm_or_si128(
+                    _mm_slli_epi16::<2>(_mm_and_si128(t0, _mm_set1_epi16(0x07))),
+                    _mm_srli_epi16::<4>(b1),
+                ),
+                is4,
+            );
+            let sh = _mm_loadu_si128(SSE16_TBL[gm].as_ptr() as *const __m128i);
+            let r = _mm_shuffle_epi8(r, sh);
+            let top = _mm_shuffle_epi8(top, sh);
+            _mm_storeu_si128(dst.add(o) as *mut __m128i, _mm_unpacklo_epi16(r, top));
+            _mm_storeu_si128(dst.add(o + 4) as *mut __m128i, _mm_unpackhi_epi16(r, top));
+            o += gm.count_ones() as usize;
+        }
+        g += 8;
+    }
+    o
 }
 
 #[target_feature(enable = "sse2,ssse3,sse4.1,popcnt")]
@@ -168,18 +174,20 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
     let p = src.as_ptr();
     let (mut i, mut o) = (0usize, 0usize);
     let mut streak = 0u32;
-    let pat = _mm_loadu_si128(PAT4.as_ptr() as *const __m128i);
-    while i + 32 <= len {
+    // Four vectors give 64-bit masks; the u32 path's last 16-byte load ends at i + P + 12.
+    while i + 72 <= len {
         let a = _mm_loadu_si128(p.add(i) as *const __m128i);
         let b = _mm_loadu_si128(p.add(i + 16) as *const __m128i);
+        let c = _mm_loadu_si128(p.add(i + 32) as *const __m128i);
+        let d = _mm_loadu_si128(p.add(i + 48) as *const __m128i);
         macro_rules! mm {
-            ($x:expr, $y:expr) => {
-                (_mm_movemask_epi8($x) as u32 as u64)
-                    | ((_mm_movemask_epi8($y) as u32 as u64) << 16)
-            };
+            ($v:ident => $e:expr) => {{
+                let m = |$v: __m128i| _mm_movemask_epi8($e) as u32 as u64;
+                m(a) | (m(b) << 16) | (m(c) << 32) | (m(d) << 48)
+            }};
         }
-        let hi = mm!(a, b);
-        let tz = (hi.trailing_zeros().min(32) & !3) as usize;
+        let hi = mm!(x => x);
+        let tz = (hi.trailing_zeros() & !3) as usize;
         if tz >= 4 {
             let mut k = 0;
             while k < tz {
@@ -193,21 +201,15 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
         }
         macro_rules! ge {
             ($x:expr) => {
-                mm!(
-                    _mm_cmpgt_epi8(a, _mm_set1_epi8(th($x))),
-                    _mm_cmpgt_epi8(b, _mm_set1_epi8(th($x)))
-                ) & hi
+                mm!(v => _mm_cmpgt_epi8(v, _mm_set1_epi8(th($x)))) & hi
             };
         }
         macro_rules! eq {
             ($x:expr) => {
-                mm!(
-                    _mm_cmpeq_epi8(a, _mm_set1_epi8($x as u8 as i8)),
-                    _mm_cmpeq_epi8(b, _mm_set1_epi8($x as u8 as i8))
-                )
+                mm!(v => _mm_cmpeq_epi8(v, _mm_set1_epi8($x as u8 as i8)))
             };
         }
-        const P: u32 = 16;
+        const P: u32 = SSE41_P as u32;
         let (c0, e0, f0) = (ge!(0xC0), ge!(0xE0), ge!(0xF0));
         macro_rules! dec16 {
             ($leads:expr) => {{
@@ -253,29 +255,9 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
                 }
             }};
         }
-        macro_rules! dec32 {
-            ($leads:expr) => {{
-                let leads: u64 = $leads;
-                let mut g = 0;
-                while g < P as usize {
-                    let gm = ((leads >> g) & 0xF) as usize;
-                    if gm != 0 {
-                        let x = _mm_loadu_si128(p.add(i + g) as *const __m128i);
-                        let r = dec_sse(_mm_shuffle_epi8(x, pat));
-                        let r = _mm_shuffle_epi8(
-                            r,
-                            _mm_loadu_si128(SSE_TBL[gm].as_ptr() as *const __m128i),
-                        );
-                        _mm_storeu_si128(dst.add(o) as *mut __m128i, r);
-                        o += gm.count_ones() as usize;
-                    }
-                    g += 4;
-                }
-            }};
-        }
         let pm = (1u64 << P) - 1;
         let planned = match plan(hi, c0, ge!(0xC2), e0, f0, ge!(0xF5), P) {
-            Ok(x) if e0 & 0xFFFF == 0 => Ok(x),
+            Ok(x) if e0 & pm == 0 => Ok(x),
             Ok(x) => {
                 let rb = ranges_bad(
                     eq!(0xE0),
@@ -292,7 +274,7 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
                 }
             }
             Err(bad) if PREFIX => {
-                let rb = if e0 & 0xFFFF == 0 {
+                let rb = if e0 & pm == 0 {
                     0
                 } else {
                     ranges_bad(
@@ -316,7 +298,7 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
             }
             Ok((leads, adv)) => {
                 streak = 0;
-                dec32!(leads);
+                o = sse41_wide(p, i, dst, o, leads);
                 i += adv;
             }
             Err((leads, cut)) => {
@@ -327,7 +309,7 @@ unsafe fn sse41_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32
                     if f0 & ((1u64 << cut) - 1) == 0 {
                         dec16!(leads);
                     } else {
-                        dec32!(leads);
+                        o = sse41_wide(p, i, dst, o, leads);
                     }
                 }
                 if PREFIX {
@@ -663,7 +645,7 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
         let z = _mm512_loadu_si512(p.add(i) as *const _);
         let hi = _mm512_movepi8_mask(z);
         let tz = (hi.trailing_zeros() & !15) as usize;
-        if tz >= 16 {
+        if tz >= 4 {
             let mut k = 0;
             while k < tz {
                 let x = _mm_loadu_si128(p.add(i + k) as *const __m128i);

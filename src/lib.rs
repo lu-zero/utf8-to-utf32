@@ -9,7 +9,7 @@
 //! | [`Level`] | CPU features | Notes |
 //! |---|---|---|
 //! | `Scalar` | none | portable; also used for tails and error resolution |
-//! | `Sse41` | SSSE3, SSE4.1, POPCNT | 16-byte blocks (x86/x86_64) |
+//! | `Sse41` | SSSE3, SSE4.1, POPCNT | 60-byte blocks (x86/x86_64) |
 //! | `Avx2` | AVX2, POPCNT | 60-byte blocks (x86/x86_64) |
 //! | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 60-byte blocks, `vpcompressw`/`vpcompressd` (x86/x86_64) |
 //! | `Neon` | NEON | 64-byte blocks, `tbl` validation and compaction (aarch64) |
