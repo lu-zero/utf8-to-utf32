@@ -441,6 +441,39 @@ fn lossy_vec(kernel: Kernel, src: &[u8], out: &mut Vec<u32>, c1: bool) {
     unsafe { out.set_len(base + n) };
 }
 
+/// Decode one `Pieces` window: `kernel(win)`, except that after windows ending at an error
+/// (`streak > 0`) the first `SCALAR_RUN << (streak - 1)` bytes are decoded inline by the
+/// scalar loop. Error-dense input then pays neither for a failing SIMD block nor for the
+/// kernel's error return on each short window. `scalar::run` stops on a character boundary
+/// and reads past its limit within `win`, so the result is exactly the one of `kernel(win)`.
+/// Out of line: inlined into `next_piece` it cost up to 10% on clean AVX-512 `Decoder` rows.
+#[cfg(feature = "alloc")]
+#[inline(never)]
+unsafe fn decode_window(
+    kernel: Kernel,
+    win: &[u8],
+    dst: *mut u32,
+    streak: u8,
+) -> Result<usize, Utf32Error> {
+    if streak == 0 {
+        return kernel(win, dst, STRICT);
+    }
+    // `run` stops on a char boundary at or after the limit and reads past it within `win`.
+    let lim = (Decoder::SCALAR_RUN << (streak - 1)).min(win.len());
+    let (k, n) = scalar::run(win, 0, lim, dst, 0)?;
+    if k >= win.len() {
+        return Ok(n);
+    }
+    match kernel(&win[k..], dst.add(n), STRICT) {
+        Ok(m) => Ok(n + m),
+        Err(e) => Err(Utf32Error {
+            valid_up_to: e.valid_up_to + k,
+            written: e.written + n,
+            error_len: e.error_len,
+        }),
+    }
+}
+
 /// A piece of input produced by [`Pieces::next_piece`].
 #[cfg(feature = "alloc")]
 #[derive(Debug, PartialEq, Eq)]
@@ -494,6 +527,9 @@ impl Decoder {
     pub const ASCII_MIN: usize = 16;
     /// Max bytes decoded into one `Piece::Wide`.
     pub const CHUNK: usize = 16 * 1024;
+    /// Cap of `Pieces::streak`; the scalar stretch is `SCALAR_RUN << (streak - 1)` bytes.
+    const ERR_STREAK_MAX: u8 = 4;
+    const SCALAR_RUN: usize = 64;
 
     /// Decoder at [`active_level`].
     pub fn new() -> Self {
@@ -516,6 +552,7 @@ impl Decoder {
             src,
             pos: 0,
             pending: None,
+            streak: 0,
         }
     }
 }
@@ -528,6 +565,9 @@ pub struct Pieces<'a> {
     pos: usize,
     /// Error found by the previous Wide decode: (position, error_len).
     pending: Option<(usize, u8)>,
+    /// Consecutive windows that failed close to their start; while non-zero the start
+    /// of the next window is decoded by the scalar code (errors cluster).
+    streak: u8,
 }
 
 #[cfg(feature = "alloc")]
@@ -566,7 +606,14 @@ impl<'a> Pieces<'a> {
         let sc = &mut self.dec.scratch;
         sc.clear();
         sc.reserve(win.len());
-        let res = unsafe { (self.dec.kernel)(win, sc.as_mut_ptr(), STRICT) };
+        let res = unsafe { decode_window(self.dec.kernel, win, sc.as_mut_ptr(), self.streak) };
+        // Only an error close to the window start counts as error-dense input.
+        self.streak = match res {
+            Err(ref e) if e.valid_up_to < Decoder::SCALAR_RUN << self.streak => {
+                (self.streak + 1).min(Decoder::ERR_STREAK_MAX)
+            }
+            _ => 0,
+        };
         match res {
             Ok(n) => {
                 unsafe { sc.set_len(n) };

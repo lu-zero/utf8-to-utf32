@@ -278,12 +278,13 @@ fn block_boundaries() {
 }
 
 /// Runs of errors at several spacings between clean text, so that the x86 kernels'
-/// scalar stretch after a failing block grows, ends inside an error run, and resets.
+/// scalar stretch after a failing block (and the `Decoder`'s after a failing window) grows,
+/// ends inside an error run, and resets.
 #[test]
 fn error_runs() {
     let clean = "é─中😀 ascii ".repeat(40);
     for level in levels() {
-        for gap in [0usize, 1, 2, 7, 13, 30, 61, 64, 200] {
+        for gap in [0usize, 1, 2, 7, 13, 30, 61, 64, 127, 129, 200, 520] {
             for errs in [1usize, 3, 40] {
                 for bad in [&b"\xff"[..], b"\x9b", b"\xe2\x94", b"\xf0\x9f\x98"] {
                     let mut s = clean.as_bytes()[..76].to_vec();
