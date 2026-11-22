@@ -33,12 +33,19 @@ input, where the strict rows cannot run, the competitor is `utf8_chunks` +
 
 | Our SIMD vs best other | ASCII | Latin (2-byte) | CJK (3-byte) | box drawing and ASCII | emoji (4-byte) | dirty: lossy, errors every ~12 B |
 |---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.36x | 1.51x | 1.46x | 1.50x | 0.97x | 1.18x |
-| aarch64 / NEON | 0.83x | 1.61x | 0.96x | 1.68x | 1.10x | 1.78x |
-| POWER9 / VSX | 1.38x | 1.73x | 1.11x | 1.84x | 1.45x | 1.85x |
-| Spacemit X60 / RVV | 1.01x | 0.71x | 0.54x | 0.63x | 0.70x | 1.14x |
+| x86 / best SIMD | 1.36x simdutf | 1.51x simdutf | 1.46x simdutf | 1.50x simdutf | 0.97x simdutf | 1.18x utf8_chunks |
+| aarch64 / NEON | 0.83x simdutf | 1.61x simdutf | 0.96x simdutf | 1.68x simdutf | 1.10x simdutf | 1.78x utf8_chunks |
+| POWER9 / VSX | 1.38x simdutf | 1.73x simdutf | 1.11x simdutf | 1.84x simdutf | 1.45x std | 1.85x utf8_chunks |
+| Spacemit X60 / RVV | 1.01x simdutf | 0.71x simdutf | 0.54x simdutf | 0.63x simdutf | 0.70x simdutf | 1.14x utf8_chunks |
 
-A value below 1x means another implementation was faster on that input class.
+Each cell names the competing implementation used as the reference: `simdutf`
+is simdutf 0.7 in C++, `std` is `from_utf8` + `chars()`, `simdutf8` is simdutf8
++ `chars()`, and `utf8_chunks` is `utf8_chunks` + `chars()` in C1 mode (the strict
+rows cannot run on dirty input). The fastest of those on the same machine is
+the denominator; on this run `simdutf` wins every clean cell except one VSX
+emoji cell, where `std` is faster.
+
+A value below 1x means the named implementation was faster on that input class.
 simdutf C++ beats our NEON kernel on ASCII and edges it on CJK. Its RVV backend
 beats our RVV kernel on the 2- to 4-byte classes, from 1.4x on Latin to 1.9x on
 CJK, but we match it on ASCII (1.01x). The RVV row needs `CXXFLAGS="-march=rv64gcv"` when building the C++

@@ -22,17 +22,17 @@ TITLES = {
     "dirty": "dirty: lossy, errors every ~12 B",
 }
 ARCHES = [
-    ("x86 / AVX-512", "bench/results/default.md", "#5faf5f"),
+    ("x86 / best SIMD", "bench/results/default.md", "#5faf5f"),
     ("aarch64 / NEON", "bench/results/neon.md", "#8a7faf"),
     ("POWER9 / VSX", "bench/results/ppc64.md", "#3f8f6f"),
     ("Spacemit X60 / RVV", "bench/results/riscv.md", "#8f7f5f"),
 ]
 CLEAN_COMPETITORS = [
-    "simdutf C++ (strict)",
-    "simdutf8 + chars",
-    "std from_utf8 + chars",
+    ("simdutf", "simdutf C++ (strict)"),
+    ("simdutf8", "simdutf8 + chars"),
+    ("std", "std from_utf8 + chars"),
 ]
-DIRTY_COMPETITOR = "utf8_chunks + chars (C1)"
+DIRTY_COMPETITOR = ("utf8_chunks", "utf8_chunks + chars (C1)")
 
 
 def ours_value(rows, ci, dirty):
@@ -49,10 +49,10 @@ def ours_value(rows, ci, dirty):
 
 
 def best_competitor(rows, ci, dirty):
-    names = [DIRTY_COMPETITOR] if dirty else CLEAN_COMPETITORS
-    vals = [value(rows, name, ci, dirty) for name in names]
-    vals = [v for v in vals if v is not None]
-    return max(vals) if vals else None
+    candidates = [DIRTY_COMPETITOR] if dirty else CLEAN_COMPETITORS
+    vals = [(short, value(rows, name, ci, dirty)) for short, name in candidates]
+    vals = [(short, v) for short, v in vals if v is not None]
+    return max(vals, key=lambda t: t[1]) if vals else None
 
 
 def ratios():
@@ -68,7 +68,8 @@ def ratios():
             ours = ours_value(rows, ci, dirty)
             other = best_competitor(rows, ci, dirty)
             if ours is not None and other:
-                data[label][1][col] = ours / other
+                ref, other_v = other
+                data[label][1][col] = (ours / other_v, ref)
     return data
 
 
@@ -77,7 +78,7 @@ def main():
     print("| Our SIMD vs best other | " + " | ".join(TITLES.get(c, c) for c in COLS) + " |")
     print("|---|" + "---|" * len(COLS))
     for label, (_, values) in data.items():
-        cells = [f"{values[c]:.2f}x" if c in values else "–" for c in COLS]
+        cells = [f"{values[c][0]:.2f}x {values[c][1]}" if c in values else "–" for c in COLS]
         print(f"| {label} | " + " | ".join(cells) + " |")
 
     out = []
@@ -95,8 +96,8 @@ def main():
         gx = PX + (pi % 2) * (PW + 10)
         top_y = 6 + (pi // 2) * PITCH
         text(gx, top_y + 14, TITLES.get(col, col), fill=TEAL, weight=600, size=13)
-        bars = [(label, colour, values[col]) for label, (colour, values) in data.items() if col in values]
-        top, step = nice_top(max(v for _, _, v in bars))
+        bars = [(label, colour, *values[col]) for label, (colour, values) in data.items() if col in values]
+        top, step = nice_top(max(v for _, _, v, _ in bars))
         x0, y0 = gx + LABEL, top_y + 26
         y1 = y0 + ROW * len(bars)
         t = 0.0
@@ -108,18 +109,19 @@ def main():
             )
             text(x, y1 + 14, f"{t:g}", "middle")
             t += step
-        for n, (label, colour, v) in enumerate(bars):
+        for n, (label, colour, v, ref) in enumerate(bars):
             ry = y0 + n * ROW + (ROW - BAR) // 2
             w = BARW * v / top
             text(x0 - 6, ry + BAR - 2, label, "end", size=10)
             out.append(f'<rect x="{x0}" y="{ry}" width="{w:.1f}" height="{BAR}" rx="2" fill="{colour}"/>')
-            text(x0 + w + 5, ry + BAR - 2, f"{v:.2f}x", size=10)
+            text(x0 + w + 5, ry + BAR - 2, f"{v:.2f}x {ref}", size=9)
     H = 6 + ((len(COLS) + 1) // 2) * PITCH + 2
     text(
         360, H,
-        "Our best SIMD level over the fastest other implementation on the same machine. "
+        "Our best SIMD level over the fastest other implementation on the same machine; "
+        "the reference is named after each ratio (utf8_chunks only for dirty input). "
         "One machine per architecture; ratios only. median of 7.",
-        "middle", size=11,
+        "middle", size=10,
     )
     H += 10
     svg = (
