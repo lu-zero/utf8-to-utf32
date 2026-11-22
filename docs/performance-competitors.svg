@@ -9,18 +9,18 @@
 <text x="239.3" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
 <line x1="296.0" y1="32" x2="296.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="120.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="120.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="126" y="35" width="154.0" height="13" rx="2" fill="#5faf5f"/>
-<text x="285.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.36x simdutf</text>
+<text x="285.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.36 (sse4.1 vs simdutf)</text>
 <text x="120.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="126" y="55" width="93.7" height="13" rx="2" fill="#8a7faf"/>
-<text x="224.7" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.83x simdutf</text>
+<text x="224.7" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.83 (neon vs simdutf)</text>
 <text x="120.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="75" width="156.4" height="13" rx="2" fill="#3f8f6f"/>
-<text x="287.4" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.38x simdutf</text>
+<text x="287.4" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.38 (vsx vs simdutf)</text>
 <text x="120.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="126" y="95" width="114.2" height="13" rx="2" fill="#8f7f5f"/>
-<text x="245.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.01x simdutf</text>
+<text x="245.2" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.01 (rvv vs simdutf)</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
 <line x1="486.0" y1="32" x2="486.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -32,18 +32,18 @@
 <text x="613.5" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <line x1="656.0" y1="32" x2="656.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<text x="480.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="480.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="486" y="35" width="128.4" height="13" rx="2" fill="#5faf5f"/>
-<text x="619.4" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.51x simdutf</text>
+<text x="619.4" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.51 (avx512 vs simdutf)</text>
 <text x="480.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="55" width="136.9" height="13" rx="2" fill="#8a7faf"/>
-<text x="627.9" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.61x simdutf</text>
+<text x="627.9" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.61 (neon vs simdutf)</text>
 <text x="480.0" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="75" width="147.3" height="13" rx="2" fill="#3f8f6f"/>
-<text x="638.3" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.73x simdutf</text>
+<text x="638.3" y="86.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.73 (vsx vs simdutf)</text>
 <text x="480.0" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="486" y="95" width="60.7" height="13" rx="2" fill="#8f7f5f"/>
-<text x="551.7" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.71x simdutf</text>
+<text x="551.7" y="106.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.71 (rvv vs simdutf)</text>
 <text x="8.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
 <line x1="126.0" y1="170" x2="126.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="126.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -53,18 +53,18 @@
 <text x="239.3" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
 <line x1="296.0" y1="170" x2="296.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="120.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="120.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="126" y="173" width="165.4" height="13" rx="2" fill="#5faf5f"/>
-<text x="296.4" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.46x simdutf</text>
+<text x="296.4" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.46 (avx512 vs simdutf)</text>
 <text x="120.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="126" y="193" width="108.3" height="13" rx="2" fill="#8a7faf"/>
-<text x="239.3" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.96x simdutf</text>
+<text x="239.3" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.96 (neon vs simdutf)</text>
 <text x="120.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="213" width="126.1" height="13" rx="2" fill="#3f8f6f"/>
-<text x="257.1" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.11x simdutf</text>
+<text x="257.1" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.11 (vsx vs simdutf)</text>
 <text x="120.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="126" y="233" width="61.3" height="13" rx="2" fill="#8f7f5f"/>
-<text x="192.3" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.54x simdutf</text>
+<text x="192.3" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.54 (rvv vs simdutf)</text>
 <text x="368.0" y="158.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
 <line x1="486.0" y1="170" x2="486.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -76,18 +76,18 @@
 <text x="613.5" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <line x1="656.0" y1="170" x2="656.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<text x="480.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="480.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="486" y="173" width="127.3" height="13" rx="2" fill="#5faf5f"/>
-<text x="618.3" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.50x simdutf</text>
+<text x="618.3" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.50 (avx512 vs simdutf)</text>
 <text x="480.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="193" width="143.2" height="13" rx="2" fill="#8a7faf"/>
-<text x="634.2" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.68x simdutf</text>
+<text x="634.2" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.68 (neon vs simdutf)</text>
 <text x="480.0" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="213" width="156.6" height="13" rx="2" fill="#3f8f6f"/>
-<text x="647.6" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.84x simdutf</text>
+<text x="647.6" y="224.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.84 (vsx vs simdutf)</text>
 <text x="480.0" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="486" y="233" width="53.8" height="13" rx="2" fill="#8f7f5f"/>
-<text x="544.8" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.63x simdutf</text>
+<text x="544.8" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.63 (rvv vs simdutf)</text>
 <text x="8.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
 <line x1="126.0" y1="308" x2="126.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="126.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -97,18 +97,18 @@
 <text x="239.3" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
 <line x1="296.0" y1="308" x2="296.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="126" y="311" width="109.7" height="13" rx="2" fill="#5faf5f"/>
-<text x="240.7" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.97x simdutf</text>
+<text x="240.7" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.97 (avx512 vs simdutf)</text>
 <text x="120.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="126" y="331" width="124.8" height="13" rx="2" fill="#8a7faf"/>
-<text x="255.8" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.10x simdutf</text>
+<text x="255.8" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.10 (neon vs simdutf)</text>
 <text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="126" y="351" width="164.6" height="13" rx="2" fill="#3f8f6f"/>
-<text x="295.6" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.45x std</text>
+<text x="295.6" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.45 (vsx vs std)</text>
 <text x="120.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="126" y="371" width="79.8" height="13" rx="2" fill="#8f7f5f"/>
-<text x="210.8" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.70x simdutf</text>
+<text x="210.8" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">0.70 (rvv vs simdutf)</text>
 <text x="368.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="486.0" y1="308" x2="486.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -120,17 +120,17 @@
 <text x="613.5" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <line x1="656.0" y1="308" x2="656.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<text x="480.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / best SIMD</text>
+<text x="480.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86</text>
 <rect x="486" y="311" width="100.1" height="13" rx="2" fill="#5faf5f"/>
-<text x="591.1" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.18x utf8_chunks</text>
+<text x="591.1" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.18 (avx2 vs utf8_chunks)</text>
 <text x="480.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="331" width="151.5" height="13" rx="2" fill="#8a7faf"/>
-<text x="642.5" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.78x utf8_chunks</text>
+<text x="642.5" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.78 (neon vs utf8_chunks)</text>
 <text x="480.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
 <rect x="486" y="351" width="157.2" height="13" rx="2" fill="#3f8f6f"/>
-<text x="648.2" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.85x utf8_chunks</text>
+<text x="648.2" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.85 (vsx vs utf8_chunks)</text>
 <text x="480.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
 <rect x="486" y="371" width="97.1" height="13" rx="2" fill="#8f7f5f"/>
-<text x="588.1" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.14x utf8_chunks</text>
-<text x="360.0" y="422.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="middle">Our best SIMD level over the fastest other implementation on the same machine; the reference is named after each ratio (utf8_chunks only for dirty input). One machine per architecture; ratios only. median of 7.</text>
+<text x="588.1" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="9" fill="#8a8a8a" text-anchor="start">1.14 (rvv vs utf8_chunks)</text>
+<text x="360.0" y="422.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="middle">Our best SIMD level over the fastest other implementation on the same machine; both are named after each ratio (utf8_chunks only for dirty input). One machine per architecture; ratios only. median of 7.</text>
 </svg>
