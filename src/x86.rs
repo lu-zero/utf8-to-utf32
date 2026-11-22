@@ -2,7 +2,7 @@
 //!
 //! 1. ASCII fast path: if the next bytes have no high bit, widen them
 //!    (`pmovzxbd`) straight to u32.
-//! 2. Otherwise take a block of P positions (16 / 32 / 48) plus 3 bytes of
+//! 2. Otherwise take a block of P positions (16 / 32 / 60) plus 3 bytes of
 //!    lookahead and build u64 bitmasks from byte compares (high bit, at least
 //!    C0, C2, E0, F0, F5; for 3/4-byte leads E0/ED/F0/F4 also whether the next
 //!    byte is at least A0 / 90). The block is valid iff the continuation mask
@@ -100,14 +100,14 @@ const fn vbmi_idx(g: usize) -> [u8; 64] {
     while j < 16 {
         let mut k = 0;
         while k < 4 {
-            t[j * 4 + k] = (g + j + k) as u8;
+            t[j * 4 + k] = ((g + j + k) & 63) as u8;
             k += 1;
         }
         j += 1;
     }
     t
 }
-static VBMI_IDX: [[u8; 64]; 3] = [vbmi_idx(0), vbmi_idx(16), vbmi_idx(32)];
+static VBMI_IDX: [[u8; 64]; 4] = [vbmi_idx(0), vbmi_idx(16), vbmi_idx(32), vbmi_idx(48)];
 
 /// u16 lane j = bytes (g+j, g+j+1) for IDX16[.][0], and (g+j+2, _) for IDX16[.][1].
 const fn vbmi_idx16(g: usize, off: usize) -> [u8; 64] {
@@ -636,6 +636,7 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
         _mm512_loadu_si512(VBMI_IDX[0].as_ptr() as *const _),
         _mm512_loadu_si512(VBMI_IDX[1].as_ptr() as *const _),
         _mm512_loadu_si512(VBMI_IDX[2].as_ptr() as *const _),
+        _mm512_loadu_si512(VBMI_IDX[3].as_ptr() as *const _),
     ];
     let ld = |a: &[u8; 64]| _mm512_loadu_si512(a.as_ptr() as *const _);
     let idx16 = [
@@ -667,7 +668,7 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
                 _mm512_cmpeq_epi8_mask(z, _mm512_set1_epi8($x as u8 as i8))
             };
         }
-        const P: u32 = 48;
+        const P: u32 = 60;
         let (c0, e0, f0) = (ge!(0xC0), ge!(0xE0), ge!(0xF0));
         macro_rules! dec16 {
             ($leads:expr) => {{
@@ -677,7 +678,7 @@ unsafe fn avx512_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf3
                     let gm = if gi == 0 {
                         leads as u32
                     } else {
-                        ((leads >> 32) & 0xFFFF) as u32
+                        ((leads >> 32) & 0x0FFF_FFFF) as u32
                     };
                     if gm != 0 {
                         let v01 = _mm512_permutexvar_epi8(idx16[gi][0], z);
