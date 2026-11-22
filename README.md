@@ -10,6 +10,21 @@ This crate converts UTF-8 to UTF-32 in pure Rust, validating as it goes. It uses
 - **Lossy conversion.** Each maximal invalid subpart becomes one U+FFFD, which gives the same output as `String::from_utf8_lossy`. An optional *C1 mode* passes a lone `0x80..=0x9F` byte through as its raw value, which is what terminal emulators want for C1 controls.
 - **Chunk decoder** (`Decoder` / `Piece`). It splits input into ASCII runs, decoded runs, invalid subparts, and a truncated tail that you carry over to the next read.
 
+## Performance
+
+![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
+
+| Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
+|---|---|---|---|---|---|---|
+| x86 / AVX-512 | 1.32x | 3.21x | 4.86x | 3.93x | 2.27x | 1.13x |
+| aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
+| POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
+| Spacemit X60 / RVV | 3.33x | 2.22x | 1.82x | 2.38x | 2.11x | 1.00x |
+
+Each row is one machine; the figure is the ratio to scalar **on that machine**, so absolute GB/s are not compared across rows. Full tables, benchmark method, per-architecture notes and raw results are in [docs/performance.md](docs/performance.md); [Documentation](#documentation) links the architecture pages.
+
+Against other implementations on the same machine, x86 and POWER9 lead on every class (x86's AVX-512 emoji is close to simdutf C++). NEON loses ASCII and CJK to simdutf C++ (the ASCII ordering is not stable across builds), and RVV matches simdutf's RVV backend on ASCII but loses the 2- to 4-byte classes, from 1.4x on Latin up to 1.9x on CJK. See the [cross-implementation graph](docs/performance-competitors.svg) and its table in [docs/performance.md](docs/performance.md#versus-other-implementations).
+
 ## Usage
 
 ```toml
@@ -46,18 +61,6 @@ while let Some(p) = pieces.next_piece() {
 
 There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmarking. With `std`, the `UTF32_LEVEL=scalar|sse4.1|avx2|avx512|neon|vsx` environment variable sets the default level.
 
-## Implementations
-
-| Level | CPU features | Block | Fast paths |
-|---|---|---|---|
-| `Scalar` | none | none | 8-byte ASCII widening, then one character at a time |
-| `Sse41` | SSSE3, SSE4.1, POPCNT | 60 B | ASCII widening; 8 u16 lanes per register, with a second u16 vector for bits 16–20 in blocks with 4-byte characters (x86/x86_64) |
-| `Avx2` | AVX2, POPCNT | 60 B | the same, with 16 u16 lanes or 8 u32 lanes (x86/x86_64) |
-| `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 60 B | the same, with 32 u16 lanes (`vpcompressw`) or 16 u32 lanes (`vpcompressd`) (x86/x86_64) |
-| `Neon` | NEON | 64 B | ASCII widening; Keiser–Lemire `tbl` validation; blocks with only 1–3-byte characters decoded in the byte domain (16 positions per vector, `vsli` bit-inserts), 4-byte characters add a third output byte; compaction by `tbl` straight into u32 lanes (aarch64) |
-| `Vsx` | VSX (nightly, `vsx` feature) | 64 B | the NEON design with `vec_perm` lookups and compaction; SWAR movemask; POWER9 `lxv`/`stxv` (POWER9 only) |
-| `Rvv` | RVV (nightly, `rvv` feature, V extension) | vl B | SEW=8 validation, SEW=32 code-point arithmetic and `vcompress` compaction (riscv64) |
-
 ## Features
 
 - `std` (default): runtime CPU detection and `UTF32_LEVEL`. It implies `alloc`.
@@ -66,27 +69,6 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 
 The minimum supported Rust version is **1.89**, the release that stabilized the AVX-512 intrinsics. aarch64 uses the NEON kernel; POWER9 can enable the VSX kernel with `--features vsx` on a nightly toolchain (POWER8 falls back to scalar); riscv64 can enable the RVV kernel with `--features rvv` on a nightly toolchain; other non-x86 targets use the scalar path.
 
-## Performance
-
-SIMD levels reach up to 4.86x scalar, with one error-dense case slightly slower. The graph compares each level to scalar on the same machine; full tables, per-architecture notes and the raw results are in [docs/performance.md](docs/performance.md).
-
-| Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
-|---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.32x | 3.21x | 4.86x | 3.93x | 2.27x | 1.13x |
-| aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
-| POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
-| Spacemit X60 / RVV | 3.33x | 2.22x | 1.82x | 2.38x | 2.11x | 1.00x |
-
-![SIMD speedup over scalar by input type and architecture](docs/performance-summary.svg)
-
-Against other implementations on the same machine, x86 and POWER9 lead on every
-class (x86's AVX-512 emoji is close to simdutf C++). NEON loses ASCII and CJK to
-simdutf C++ (the ASCII ordering is not stable across builds), and RVV matches
-simdutf's RVV backend on ASCII but loses the 2- to 4-byte classes, from 1.4x on
-Latin up to 1.9x on CJK. See the
-[cross-implementation graph](docs/performance-competitors.svg) and its table in
-[docs/performance.md](docs/performance.md#versus-other-implementations).
-
 ## Documentation
 
 - [docs/performance.md](docs/performance.md): benchmark method, full tables and the cross-architecture summary.
@@ -94,16 +76,16 @@ Latin up to 1.9x on CJK. See the
 - [docs/architecture/x86.md](docs/architecture/x86.md): the SSE4.1, AVX2 and AVX-512 kernels on x86 and x86_64.
 - [docs/architecture/aarch64.md](docs/architecture/aarch64.md): the NEON kernel, including measurements and ideas that were evaluated.
 - [docs/architecture/ppc64.md](docs/architecture/ppc64.md): the VSX kernel, its SWAR masks and the measured `Decoder` cost on error-dense input.
-- [docs/architecture/riscv.md](docs/architecture/riscv.md): the RVV kernel, its inline-asm design and the VLA block contract.
+- [docs/architecture/riscv.md](docs/architecture/riscv.md): the RVV kernel, its inline-asm design and the block contract.
 
 ## Acknowledgements
 
-Some RVV kernel optimizations (the signed-byte non-continuation mask and the
-1-2/1-3 byte decode fast paths) are inspired by [Olaf Bernstein’s `rvv-bench`
-`vector-utf`](https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c)
-([article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html)).
-The 4-byte decode path contains routines translated from `vector-utf`; its MIT
-notice is in [`LICENSE-rvv-bench`](LICENSE-rvv-bench).
+This crate builds on the work of others:
+
+- **Olaf Bernstein** — his [`rvv-bench` `vector-utf`](https://github.com/camel-cdr/rvv-bench/blob/main/vector-utf/8toN_gather.c) and the accompanying [article](https://camel-cdr.github.io/rvv-bench-results/articles/vector-utf.html) supplied the signed-byte non-continuation mask, the max-classified 1–2/1–3 byte fast paths, and routines translated into the RVV 4-byte decode path. His MIT notice is in [`LICENSE-rvv-bench`](LICENSE-rvv-bench). His RVV conversion work is also upstreamed in simdutf, where it is the vector implementation we benchmark against.
+- **[simdutf](https://github.com/simdutf/simdutf)** (C++) — the established UTF-8 conversion library; the strict implementation we compare against in the benchmark tables.
+- **[simdutf8](https://github.com/rusticstuff/simdutf8)** (Rust) — fast UTF-8 validation; its `from_utf8` + `chars()` row is the reference for validation-only throughput.
+- **`core::str::from_utf8` and `utf8_chunks`** — the oracle for error semantics (`valid_up_to`, `error_len`, maximal subparts) and lossy output.
 
 ## License
 
