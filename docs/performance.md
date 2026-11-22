@@ -15,7 +15,7 @@ The graph shows the ratio to scalar on the **same** machine, which is.
 
 | Speedup over scalar | ASCII | Latin (2-byte) | CJK (3-byte) | box drawing and ASCII | emoji (4-byte) | dirty: lossy, errors every ~12 B |
 |---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.28x | 3.79x | 4.26x | 4.00x | 2.19x | 1.13x |
+| x86 / AVX-512 | 1.32x | 3.21x | 4.86x | 3.93x | 2.27x | 1.13x |
 | aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
 | Spacemit X60 / RVV | 3.33x | 2.22x | 1.82x | 2.38x | 2.11x | 1.00x |
@@ -33,7 +33,7 @@ input, where the strict rows cannot run, the competitor is `utf8_chunks` +
 
 | Our SIMD vs best other | ASCII | Latin (2-byte) | CJK (3-byte) | box drawing and ASCII | emoji (4-byte) | dirty: lossy, errors every ~12 B |
 |---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.24x | 1.62x | 1.48x | 1.48x | 1.04x | 1.34x |
+| x86 / AVX-512 | 1.36x | 1.51x | 1.46x | 1.50x | 0.97x | 1.18x |
 | aarch64 / NEON | 0.83x | 1.61x | 0.96x | 1.68x | 1.10x | 1.78x |
 | POWER9 / VSX | 1.38x | 1.73x | 1.11x | 1.84x | 1.45x | 1.85x |
 | Spacemit X60 / RVV | 1.01x | 0.71x | 0.54x | 0.63x | 0.70x | 1.14x |
@@ -59,20 +59,24 @@ on other Intel generations.
 
 | GB/s | ascii | latin | cjk | box drawing | emoji | dirty |
 |---|---|---|---|---|---|---|
-| simdutf 0.7 (C++) | 5.57 | 3.80 | 4.02 | 3.80 | 3.55 | – |
-| simdutf8 + `chars()` | 1.51 | 1.52 | 2.51 | 1.75 | 2.00 | – |
-| std `from_utf8` + `chars()` | 1.51 | 0.87 | 1.17 | 0.96 | 0.96 | – |
-| `utf8_chunks` + `chars()` (C1) | 0.52 | 0.68 | 0.95 | 0.76 | 0.85 | 0.90 |
-| this crate, scalar | 5.18 | 1.62 | 1.40 | 1.41 | 1.69 | – |
-| this crate, sse4.1 | 6.88 | 2.13 | 1.58 | 1.54 | 1.23 | – |
-| this crate, avx2 | 6.58 | 3.52 | 2.82 | 2.83 | 1.72 | – |
-| this crate, avx512 | 6.61 | 6.14 | 5.96 | 5.64 | 3.70 | – |
+| simdutf 0.7 (C++) | 5.02 | 3.80 | 4.03 | 3.78 | 3.79 | – |
+| simdutf8 + `chars()` | 1.50 | 1.48 | 2.53 | 1.76 | 2.07 | – |
+| std `from_utf8` + `chars()` | 1.49 | 0.79 | 1.18 | 0.88 | 1.01 | – |
+| `utf8_chunks` + `chars()` (C1) | 0.58 | 0.76 | 0.96 | 0.78 | 0.96 | 1.01 |
+| this crate, scalar | 5.17 | 1.79 | 1.21 | 1.44 | 1.62 | – |
+| this crate, sse4.1 | 6.82 | 2.11 | 1.60 | 1.54 | 1.18 | – |
+| this crate, avx2 | 6.72 | 3.49 | 2.21 | 2.89 | 1.70 | – |
+| this crate, avx512 | 6.80 | 5.74 | 5.88 | 5.66 | 3.67 | – |
 
 "Dirty" uses lossy conversion in C1 mode; the other columns use the strict
-slice function. The recorded run below is from the patched kernels on the
-`x86_64-updates` branch; `native.md` is from an earlier, unchanged build.
-Full output: [`default.md`](../bench/results/default.md) and
-[`native.md`](../bench/results/native.md).
+slice function. The recorded run is from the patched kernels on the
+`x86_64-updates` branch, including the inline scalar decode of error-dense
+`Decoder` windows; the dirty `Decoder` row is now 0.79 GB/s on SSE4.1 (was
+0.42 before the fix). `native.md` is from the same final build with
+`-C target-cpu=native`; `native-9c9e38e.md` records the state before the
+Decoder fix. Full output: [`default.md`](../bench/results/default.md),
+[`native.md`](../bench/results/native.md) and
+[`native-9c9e38e.md`](../bench/results/native-9c9e38e.md).
 
 ![GB/s by implementation and input type on x86](performance-x86.svg)
 

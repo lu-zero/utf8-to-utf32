@@ -12,58 +12,56 @@
 <line x1="300.0" y1="32" x2="300.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="300.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">8</text>
 <text x="96.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="102" y="35" width="137.9" height="13" rx="2" fill="#d78787"/>
-<text x="244.9" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.57</text>
+<rect x="102" y="35" width="124.2" height="13" rx="2" fill="#d78787"/>
+<text x="231.2" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.02</text>
 <text x="96.0" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="102" y="54" width="37.4" height="13" rx="2" fill="#d7a17f"/>
-<text x="144.4" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.51</text>
+<rect x="102" y="54" width="37.1" height="13" rx="2" fill="#d7a17f"/>
+<text x="144.1" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.50</text>
 <text x="96.0" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="102" y="73" width="37.4" height="13" rx="2" fill="#87afaf"/>
-<text x="144.4" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.51</text>
+<rect x="102" y="73" width="36.9" height="13" rx="2" fill="#87afaf"/>
+<text x="143.9" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.49</text>
 <text x="96.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="102" y="92" width="128.2" height="13" rx="2" fill="#8a8a8a"/>
-<text x="235.2" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.18</text>
+<rect x="102" y="92" width="128.0" height="13" rx="2" fill="#8a8a8a"/>
+<text x="235.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.17</text>
 <text x="96.0" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
-<rect x="102" y="111" width="170.3" height="13" rx="2" fill="#87af87"/>
-<text x="277.3" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.88</text>
+<rect x="102" y="111" width="168.8" height="13" rx="2" fill="#87af87"/>
+<text x="275.8" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.82</text>
 <text x="96.0" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="102" y="130" width="162.9" height="13" rx="2" fill="#5faf87"/>
-<text x="269.9" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.58</text>
+<rect x="102" y="130" width="166.3" height="13" rx="2" fill="#5faf87"/>
+<text x="273.3" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.72</text>
 <text x="96.0" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="102" y="149" width="163.6" height="13" rx="2" fill="#5faf5f"/>
-<text x="270.6" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.61</text>
+<rect x="102" y="149" width="168.3" height="13" rx="2" fill="#5faf5f"/>
+<text x="275.3" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.80</text>
 <text x="368.0" y="20.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">Latin (2-byte)</text>
 <line x1="462.0" y1="32" x2="462.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="462.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="511.5" y1="32" x2="511.5" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="511.5" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
-<line x1="561.0" y1="32" x2="561.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="561.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
-<line x1="610.5" y1="32" x2="610.5" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="610.5" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">6</text>
+<line x1="528.0" y1="32" x2="528.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="528.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
+<line x1="594.0" y1="32" x2="594.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="594.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
 <line x1="660.0" y1="32" x2="660.0" y2="165" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="660.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">8</text>
+<text x="660.0" y="179.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">6</text>
 <text x="456.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="462" y="35" width="94.0" height="13" rx="2" fill="#d78787"/>
-<text x="561.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.80</text>
+<rect x="462" y="35" width="125.4" height="13" rx="2" fill="#d78787"/>
+<text x="592.4" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.80</text>
 <text x="456.0" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="462" y="54" width="37.6" height="13" rx="2" fill="#d7a17f"/>
-<text x="504.6" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.52</text>
+<rect x="462" y="54" width="48.8" height="13" rx="2" fill="#d7a17f"/>
+<text x="515.8" y="65.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.48</text>
 <text x="456.0" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="462" y="73" width="21.5" height="13" rx="2" fill="#87afaf"/>
-<text x="488.5" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.87</text>
+<rect x="462" y="73" width="26.1" height="13" rx="2" fill="#87afaf"/>
+<text x="493.1" y="84.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.79</text>
 <text x="456.0" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="462" y="92" width="40.1" height="13" rx="2" fill="#8a8a8a"/>
-<text x="507.1" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.62</text>
+<rect x="462" y="92" width="59.1" height="13" rx="2" fill="#8a8a8a"/>
+<text x="526.1" y="103.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.79</text>
 <text x="456.0" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
-<rect x="462" y="111" width="52.7" height="13" rx="2" fill="#87af87"/>
-<text x="519.7" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.13</text>
+<rect x="462" y="111" width="69.6" height="13" rx="2" fill="#87af87"/>
+<text x="536.6" y="122.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.11</text>
 <text x="456.0" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="462" y="130" width="87.1" height="13" rx="2" fill="#5faf87"/>
-<text x="554.1" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.52</text>
+<rect x="462" y="130" width="115.2" height="13" rx="2" fill="#5faf87"/>
+<text x="582.2" y="141.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.49</text>
 <text x="456.0" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="462" y="149" width="152.0" height="13" rx="2" fill="#5faf5f"/>
-<text x="619.0" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">6.14</text>
+<rect x="462" y="149" width="189.4" height="13" rx="2" fill="#5faf5f"/>
+<text x="656.4" y="160.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.74</text>
 <text x="8.0" y="211.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">CJK (3-byte)</text>
 <line x1="102.0" y1="223" x2="102.0" y2="356" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="102.0" y="370.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -74,26 +72,26 @@
 <line x1="300.0" y1="223" x2="300.0" y2="356" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="300.0" y="370.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">6</text>
 <text x="96.0" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="102" y="226" width="132.7" height="13" rx="2" fill="#d78787"/>
-<text x="239.7" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">4.02</text>
+<rect x="102" y="226" width="133.0" height="13" rx="2" fill="#d78787"/>
+<text x="240.0" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">4.03</text>
 <text x="96.0" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="102" y="245" width="82.8" height="13" rx="2" fill="#d7a17f"/>
-<text x="189.8" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.51</text>
+<rect x="102" y="245" width="83.5" height="13" rx="2" fill="#d7a17f"/>
+<text x="190.5" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.53</text>
 <text x="96.0" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="102" y="264" width="38.6" height="13" rx="2" fill="#87afaf"/>
-<text x="145.6" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.17</text>
+<rect x="102" y="264" width="38.9" height="13" rx="2" fill="#87afaf"/>
+<text x="145.9" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.18</text>
 <text x="96.0" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="102" y="283" width="46.2" height="13" rx="2" fill="#8a8a8a"/>
-<text x="153.2" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.40</text>
+<rect x="102" y="283" width="39.9" height="13" rx="2" fill="#8a8a8a"/>
+<text x="146.9" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.21</text>
 <text x="96.0" y="313.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
-<rect x="102" y="302" width="52.1" height="13" rx="2" fill="#87af87"/>
-<text x="159.1" y="313.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.58</text>
+<rect x="102" y="302" width="52.8" height="13" rx="2" fill="#87af87"/>
+<text x="159.8" y="313.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.60</text>
 <text x="96.0" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="102" y="321" width="93.1" height="13" rx="2" fill="#5faf87"/>
-<text x="200.1" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.82</text>
+<rect x="102" y="321" width="72.9" height="13" rx="2" fill="#5faf87"/>
+<text x="179.9" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.21</text>
 <text x="96.0" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="102" y="340" width="196.7" height="13" rx="2" fill="#5faf5f"/>
-<text x="303.7" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.96</text>
+<rect x="102" y="340" width="194.0" height="13" rx="2" fill="#5faf5f"/>
+<text x="301.0" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.88</text>
 <text x="368.0" y="211.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">box drawing and ASCII</text>
 <line x1="462.0" y1="223" x2="462.0" y2="356" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="462.0" y="370.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -104,26 +102,26 @@
 <line x1="660.0" y1="223" x2="660.0" y2="356" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="660.0" y="370.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">6</text>
 <text x="456.0" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="462" y="226" width="125.4" height="13" rx="2" fill="#d78787"/>
-<text x="592.4" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.80</text>
+<rect x="462" y="226" width="124.7" height="13" rx="2" fill="#d78787"/>
+<text x="591.7" y="237.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.78</text>
 <text x="456.0" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="462" y="245" width="57.8" height="13" rx="2" fill="#d7a17f"/>
-<text x="524.8" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.75</text>
+<rect x="462" y="245" width="58.1" height="13" rx="2" fill="#d7a17f"/>
+<text x="525.1" y="256.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.76</text>
 <text x="456.0" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="462" y="264" width="31.7" height="13" rx="2" fill="#87afaf"/>
-<text x="498.7" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.96</text>
+<rect x="462" y="264" width="29.0" height="13" rx="2" fill="#87afaf"/>
+<text x="496.0" y="275.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.88</text>
 <text x="456.0" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="462" y="283" width="46.5" height="13" rx="2" fill="#8a8a8a"/>
-<text x="513.5" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.41</text>
+<rect x="462" y="283" width="47.5" height="13" rx="2" fill="#8a8a8a"/>
+<text x="514.5" y="294.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.44</text>
 <text x="456.0" y="313.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
 <rect x="462" y="302" width="50.8" height="13" rx="2" fill="#87af87"/>
 <text x="517.8" y="313.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.54</text>
 <text x="456.0" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="462" y="321" width="93.4" height="13" rx="2" fill="#5faf87"/>
-<text x="560.4" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.83</text>
+<rect x="462" y="321" width="95.4" height="13" rx="2" fill="#5faf87"/>
+<text x="562.4" y="332.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.89</text>
 <text x="456.0" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="462" y="340" width="186.1" height="13" rx="2" fill="#5faf5f"/>
-<text x="653.1" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.64</text>
+<rect x="462" y="340" width="186.8" height="13" rx="2" fill="#5faf5f"/>
+<text x="653.8" y="351.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">5.66</text>
 <text x="8.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
 <line x1="102.0" y1="414" x2="102.0" y2="547" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="102.0" y="561.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -136,26 +134,26 @@
 <line x1="300.0" y1="414" x2="300.0" y2="547" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="300.0" y="561.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">4</text>
 <text x="96.0" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf (C++)</text>
-<rect x="102" y="417" width="175.7" height="13" rx="2" fill="#d78787"/>
-<text x="282.7" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.55</text>
+<rect x="102" y="417" width="187.6" height="13" rx="2" fill="#d78787"/>
+<text x="294.6" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.79</text>
 <text x="96.0" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">simdutf8 + chars</text>
-<rect x="102" y="436" width="99.0" height="13" rx="2" fill="#d7a17f"/>
-<text x="206.0" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.00</text>
+<rect x="102" y="436" width="102.5" height="13" rx="2" fill="#d7a17f"/>
+<text x="209.5" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">2.07</text>
 <text x="96.0" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">std + chars</text>
-<rect x="102" y="455" width="47.5" height="13" rx="2" fill="#87afaf"/>
-<text x="154.5" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.96</text>
+<rect x="102" y="455" width="50.0" height="13" rx="2" fill="#87afaf"/>
+<text x="157.0" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.01</text>
 <text x="96.0" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="102" y="474" width="83.7" height="13" rx="2" fill="#8a8a8a"/>
-<text x="190.7" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.69</text>
+<rect x="102" y="474" width="80.2" height="13" rx="2" fill="#8a8a8a"/>
+<text x="187.2" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.62</text>
 <text x="96.0" y="504.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
-<rect x="102" y="493" width="60.9" height="13" rx="2" fill="#87af87"/>
-<text x="167.9" y="504.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.23</text>
+<rect x="102" y="493" width="58.4" height="13" rx="2" fill="#87af87"/>
+<text x="165.4" y="504.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.18</text>
 <text x="96.0" y="523.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="102" y="512" width="85.1" height="13" rx="2" fill="#5faf87"/>
-<text x="192.1" y="523.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.72</text>
+<rect x="102" y="512" width="84.1" height="13" rx="2" fill="#5faf87"/>
+<text x="191.1" y="523.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.70</text>
 <text x="96.0" y="542.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="102" y="531" width="183.2" height="13" rx="2" fill="#5faf5f"/>
-<text x="290.1" y="542.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.70</text>
+<rect x="102" y="531" width="181.7" height="13" rx="2" fill="#5faf5f"/>
+<text x="288.7" y="542.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">3.67</text>
 <text x="368.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="462.0" y1="414" x2="462.0" y2="490" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="462.0" y="504.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -166,16 +164,16 @@
 <line x1="660.0" y1="414" x2="660.0" y2="490" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="660.0" y="504.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <text x="456.0" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">scalar</text>
-<rect x="462" y="417" width="128.0" height="13" rx="2" fill="#8a8a8a"/>
-<text x="595.0" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.97</text>
+<rect x="462" y="417" width="126.7" height="13" rx="2" fill="#8a8a8a"/>
+<text x="593.7" y="428.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">0.96</text>
 <text x="456.0" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">sse4.1</text>
-<rect x="462" y="436" width="157.1" height="13" rx="2" fill="#87af87"/>
-<text x="624.1" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.19</text>
+<rect x="462" y="436" width="137.3" height="13" rx="2" fill="#87af87"/>
+<text x="604.3" y="447.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.04</text>
 <text x="456.0" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx2</text>
-<rect x="462" y="455" width="159.7" height="13" rx="2" fill="#5faf87"/>
-<text x="626.7" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.21</text>
+<rect x="462" y="455" width="157.1" height="13" rx="2" fill="#5faf87"/>
+<text x="624.1" y="466.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.19</text>
 <text x="456.0" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="end">avx512</text>
-<rect x="462" y="474" width="145.2" height="13" rx="2" fill="#5faf5f"/>
-<text x="612.2" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.10</text>
+<rect x="462" y="474" width="142.6" height="13" rx="2" fill="#5faf5f"/>
+<text x="609.6" y="485.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="start">1.08</text>
 <text x="360.0" y="581.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#8a8a8a" text-anchor="middle">GB/s of UTF-8 input, higher is better. Intel Xeon with AVX-512 VBMI2, median of 7.</text>
 </svg>

@@ -68,11 +68,11 @@ The minimum supported Rust version is **1.89**, the release that stabilized the 
 
 ## Performance
 
-SIMD levels reach up to 4.26x scalar, with one error-dense case slightly slower. The graph compares each level to scalar on the same machine; full tables, per-architecture notes and the raw results are in [docs/performance.md](docs/performance.md).
+SIMD levels reach up to 4.86x scalar, with one error-dense case slightly slower. The graph compares each level to scalar on the same machine; full tables, per-architecture notes and the raw results are in [docs/performance.md](docs/performance.md).
 
 | Speedup over scalar | ASCII | Latin | CJK | box | emoji | dirty |
 |---|---|---|---|---|---|---|
-| x86 / AVX-512 | 1.28x | 3.79x | 4.26x | 4.00x | 2.19x | 1.13x |
+| x86 / AVX-512 | 1.32x | 3.21x | 4.86x | 3.93x | 2.27x | 1.13x |
 | aarch64 / NEON | 1.77x | 2.07x | 2.46x | 2.28x | 1.44x | 0.93x |
 | POWER9 / VSX | 2.77x | 1.20x | 1.46x | 2.06x | 1.61x | 1.12x |
 | Spacemit X60 / RVV | 3.33x | 2.22x | 1.82x | 2.38x | 2.11x | 1.00x |
