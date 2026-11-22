@@ -10,8 +10,8 @@
 <line x1="296.0" y1="32" x2="296.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <text x="120.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="126" y="35" width="146.2" height="13" rx="2" fill="#5faf5f"/>
-<text x="277.2" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.29x</text>
+<rect x="126" y="35" width="140.0" height="13" rx="2" fill="#5faf5f"/>
+<text x="271.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.24x</text>
 <text x="120.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="126" y="55" width="93.7" height="13" rx="2" fill="#8a7faf"/>
 <text x="224.7" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.83x</text>
@@ -33,8 +33,8 @@
 <line x1="656.0" y1="32" x2="656.0" y2="112" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="126.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
 <text x="480.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="486" y="35" width="117.0" height="13" rx="2" fill="#5faf5f"/>
-<text x="608.0" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.38x</text>
+<rect x="486" y="35" width="137.3" height="13" rx="2" fill="#5faf5f"/>
+<text x="628.3" y="46.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.62x</text>
 <text x="480.0" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="55" width="136.9" height="13" rx="2" fill="#8a7faf"/>
 <text x="627.9" y="66.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.61x</text>
@@ -54,8 +54,8 @@
 <line x1="296.0" y1="170" x2="296.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="296.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
 <text x="120.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="126" y="173" width="136.6" height="13" rx="2" fill="#5faf5f"/>
-<text x="267.6" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.21x</text>
+<rect x="126" y="173" width="168.0" height="13" rx="2" fill="#5faf5f"/>
+<text x="299.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.48x</text>
 <text x="120.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="126" y="193" width="108.3" height="13" rx="2" fill="#8a7faf"/>
 <text x="239.3" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.96x</text>
@@ -77,8 +77,8 @@
 <line x1="656.0" y1="170" x2="656.0" y2="250" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="264.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
 <text x="480.0" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="486" y="173" width="103.6" height="13" rx="2" fill="#5faf5f"/>
-<text x="594.6" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.22x</text>
+<rect x="486" y="173" width="126.2" height="13" rx="2" fill="#5faf5f"/>
+<text x="617.2" y="184.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.48x</text>
 <text x="480.0" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="193" width="143.2" height="13" rx="2" fill="#8a7faf"/>
 <text x="634.2" y="204.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.68x</text>
@@ -89,23 +89,26 @@
 <rect x="486" y="233" width="53.8" height="13" rx="2" fill="#8f7f5f"/>
 <text x="544.8" y="244.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.63x</text>
 <text x="8.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">emoji (4-byte)</text>
-<line x1="126.0" y1="308" x2="126.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="126.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
-<line x1="182.7" y1="308" x2="182.7" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="182.7" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
-<line x1="239.3" y1="308" x2="239.3" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="239.3" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
-<line x1="296.0" y1="308" x2="296.0" y2="368" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
-<text x="296.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
-<text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
-<rect x="126" y="311" width="124.8" height="13" rx="2" fill="#8a7faf"/>
-<text x="255.8" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.10x</text>
-<text x="120.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
-<rect x="126" y="331" width="164.6" height="13" rx="2" fill="#3f8f6f"/>
-<text x="295.6" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>
-<text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
-<rect x="126" y="351" width="79.8" height="13" rx="2" fill="#8f7f5f"/>
-<text x="210.8" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.70x</text>
+<line x1="126.0" y1="308" x2="126.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="126.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
+<line x1="182.7" y1="308" x2="182.7" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="182.7" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0.5</text>
+<line x1="239.3" y1="308" x2="239.3" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="239.3" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1</text>
+<line x1="296.0" y1="308" x2="296.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
+<text x="296.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">1.5</text>
+<text x="120.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
+<rect x="126" y="311" width="118.1" height="13" rx="2" fill="#5faf5f"/>
+<text x="249.1" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.04x</text>
+<text x="120.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
+<rect x="126" y="331" width="124.8" height="13" rx="2" fill="#8a7faf"/>
+<text x="255.8" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.10x</text>
+<text x="120.0" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">POWER9 / VSX</text>
+<rect x="126" y="351" width="164.6" height="13" rx="2" fill="#3f8f6f"/>
+<text x="295.6" y="362.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.45x</text>
+<text x="120.0" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">Spacemit X60 / RVV</text>
+<rect x="126" y="371" width="79.8" height="13" rx="2" fill="#8f7f5f"/>
+<text x="210.8" y="382.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">0.70x</text>
 <text x="368.0" y="296.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#5fafaf" text-anchor="start" font-weight="600">dirty: lossy, errors every ~12 B</text>
 <line x1="486.0" y1="308" x2="486.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="486.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">0</text>
@@ -118,8 +121,8 @@
 <line x1="656.0" y1="308" x2="656.0" y2="388" stroke="#8a8a8a" stroke-opacity="0.35" stroke-width="1"/>
 <text x="656.0" y="402.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#8a8a8a" text-anchor="middle">2</text>
 <text x="480.0" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">x86 / AVX-512</text>
-<rect x="486" y="311" width="89.1" height="13" rx="2" fill="#5faf5f"/>
-<text x="580.1" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.05x</text>
+<rect x="486" y="311" width="114.3" height="13" rx="2" fill="#5faf5f"/>
+<text x="605.3" y="322.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.34x</text>
 <text x="480.0" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="end">aarch64 / NEON</text>
 <rect x="486" y="331" width="151.5" height="13" rx="2" fill="#8a7faf"/>
 <text x="642.5" y="342.0" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">1.78x</text>

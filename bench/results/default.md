@@ -1,18 +1,18 @@
 active level (dispatch): Avx512
-| GB/s (median of 7)           |     ascii |     latin |       cjk | box/mixed |     dirty |
-| simdutf C++ (strict)         |      5.24 |      3.80 |      3.99 |      3.80 |         - |
-| simdutf8 + chars             |      1.45 |      1.59 |      2.48 |      1.74 |         - |
-| std from_utf8 + chars        |      1.50 |      0.93 |      0.97 |      0.94 |         - |
-| utf8_chunks + chars (C1)     |      0.52 |      0.59 |      0.98 |      0.65 |      1.04 |
-| ours scalar slice fn         |      5.22 |      1.34 |      1.08 |      1.07 |         - |
-| ours scalar lossy_into (C1)  |      5.07 |      1.27 |      1.05 |      1.04 |      0.96 |
-| ours scalar Decoder pieces   |     15.60 |      1.33 |      1.06 |      1.02 |      0.60 |
-| ours sse4.1 slice fn         |      6.54 |      1.55 |      1.59 |      1.29 |         - |
-| ours sse4.1 lossy_into (C1)  |      6.50 |      1.54 |      1.58 |      1.29 |      1.06 |
-| ours sse4.1 Decoder pieces   |     41.20 |      1.52 |      1.59 |      1.30 |      0.55 |
-| ours avx2 slice fn           |      6.52 |      2.77 |      2.81 |      2.70 |         - |
-| ours avx2 lossy_into (C1)    |      6.52 |      2.76 |      2.82 |      2.69 |      1.09 |
-| ours avx2 Decoder pieces     |     75.33 |      3.00 |      2.80 |      2.70 |      0.55 |
-| ours avx512 slice fn         |      6.76 |      5.23 |      4.81 |      4.63 |         - |
-| ours avx512 lossy_into (C1)  |      6.56 |      5.09 |      4.79 |      4.63 |      1.04 |
-| ours avx512 Decoder pieces   |     84.01 |      4.97 |      4.73 |      4.70 |      0.59 |
+| GB/s (median of 7)           |     ascii |     latin |       cjk | box/mixed |     emoji |     dirty |
+| simdutf C++ (strict)         |      5.57 |      3.80 |      4.02 |      3.80 |      3.55 |         - |
+| simdutf8 + chars             |      1.51 |      1.52 |      2.51 |      1.75 |      2.00 |         - |
+| std from_utf8 + chars        |      1.51 |      0.87 |      1.17 |      0.96 |      0.96 |         - |
+| utf8_chunks + chars (C1)     |      0.52 |      0.68 |      0.95 |      0.76 |      0.85 |      0.90 |
+| ours scalar slice fn         |      5.18 |      1.62 |      1.40 |      1.41 |      1.69 |         - |
+| ours scalar lossy_into (C1)  |      5.22 |      1.68 |      1.36 |      1.41 |      1.71 |      0.97 |
+| ours scalar Decoder pieces   |     30.12 |      1.75 |      1.38 |      1.43 |      1.69 |      0.60 |
+| ours sse4.1 slice fn         |      6.88 |      2.13 |      1.58 |      1.54 |      1.23 |         - |
+| ours sse4.1 lossy_into (C1)  |      6.79 |      2.04 |      1.58 |      1.51 |      1.23 |      1.19 |
+| ours sse4.1 Decoder pieces   |     32.93 |      2.13 |      1.58 |      1.47 |      1.23 |      0.42 |
+| ours avx2 slice fn           |      6.58 |      3.52 |      2.82 |      2.83 |      1.72 |         - |
+| ours avx2 lossy_into (C1)    |      6.60 |      3.51 |      2.82 |      2.86 |      1.72 |      1.21 |
+| ours avx2 Decoder pieces     |     71.17 |      3.45 |      2.86 |      2.88 |      1.73 |      0.52 |
+| ours avx512 slice fn         |      6.61 |      6.14 |      5.96 |      5.64 |      3.70 |         - |
+| ours avx512 lossy_into (C1)  |      6.64 |      6.10 |      5.87 |      5.66 |      3.69 |      1.10 |
+| ours avx512 Decoder pieces   |     80.00 |      5.88 |      5.83 |      5.53 |      3.71 |      0.58 |
