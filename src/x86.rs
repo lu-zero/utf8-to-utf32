@@ -2,7 +2,7 @@
 //!
 //! 1. ASCII fast path: if the next bytes have no high bit, widen them
 //!    (`pmovzxbd`) straight to u32.
-//! 2. Otherwise take a block of P positions (16 / 32 / 60) plus 3 bytes of
+//! 2. Otherwise take a block of P positions (16 / 60 / 60) plus 3 bytes of
 //!    lookahead and build u64 bitmasks from byte compares (high bit, at least
 //!    C0, C2, E0, F0, F5; for 3/4-byte leads E0/ED/F0/F4 also whether the next
 //!    byte is at least A0 / 90). The block is valid iff the continuation mask
@@ -392,7 +392,8 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
     let p = src.as_ptr();
     let (mut i, mut o) = (0usize, 0usize);
     let pat = _mm256_loadu_si256(PAT8.as_ptr() as *const __m256i);
-    while i + 64 <= len {
+    // The u32 path's last 16-byte load ends at i + P + 12.
+    while i + 72 <= len {
         let a = _mm256_loadu_si256(p.add(i) as *const __m256i);
         let b = _mm256_loadu_si256(p.add(i + 32) as *const __m256i);
         macro_rules! mm {
@@ -430,7 +431,7 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
                 )
             };
         }
-        const P: u32 = 32;
+        const P: u32 = 60;
         let (c0, e0, f0) = (ge!(0xC0), ge!(0xE0), ge!(0xF0));
         macro_rules! dec16 {
             ($leads:expr) => {{
@@ -514,7 +515,7 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
         }
         let pm = (1u64 << P) - 1;
         let planned = match plan(hi, c0, ge!(0xC2), e0, f0, ge!(0xF5), P) {
-            Ok(x) if e0 & 0xFFFF_FFFF == 0 => Ok(x),
+            Ok(x) if e0 & pm == 0 => Ok(x),
             Ok(x) => {
                 let rb = ranges_bad(
                     eq!(0xE0),
@@ -531,7 +532,7 @@ unsafe fn avx2_impl(src: &[u8], dst: *mut u32, mode: u8) -> Result<usize, Utf32E
                 }
             }
             Err(bad) if PREFIX => {
-                let rb = if e0 & 0xFFFF_FFFF == 0 {
+                let rb = if e0 & pm == 0 {
                     0
                 } else {
                     ranges_bad(

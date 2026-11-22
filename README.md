@@ -52,7 +52,7 @@ There are explicit-level variants (`*_with(Level, ..)`) for testing and benchmar
 |---|---|---|---|
 | `Scalar` | none | none | 8-byte ASCII widening, then one character at a time |
 | `Sse41` | SSSE3, SSE4.1, POPCNT | 16 B | ASCII widening; blocks with only 1–3-byte characters decoded as 8 u16 lanes; general blocks as 4 u32 lanes (x86/x86_64) |
-| `Avx2` | AVX2, POPCNT | 32 B | the same, with 16 u16 lanes or 8 u32 lanes (x86/x86_64) |
+| `Avx2` | AVX2, POPCNT | 60 B | the same, with 16 u16 lanes or 8 u32 lanes (x86/x86_64) |
 | `Avx512` | AVX-512 F, BW, VBMI, VBMI2 | 60 B | the same, with 32 u16 lanes (`vpcompressw`) or 16 u32 lanes (`vpcompressd`) (x86/x86_64) |
 | `Neon` | NEON | 64 B | ASCII widening; Keiser–Lemire `tbl` validation; blocks with only 1–3-byte characters decoded in the byte domain (16 positions per vector, `vsli` bit-inserts), 4-byte characters add a third output byte; compaction by `tbl` straight into u32 lanes (aarch64) |
 | `Vsx` | VSX (nightly, `vsx` feature) | 64 B | the NEON design with `vec_perm` lookups and compaction; SWAR movemask; POWER9 `lxv`/`stxv` (POWER9 only) |
